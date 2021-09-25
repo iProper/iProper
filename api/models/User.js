@@ -7,7 +7,7 @@ const userSchema = new Schema({
   email: String,
   password: String,
   phoneNumber: String,
-  isOwner: Bool,
+  isOwner: Boolean,
 });
 
 module.exports = mongoose.model("User", userSchema);
