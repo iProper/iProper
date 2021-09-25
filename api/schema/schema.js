@@ -35,12 +35,12 @@ const RootQuery = new GraphQLObjectType({
         return User.findById(args.id);
       },
     },
-    users: {
-      type: new GraphQLList(UserType),
-      resolve(_parent, _args) {
-        return User.find({});
-      },
-    },
+    //   users: {
+    //     type: new GraphQLList(UserType),
+    //     resolve(_parent, _args) {
+    //       return User.find({});
+    //     },
+    //   },
   },
 });
 
@@ -69,41 +69,41 @@ const Mutation = new GraphQLObjectType({
         return user.save();
       },
     },
-    updateUser: {
-      type: UserType,
-      args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
-        firstName: { type: new GraphQLNonNull(GraphQLString) },
-        lastName: { type: new GraphQLNonNull(GraphQLString) },
-        email: { type: new GraphQLNonNull(GraphQLString) },
-        password: { type: new GraphQLNonNull(GraphQLString) },
-        phoneNumber: { type: GraphQLString },
-        isOwner: { type: new GraphQLNonNull(GraphQLString) },
-      },
-      resolve(_parent, args) {
-        return User.findByIdAndUpdate(
-          args.id,
-          {
-            firstName: args.firstName,
-            lastName: args.lastName,
-            email: args.email,
-            password: args.password,
-            phoneNumber: args.phoneNumber,
-            isOwner: args.isOwner,
-          },
-          { new: true }
-        );
-      },
-    },
-    deleteUser: {
-      type: UserType,
-      args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
-      },
-      resolve(_parent, args) {
-        return User.findByIdAndDelete(args.id);
-      },
-    },
+    // updateUser: {
+    //   type: UserType,
+    //   args: {
+    //     id: { type: new GraphQLNonNull(GraphQLID) },
+    //     firstName: { type: new GraphQLNonNull(GraphQLString) },
+    //     lastName: { type: new GraphQLNonNull(GraphQLString) },
+    //     email: { type: new GraphQLNonNull(GraphQLString) },
+    //     password: { type: new GraphQLNonNull(GraphQLString) },
+    //     phoneNumber: { type: GraphQLString },
+    //     isOwner: { type: new GraphQLNonNull(GraphQLString) },
+    //   },
+    //   resolve(_parent, args) {
+    //     return User.findByIdAndUpdate(
+    //       args.id,
+    //       {
+    //         firstName: args.firstName,
+    //         lastName: args.lastName,
+    //         email: args.email,
+    //         password: args.password,
+    //         phoneNumber: args.phoneNumber,
+    //         isOwner: args.isOwner,
+    //       },
+    //       { new: true }
+    //     );
+    // },
+    // },
+    // deleteUser: {
+    //   type: UserType,
+    //   args: {
+    //     id: { type: new GraphQLNonNull(GraphQLID) },
+    //   },
+    //   resolve(_parent, args) {
+    //     return User.findByIdAndDelete(args.id);
+    //   },
+    // },
   },
 });
 
