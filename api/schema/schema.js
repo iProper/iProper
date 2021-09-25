@@ -16,8 +16,12 @@ const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
     id: { type: GraphQLID },
-    name: { type: GraphQLString },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+    email: { type: GraphQLString },
     password: { type: GraphQLString },
+    phoneNumber: { type: GraphQLString },
+    isOwner: { type: GraphQLString },
   }),
 });
 
@@ -43,16 +47,24 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
+    type: UserType,
     addUser: {
-      type: UserType,
       args: {
-        name: { type: new GraphQLNonNull(GraphQLString) },
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        lastName: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
+        phoneNumber: { type: GraphQLString },
+        isOwner: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve(_parent, args) {
         let user = new User({
-          name: args.name,
+          firstName: args.firstName,
+          lastName: args.lastName,
+          email: args.email,
           password: args.password,
+          phoneNumber: args.phoneNumber,
+          isOwner: args.isOwner,
         });
         return user.save();
       },
@@ -61,15 +73,23 @@ const Mutation = new GraphQLObjectType({
       type: UserType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLID) },
-        name: { type: new GraphQLNonNull(GraphQLString) },
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        lastName: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
+        phoneNumber: { type: GraphQLString },
+        isOwner: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve(_parent, args) {
         return User.findByIdAndUpdate(
           args.id,
           {
-            name: args.name,
+            firstName: args.firstName,
+            lastName: args.lastName,
+            email: args.email,
             password: args.password,
+            phoneNumber: args.phoneNumber,
+            isOwner: args.isOwner,
           },
           { new: true }
         );
