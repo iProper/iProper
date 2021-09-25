@@ -57,6 +57,24 @@ const Mutation = new GraphQLObjectType({
         return user.save();
       },
     },
+    updateUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(_parent, args) {
+        return User.findByIdAndUpdate(
+          args.id,
+          {
+            name: args.name,
+            password: args.password,
+          },
+          { new: true }
+        );
+      },
+    },
     deleteUser: {
       type: UserType,
       args: {
