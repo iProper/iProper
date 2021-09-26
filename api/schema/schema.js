@@ -58,7 +58,7 @@ const RootQuery = new GraphQLObjectType({
     current: {
       type: UserType,
       async resolve(_parent, _args, request) {
-        if (request.id) return await User.findById(request.id);
+        if (request) return await User.findById(request.id);
 
         throw new Error("Non authenticated User");
       },
