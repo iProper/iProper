@@ -1,8 +1,12 @@
-import { Image, Text, View, Pressable, Button } from "react-native";
-import React from "react";
+import { Image, Text, View, Pressable, TextInput, Button } from "react-native";
+import React, { useState } from "react";
 import styles from "../styles/App.styles";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 export function AccountTypeScreen({ navigation }) {
+  const [isOwner, setIsOwner] = useState(false);
+
   return (
     <View style={(styles.loginScreen, styles.container)}>
       <View style={[styles.loginScreenHeader, styles.container]}>
@@ -50,9 +54,10 @@ export function AccountTypeScreen({ navigation }) {
           <View style={styles.accountTypeChoice}>
             <Text style={styles.textH2}>Owner</Text>
             <Pressable
+              onPress={() => setIsOwner(true)}
               style={[
                 styles.chooseAccountTypeButton,
-                styles.chosenAccountTypeButton,
+                isOwner && styles.chosenAccountTypeButton,
               ]}
             >
               <Image
@@ -69,7 +74,13 @@ export function AccountTypeScreen({ navigation }) {
 
           <View style={styles.accountTypeChoice}>
             <Text style={styles.textH2}>Renter</Text>
-            <Pressable style={styles.chooseAccountTypeButton}>
+            <Pressable
+              onPress={() => setIsOwner(false)}
+              style={[
+                styles.chooseAccountTypeButton,
+                !isOwner && styles.chosenAccountTypeButton,
+              ]}
+            >
               <Image
                 style={[styles.accountTypeIcon]}
                 source={require("../assets/user.png")}
@@ -80,7 +91,9 @@ export function AccountTypeScreen({ navigation }) {
         </View>
 
         <Pressable
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("RegistrationForm", { isOwner });
+          }}
           style={[styles.createAccountButton, styles.button, styles.buttonBig]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>
@@ -92,75 +105,103 @@ export function AccountTypeScreen({ navigation }) {
   );
 }
 
-export function RegistrationFormScreen(props) {
-  return (
-    <SafeAreaView>
-      <View style={styles.separator} />
-      <Text style={styles.headerText}>First Name</Text>
-      <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder='First Name' />
-      </View>
-      <Text style={styles.red}>First name required</Text>
-      <Text style={styles.headerText}>Last Name</Text>
-      <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder='Last Name' />
-      </View>
-      <Text style={styles.headerText}>Email</Text>
-      <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder='email@example.com' />
-      </View>
-      <Text style={styles.headerText}>Password</Text>
-      <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder='Password' />
-      </View>
-      <Text style={styles.headerText}>Confirm Password</Text>
-      <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder='Conform Password' />
-      </View>
-      <Pressable
-        onPress={}
-        style={styles.nextStepBtn}
-      >
-        <Text style={styles.nextStepText}>{title}</Text>
-      </Pressable>
+export function RegistrationFormScreen({ route, navigation }) {
+  const { isOwner } = route.params;
 
-      <StatusBar style='auto' />
-    </SafeAreaView>
+  const submitForm = () => {
+    return;
+  };
+
+  const onPressNextStep = () => {
+    if (isOwner) navigation.navigate("ConfirmPhoneNumber");
+    else submitForm();
+  };
+
+  return (
+    <View style={styles.registerForm}>
+      <View style={styles.navigationHeaderArea}>
+        <View style={styles.navigationHeader}>
+          <Pressable onPress={() => {navigation.goBack()}}>
+            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
+          </Pressable>
+          <Text style={styles.navigationHeaderText}>
+            {isOwner ? "Owner " : "Renter "}Registration
+          </Text>
+        </View>
+        <View style={[styles.separator, styles.separatorBlue]} />
+      </View>
+
+      <View style={styles.formBox}>
+        <Text style={[styles.textH3, styles.formLabel]}>First Name</Text>
+        <TextInput style={styles.formInput} placeholder='First Name' />
+        <Text style={styles.alarmText}>First name required</Text>
+      </View>
+
+      <View style={styles.formBox}>
+        <Text style={[styles.textH3, styles.formLabel]}>Last Name</Text>
+        <TextInput style={styles.formInput} placeholder='Last Name' />
+        <Text style={styles.alarmText}></Text>
+      </View>
+
+      <View style={styles.formBox}>
+        <Text style={[styles.textH3, styles.formLabel]}>Email</Text>
+        <TextInput style={styles.formInput} placeholder='email@example.com' />
+        <Text style={styles.alarmText}></Text>
+      </View>
+
+      <View style={styles.formBox}>
+        <Text style={[styles.textH3, styles.formLabel]}>Password</Text>
+        <TextInput style={styles.formInput} placeholder='Password' />
+        <Text style={styles.alarmText}></Text>
+      </View>
+
+      <View style={styles.formBox}>
+        <Text style={[styles.textH3, styles.formLabel]}>Confirm Password</Text>
+        <TextInput style={styles.formInput} placeholder='Confirm Password' />
+        <Text style={styles.alarmText}></Text>
+      </View>
+
+      <Pressable
+        onPress={() => {}}
+        style={[styles.button, styles.buttonBig, styles.nextStepBtn]}
+      >
+        <Text style={[styles.buttonText, styles.buttonTextBig]}>
+          {isOwner ? "Next Step" : "Create Account"}
+        </Text>
+      </Pressable>
+    </View>
   );
 }
 
-export function ConfirmPhoneNumberScreen() {
+export function ConfirmPhoneNumberScreen({ navigation }) {
   return (
-    <SafeAreaView>
+    <View>
       <View style={styles.separator} />
-      <Text style={styles.headerText}>Phone number</Text>
+      <Text style={styles.textH3}>Phone number</Text>
       <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder="123-345-6789" />
+        <TextInput style={styles.formInput} placeholder='123-345-6789' />
       </View>
       <View style={styles.requestBtn}>
-        <Pressable onPress={}>
+        <Pressable onPress={() => {}}>
           <Text style={styles.requestText}>{SMSrequestCode}</Text>
         </Pressable>
       </View>
-      <Text style={styles.headerText}>Enter code</Text>
+      <Text style={styles.textH3}>Enter code</Text>
       <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder="e.g. 123456" />
+        <TextInput style={styles.input} placeholder='e.g. 123456' />
       </View>
       <View>
-        <Pressable
-          onPress={}
-          style={styles.confirmBtn}
-        >
+        <Pressable onPress={() => {}} style={styles.confirmBtn}>
           <Text style={styles.confirmText}>{title}</Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
-export function UploadOwnerDocumentsScreen() {
+export function UploadOwnerDocumentsScreen({ navigation }) {
   return (
-    <SafeAreaView>
+    <View>
       <View style={styles.separator} />
       <Text style={styles.finishRegistrationText}>
         Please, provide evidences of rental property ownership
@@ -175,23 +216,42 @@ export function UploadOwnerDocumentsScreen() {
       >
         Check valiable provement of ownership.
       </Text>
-      <Pressable
-        onPress={finishRegistrationBtnPressed}
-        //onPress = {() => (console.log("Button press"))}
-        style={styles.uploadDocumentsBtn}
-      >
+      <Pressable onPress={() => {}} style={styles.uploadDocumentsBtn}>
         <Text style={styles.uploadDocText}>{uploadDoc}</Text>
       </Pressable>
 
-      <Pressable
-        onPress={finishRegistrationBtnPressed}
-        //onPress = {() => (console.log("Button press"))}
-        style={styles.finishRegistrationBtn}
-      >
+      <Pressable onPress={() => {}} style={styles.finishRegistrationBtn}>
         <Text style={styles.nextStepText}>{finishTitle}</Text>
       </Pressable>
 
       <Text></Text>
-    </SafeAreaView>
+    </View>
+  );
+}
+
+const RegistrationStack = createNativeStackNavigator();
+
+export function RegistrationScreens({ navigation }) {
+  return (
+    <RegistrationStack.Navigator
+      screenOptions={{ headerShown: false, animation: "none" }}
+    >
+      <RegistrationStack.Screen
+        name='ChooseAccountType'
+        component={AccountTypeScreen}
+      />
+      <RegistrationStack.Screen
+        name='RegistrationForm'
+        component={RegistrationFormScreen}
+      />
+      <RegistrationStack.Screen
+        name='ConfirmPhoneNumber'
+        component={ConfirmPhoneNumberScreen}
+      />
+      <RegistrationStack.Screen
+        name='UploadOwnerDocuments'
+        component={UploadOwnerDocumentsScreen}
+      />
+    </RegistrationStack.Navigator>
   );
 }

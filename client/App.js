@@ -1,15 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { LoginScreen } from "./components/LoginScreen";
-import { AccountTypeScreen } from "./components/RegistrationScreens";
+import { RegistrationScreens } from "./components/RegistrationScreens";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View } from "react-native";
 import styles from "./styles/App.styles";
 
 const Stack = createNativeStackNavigator();
-
-const RegistrationScreen = AccountTypeScreen;
 
 export default function App() {
   return (
@@ -23,7 +21,7 @@ export default function App() {
           ></Stack.Screen>
           <Stack.Screen
             name='Registration'
-            component={RegistrationScreen}
+            component={RegistrationScreens}
             option={{ title: "Registration" }}
           ></Stack.Screen>
         </Stack.Navigator>

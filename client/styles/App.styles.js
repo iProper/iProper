@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native"
+import { StyleSheet, Dimensions } from "react-native";
 
 const win = Dimensions.get("window");
 
@@ -22,11 +22,18 @@ export default StyleSheet.create({
     fontWeight: "500",
     fontSize: 16,
   },
+  alarmText: {
+    color: "#FC4445",
+    fontSize: 12,
+    marginLeft: 15,
+    lineHeight: 12,
+    height: 12,
+  },
   separator: {
     width: "100%",
     height: 2,
     marginVertical: 5,
-    backgroundColor: "#aaa"
+    backgroundColor: "#aaa",
   },
   separatorVertical: {
     height: "60%",
@@ -34,6 +41,9 @@ export default StyleSheet.create({
   },
   separatorRed: {
     backgroundColor: "#FC4445",
+  },
+  separatorBlue: {
+    backgroundColor: "#97CAEF",
   },
   separator60: {
     width: "60%",
@@ -49,19 +59,24 @@ export default StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 15
+    fontSize: 15,
   },
   buttonOffText: {
     color: "#FC4445",
-    fontSize: 15
+    fontSize: 15,
   },
   buttonOff: {
     backgroundColor: "#fff",
   },
-  buttonBig: {
-  },
+  buttonBig: {},
   buttonTextBig: {
     fontSize: 25,
+  },
+  formBox: {
+    alignItems: "flex-start",
+  },
+  formLabel: {
+    paddingLeft: 10,
   },
   formInput: {
     height: 35,
@@ -74,12 +89,9 @@ export default StyleSheet.create({
     fontSize: 18,
     marginVertical: 5,
   },
-  formSubmissionError: {
-    color: "#FC4445"
-  },
   logo: {
     width: "100%",
-    height: "90%"
+    height: "90%",
   },
   App: {
     height: win.height,
@@ -108,7 +120,7 @@ export default StyleSheet.create({
     margin: 8,
     flex: 1,
   },
-  loginFormArea: { 
+  loginFormArea: {
     flex: 3,
     maxHeight: 400,
     padding: 30,
@@ -137,7 +149,7 @@ export default StyleSheet.create({
     flex: 1.2,
     width: "100%",
     alignItems: "center",
-    justifyContent: "space-around"
+    justifyContent: "space-around",
   },
   forgotPassword: {
     flex: 0.5,
@@ -153,7 +165,7 @@ export default StyleSheet.create({
   },
   chooseAccountTypeArea: {
     flex: 3,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 30,
     maxHeight: 400,
   },
@@ -169,7 +181,7 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    height: '100%',
+    height: "100%",
   },
   chooseAccountTypeButton: {
     width: 80,
@@ -185,7 +197,7 @@ export default StyleSheet.create({
     shadowColor: "#97CAEF",
     shadowOffset: {
       width: 4,
-      height: 4
+      height: 4,
     },
     shadowRadius: 5,
     width: 100,
@@ -204,5 +216,110 @@ export default StyleSheet.create({
     width: "100%",
     flex: 0.25,
     maxHeight: 50,
-  }
+  },
+  navigationHeaderArea: {
+    marginBottom: 15,
+  },
+  navigationHeader: {
+    height: 40,
+    flexDirection: "row",
+  },
+  navigationHeaderArrow: {
+    color: "#97CAEF",
+    fontSize: 35,
+    lineHeight: 30,
+  },
+  navigationHeaderText: {
+    fontSize: 25,
+  },
+  registerForm: {
+    padding: 30,
+  },
+  nextStepBtn: {
+    padding: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  nextStepText: {
+    color: "#fff",
+    fontSize: 20,
+    textAlign: "center",
+  },
+
+
+  requestBtn: {
+    padding: 16,
+    width: "75%",
+    borderRadius: 10,
+    backgroundColor: "#FC4445",
+
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: 20,
+  },
+  requestText: {
+    color: "#fff",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  confirmBtn: {
+    padding: 16,
+    width: 250,
+    borderRadius: 10,
+    alignSelf: "center",
+    backgroundColor: "#FC4445",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  confirmText: {
+    color: "#fff",
+    fontSize: 20,
+    textAlign: "center",
+  },
+  confirmInput: {
+    height: 40,
+    width: 300,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  uploadDocumentsBtn: {
+    padding: 16,
+    width: 160,
+    borderRadius: 10,
+    backgroundColor: "#FC4445",
+    alignSelf: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    marginRight: 140,
+  },
+  uploadDocText: {
+    color: "#fff",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  finishRegistrationText: {
+    margin: 10,
+    fontSize: 15,
+    marginLeft: 40,
+    textAlign: "left",
+  },
+  RegistrationProofOfOwnership: {
+    color: "#97CAEF",
+    margin: 10,
+    fontSize: 15,
+    marginLeft: 40,
+    textAlign: "left",
+  },
+  finishRegistrationBtn: {
+    padding: 16,
+    width: 310,
+    borderRadius: 10,
+    alignItems: "center",
+    backgroundColor: "#FC4445",
+    alignSelf: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
 });
