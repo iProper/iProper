@@ -195,7 +195,7 @@ export default StyleSheet.create({
     height: 80,
     borderColor: "#97CAEF",
     borderWidth: 2,
-    borderRadius: "50%",
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 20,
@@ -230,11 +230,11 @@ export default StyleSheet.create({
   navigationHeader: {
     height: 40,
     flexDirection: "row",
+    alignItems: "center",
   },
   navigationHeaderArrow: {
     color: "#97CAEF",
     fontSize: 35,
-    lineHeight: 30,
   },
   navigationHeaderText: {
     fontSize: 25,
@@ -252,7 +252,6 @@ export default StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
   },
-
 
   confirmPhoneNumberScreen: {
     padding: 30,

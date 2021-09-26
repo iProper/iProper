@@ -183,6 +183,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
   const [codeSent, setCodeSent] = useState(false);
 
   const SMSrequestCode = () => {
+    setCodeSent(true);
     return;
   };
 
@@ -195,7 +196,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
               navigation.goBack();
             }}
           >
-            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
+            <Text style={styles.navigationHeaderArrow}>{"<"}</Text>
           </Pressable>
           <Text style={styles.navigationHeaderText}>{title}</Text>
         </View>
@@ -213,22 +214,26 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
           SMSrequestCode();
         }}
       >
-        <Text style={[styles.buttonText]}>Request SMS Code Again</Text>
+        <Text style={[styles.buttonText]}>{codeSent ? "Request SMS Code Again" : "Request SMS Code"}</Text>
       </Pressable>
 
-      <View style={styles.formBox}>
-        <Text style={styles.textH3}>Enter code</Text>
-        <TextInput style={styles.formInput} placeholder='e.g. 123456' />
-      </View>
+      {codeSent && (
+        <View>
+          <View style={styles.formBox}>
+            <Text style={styles.textH3}>Enter code</Text>
+            <TextInput style={styles.formInput} placeholder='e.g. 123456' />
+          </View>
 
-      <Pressable
-        onPress={() => {
-          navigation.navigate("UploadOwnerDocuments", { title });
-        }}
-        style={[styles.button, styles.buttonBig, styles.confirmButton]}
-      >
-        <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
-      </Pressable>
+          <Pressable
+            onPress={() => {
+              navigation.navigate("UploadOwnerDocuments", { title });
+            }}
+            style={[styles.button, styles.buttonBig, styles.confirmButton]}
+          >
+            <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
@@ -269,7 +274,7 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
         <Pressable onPress={() => {}} style={styles.button}>
           <Text style={styles.buttonText}>Upload Documents</Text>
         </Pressable>
-          <Text style={styles.textH4}>No files uploaded</Text>
+        <Text style={styles.textH4}>No files uploaded</Text>
       </View>
 
       <Pressable onPress={() => {}} style={[styles.button, styles.buttonBig]}>
