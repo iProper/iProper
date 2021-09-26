@@ -128,3 +128,32 @@ export function RegistrationFormScreen(props) {
     </SafeAreaView>
   );
 }
+
+export function ConfirmPhoneNumberScreen() {
+  return (
+    <SafeAreaView>
+      <View style={styles.separator} />
+      <Text style={styles.headerText}>Phone number</Text>
+      <View style={styles.registrationBox}>
+        <TextInput style={styles.input} placeholder="123-345-6789" />
+      </View>
+      <View style={styles.requestBtn}>
+        <Pressable onPress={}>
+          <Text style={styles.requestText}>{SMSrequestCode}</Text>
+        </Pressable>
+      </View>
+      <Text style={styles.headerText}>Enter code</Text>
+      <View style={styles.registrationBox}>
+        <TextInput style={styles.input} placeholder="e.g. 123456" />
+      </View>
+      <View>
+        <Pressable
+          onPress={}
+          style={styles.confirmBtn}
+        >
+          <Text style={styles.confirmText}>{title}</Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
+  );
+}
