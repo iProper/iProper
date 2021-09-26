@@ -34,7 +34,21 @@ const RootQuery = new GraphQLObjectType({
       type: UserType,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
       resolve(_parent, args) {
-        return User.findById(args.id);
+        let hashedPassword = '';
+        let u = User.findById(args.id);
+        
+        bcrypt.hash(args.password, 10).then(hash => {
+          hashedPassword = hash;
+        });
+
+        bcrypt.compare(u.password, hashedPassword).then((res) => {
+          if (res == true) {
+            return u;
+          } else {
+            throw new Error('Wrong password.');
+          }
+        })
+
       },
     },
     //   users: {
@@ -75,6 +89,7 @@ const Mutation = new GraphQLObjectType({
           phoneNumber: args.phoneNumber,
           isOwner: args.isOwner,
         });
+
         return user.save();
       },
     },
