@@ -1,6 +1,8 @@
 const graphql = require("graphql");
 const User = require("../models/User");
 
+const bcrypt = require('bcryptjs');
+
 const {
   GraphQLObjectType,
   GraphQLString,
@@ -58,11 +60,18 @@ const Mutation = new GraphQLObjectType({
         isOwner: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve(_parent, args) {
+
+        let hashedPassword = '';
+        
+        bcrypt.hash(args.password, 10).then(hash => {
+          hashedPassword = hash;
+        })
+
         let user = new User({
           firstName: args.firstName,
           lastName: args.lastName,
           email: args.email,
-          password: args.password,
+          password: hashedPassword,
           phoneNumber: args.phoneNumber,
           isOwner: args.isOwner,
         });
