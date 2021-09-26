@@ -17,10 +17,14 @@ export default StyleSheet.create({
   textH3: {
     fontSize: 20,
   },
+  textH4: {
+    fontSize: 15,
+  },
   lightText: {
     color: "#97CAEF",
     fontWeight: "500",
     fontSize: 16,
+    marginVertical: 5,
   },
   alarmText: {
     color: "#FC4445",
@@ -56,6 +60,7 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
+    padding: 8,
   },
   buttonText: {
     color: "#fff",
@@ -68,7 +73,9 @@ export default StyleSheet.create({
   buttonOff: {
     backgroundColor: "#fff",
   },
-  buttonBig: {},
+  buttonBig: {
+    padding: 10,
+  },
   buttonTextBig: {
     fontSize: 25,
   },
@@ -247,35 +254,18 @@ export default StyleSheet.create({
   },
 
 
+  confirmPhoneNumberScreen: {
+    padding: 30,
+  },
   requestBtn: {
-    padding: 16,
+    padding: 10,
     width: "75%",
-    borderRadius: 10,
-    backgroundColor: "#FC4445",
-
-    justifyContent: "center",
     alignSelf: "center",
-    marginTop: 20,
+    marginVertical: 10,
   },
-  requestText: {
-    color: "#fff",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  confirmBtn: {
-    padding: 16,
-    width: 250,
-    borderRadius: 10,
-    alignSelf: "center",
+  confirmButton: {
     backgroundColor: "#FC4445",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  confirmText: {
-    color: "#fff",
-    fontSize: 20,
-    textAlign: "center",
+    marginTop: 15,
   },
   confirmInput: {
     height: 40,
@@ -284,42 +274,14 @@ export default StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
-  uploadDocumentsBtn: {
-    padding: 16,
-    width: 160,
-    borderRadius: 10,
-    backgroundColor: "#FC4445",
-    alignSelf: "center",
-    justifyContent: "center",
-    marginTop: 20,
-    marginRight: 140,
+
+  uploadDocumentScreen: {
+    padding: 30,
   },
-  uploadDocText: {
-    color: "#fff",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  finishRegistrationText: {
-    margin: 10,
-    fontSize: 15,
-    marginLeft: 40,
-    textAlign: "left",
-  },
-  RegistrationProofOfOwnership: {
-    color: "#97CAEF",
-    margin: 10,
-    fontSize: 15,
-    marginLeft: 40,
-    textAlign: "left",
-  },
-  finishRegistrationBtn: {
-    padding: 16,
-    width: 310,
-    borderRadius: 10,
+  uploadDocumentsArea: { 
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FC4445",
-    alignSelf: "center",
-    justifyContent: "center",
-    marginTop: 20,
+    justifyContent: "space-between",
+    margin: 20,
   },
 });

@@ -92,7 +92,10 @@ export function AccountTypeScreen({ navigation }) {
 
         <Pressable
           onPress={() => {
-            navigation.navigate("RegistrationForm", { isOwner });
+            navigation.navigate("RegistrationForm", {
+              isOwner,
+              title: isOwner ? "Owner Registration" : "Renter Registration",
+            });
           }}
           style={[styles.createAccountButton, styles.button, styles.buttonBig]}
         >
@@ -106,14 +109,14 @@ export function AccountTypeScreen({ navigation }) {
 }
 
 export function RegistrationFormScreen({ route, navigation }) {
-  const { isOwner } = route.params;
+  const { isOwner, title } = route.params;
 
   const submitForm = () => {
     return;
   };
 
   const onPressNextStep = () => {
-    if (isOwner) navigation.navigate("ConfirmPhoneNumber");
+    if (isOwner) navigation.navigate("ConfirmPhoneNumber", { title });
     else submitForm();
   };
 
@@ -121,12 +124,14 @@ export function RegistrationFormScreen({ route, navigation }) {
     <View style={styles.registerForm}>
       <View style={styles.navigationHeaderArea}>
         <View style={styles.navigationHeader}>
-          <Pressable onPress={() => {navigation.goBack()}}>
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
             <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
           </Pressable>
-          <Text style={styles.navigationHeaderText}>
-            {isOwner ? "Owner " : "Renter "}Registration
-          </Text>
+          <Text style={styles.navigationHeaderText}>{title}</Text>
         </View>
         <View style={[styles.separator, styles.separatorBlue]} />
       </View>
@@ -162,7 +167,7 @@ export function RegistrationFormScreen({ route, navigation }) {
       </View>
 
       <Pressable
-        onPress={() => {}}
+        onPress={() => onPressNextStep()}
         style={[styles.button, styles.buttonBig, styles.nextStepBtn]}
       >
         <Text style={[styles.buttonText, styles.buttonTextBig]}>
@@ -173,55 +178,104 @@ export function RegistrationFormScreen({ route, navigation }) {
   );
 }
 
-export function ConfirmPhoneNumberScreen({ navigation }) {
+export function ConfirmPhoneNumberScreen({ route, navigation }) {
+  const { title } = route.params;
+  const [codeSent, setCodeSent] = useState(false);
+
+  const SMSrequestCode = () => {
+    return;
+  };
+
   return (
-    <View>
-      <View style={styles.separator} />
-      <Text style={styles.textH3}>Phone number</Text>
+    <View style={styles.confirmPhoneNumberScreen}>
+      <View style={styles.navigationHeaderArea}>
+        <View style={styles.navigationHeader}>
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
+          </Pressable>
+          <Text style={styles.navigationHeaderText}>{title}</Text>
+        </View>
+        <View style={[styles.separator, styles.separatorBlue]} />
+      </View>
+
       <View style={styles.registrationBox}>
+        <Text style={styles.textH3}>Phone number</Text>
         <TextInput style={styles.formInput} placeholder='123-345-6789' />
       </View>
-      <View style={styles.requestBtn}>
-        <Pressable onPress={() => {}}>
-          <Text style={styles.requestText}>{SMSrequestCode}</Text>
-        </Pressable>
+
+      <Pressable
+        style={[styles.button, styles.requestBtn]}
+        onPress={() => {
+          SMSrequestCode();
+        }}
+      >
+        <Text style={[styles.buttonText]}>Request SMS Code Again</Text>
+      </Pressable>
+
+      <View style={styles.formBox}>
+        <Text style={styles.textH3}>Enter code</Text>
+        <TextInput style={styles.formInput} placeholder='e.g. 123456' />
       </View>
-      <Text style={styles.textH3}>Enter code</Text>
-      <View style={styles.registrationBox}>
-        <TextInput style={styles.input} placeholder='e.g. 123456' />
-      </View>
-      <View>
-        <Pressable onPress={() => {}} style={styles.confirmBtn}>
-          <Text style={styles.confirmText}>{title}</Text>
-        </Pressable>
-      </View>
+
+      <Pressable
+        onPress={() => {
+          navigation.navigate("UploadOwnerDocuments", { title });
+        }}
+        style={[styles.button, styles.buttonBig, styles.confirmButton]}
+      >
+        <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
+      </Pressable>
     </View>
   );
 }
 
-export function UploadOwnerDocumentsScreen({ navigation }) {
+export function UploadOwnerDocumentsScreen({ route, navigation }) {
+  const { title } = route.params;
+
   return (
-    <View>
-      <View style={styles.separator} />
-      <Text style={styles.finishRegistrationText}>
-        Please, provide evidences of rental property ownership
+    <View style={styles.uploadDocumentScreen}>
+      <View style={styles.navigationHeaderArea}>
+        <View style={styles.navigationHeader}>
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
+          </Pressable>
+          <Text style={styles.navigationHeaderText}>{title}</Text>
+        </View>
+        <View style={[styles.separator, styles.separatorBlue]} />
+      </View>
+
+      <Text style={styles.textH2}>
+        Please, provide evidences of rental property ownership.
       </Text>
       <Text
-        style={styles.RegistrationProofOfOwnership}
+        style={styles.lightText}
         onPress={() =>
           Linking.openURL(
             "https://www.ontario.ca/page/register-land-documents-electronically"
           )
         }
       >
-        Check valiable provement of ownership.
+        Check viable proof of ownership.
       </Text>
-      <Pressable onPress={() => {}} style={styles.uploadDocumentsBtn}>
-        <Text style={styles.uploadDocText}>{uploadDoc}</Text>
-      </Pressable>
+      <View style={styles.uploadDocumentsArea}>
+        <Pressable onPress={() => {}} style={styles.button}>
+          <Text style={styles.buttonText}>Upload Documents</Text>
+        </Pressable>
+          <Text style={styles.textH4}>No files uploaded</Text>
+      </View>
 
-      <Pressable onPress={() => {}} style={styles.finishRegistrationBtn}>
-        <Text style={styles.nextStepText}>{finishTitle}</Text>
+      <Pressable onPress={() => {}} style={[styles.button, styles.buttonBig]}>
+        <Text style={[styles.buttonText, styles.buttonTextBig]}>
+          Finish Registration
+        </Text>
       </Pressable>
 
       <Text></Text>
