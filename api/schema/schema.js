@@ -1,13 +1,16 @@
 const graphql = require("graphql");
 const User = require("../models/User");
 
+const bcrypt = require("bcryptjs");
+
 const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLSchema,
   GraphQLID,
-  GraphQLInt,
-  GraphQLList,
+  // GraphQLInt,
+  // GraphQLList,
+  GraphQLBoolean,
   GraphQLNonNull,
 } = graphql;
 
@@ -28,11 +31,26 @@ const UserType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
-    user: {
+    login: {
       type: UserType,
-      args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve(_parent, args) {
-        return User.findById(args.id);
+      args: {
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      async resolve(_parent, args) {
+        const user = await User.findOne({ email: args.email });
+
+        if (!user) {
+          throw new Error("There is no account associated with this email");
+        }
+
+        const valid = await bcrypt.compare(args.password, user.password);
+
+        if (!valid) {
+          throw new Error("Password is incorrect");
+        }
+
+        return user;
       },
     },
     //   users: {
@@ -47,25 +65,32 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
-    type: UserType,
-    addUser: {
+    register: {
+      type: UserType,
       args: {
         firstName: { type: new GraphQLNonNull(GraphQLString) },
         lastName: { type: new GraphQLNonNull(GraphQLString) },
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
         phoneNumber: { type: GraphQLString },
-        isOwner: { type: new GraphQLNonNull(GraphQLString) },
+        isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
-      resolve(_parent, args) {
-        let user = new User({
+      async resolve(_parent, args) {
+        const alreadyRegisted = await User.findOne({ email: args.email });
+
+        if (alreadyRegisted) {
+          throw new Error("User already registered with this email");
+        }
+
+        const user = new User({
           firstName: args.firstName,
           lastName: args.lastName,
           email: args.email,
-          password: args.password,
+          password: await bcrypt.hash(args.password, 10),
           phoneNumber: args.phoneNumber,
           isOwner: args.isOwner,
         });
+
         return user.save();
       },
     },
