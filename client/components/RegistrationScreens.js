@@ -157,3 +157,41 @@ export function ConfirmPhoneNumberScreen() {
     </SafeAreaView>
   );
 }
+
+export function UploadOwnerDocumentsScreen() {
+  return (
+    <SafeAreaView>
+      <View style={styles.separator} />
+      <Text style={styles.finishRegistrationText}>
+        Please, provide evidences of rental property ownership
+      </Text>
+      <Text
+        style={styles.RegistrationProofOfOwnership}
+        onPress={() =>
+          Linking.openURL(
+            "https://www.ontario.ca/page/register-land-documents-electronically"
+          )
+        }
+      >
+        Check valiable provement of ownership.
+      </Text>
+      <Pressable
+        onPress={finishRegistrationBtnPressed}
+        //onPress = {() => (console.log("Button press"))}
+        style={styles.uploadDocumentsBtn}
+      >
+        <Text style={styles.uploadDocText}>{uploadDoc}</Text>
+      </Pressable>
+
+      <Pressable
+        onPress={finishRegistrationBtnPressed}
+        //onPress = {() => (console.log("Button press"))}
+        style={styles.finishRegistrationBtn}
+      >
+        <Text style={styles.nextStepText}>{finishTitle}</Text>
+      </Pressable>
+
+      <Text></Text>
+    </SafeAreaView>
+  );
+}
