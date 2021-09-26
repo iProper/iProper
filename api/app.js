@@ -4,6 +4,7 @@ const schema = require("./schema/schema");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const jwt = require("express-jwt");
+const jwt_jsonwebtoken = require("jsonwebtoken");
 
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
@@ -26,11 +27,27 @@ mongoose
   )
   .then(() => console.log("Connected to database"));
 
+const getUser = (token) => {
+  if (token) {
+    try {
+      token = token.split(" ")[1];
+      return jwt_jsonwebtoken.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      throw new Error("Invalid authentication token");
+    }
+  }
+};
+
 app.use(
   "/graphql",
-  graphqlHTTP({
-    schema,
-    graphiql: true,
+  graphqlHTTP((req) => {
+    return {
+      schema,
+      graphiql: process.env.NODE_ENV === "development",
+      context: {
+        user: getUser(req.headers.authorization),
+      },
+    };
   })
 );
 
