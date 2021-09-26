@@ -63,8 +63,8 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
-    type: UserType,
     addUser: {
+      type: UserType,
       args: {
         firstName: { type: new GraphQLNonNull(GraphQLString) },
         lastName: { type: new GraphQLNonNull(GraphQLString) },
@@ -74,23 +74,22 @@ const Mutation = new GraphQLObjectType({
         isOwner: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve(_parent, args) {
-
-        let hashedPassword = '';
         
         bcrypt.hash(args.password, 10).then(hash => {
-          hashedPassword = hash;
-        })
-
+                
         let user = new User({
           firstName: args.firstName,
           lastName: args.lastName,
           email: args.email,
-          password: hashedPassword,
+          password: hash,
           phoneNumber: args.phoneNumber,
           isOwner: args.isOwner,
         });
 
-        return user.save();
+          return user.save();
+          
+        })
+
       },
     },
     // updateUser: {
