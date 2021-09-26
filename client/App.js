@@ -13,9 +13,9 @@ const RegistrationScreen = AccountTypeScreen;
 
 export default function App() {
   return (
-    <View style={[styles.container, styles.App]}>
+    <View style={[styles.App]}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
           <Stack.Screen
             name='Login'
             component={LoginScreen}
@@ -23,7 +23,7 @@ export default function App() {
           ></Stack.Screen>
           <Stack.Screen
             name='Registration'
-            component={AccountTypeScreen}
+            component={RegistrationScreen}
             option={{ title: "Registration" }}
           ></Stack.Screen>
         </Stack.Navigator>

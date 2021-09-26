@@ -8,6 +8,15 @@ export default StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#fff",
   },
+  textH1: {
+    fontSize: 30,
+  },
+  textH2: {
+    fontSize: 25,
+  },
+  textH3: {
+    fontSize: 20,
+  },
   lightText: {
     color: "#97CAEF",
     fontWeight: "500",
@@ -16,6 +25,7 @@ export default StyleSheet.create({
   separator: {
     width: "100%",
     height: 2,
+    marginVertical: 5,
     backgroundColor: "#aaa"
   },
   separatorVertical: {
@@ -72,21 +82,26 @@ export default StyleSheet.create({
     height: "90%"
   },
   App: {
-    padding: 20,
+    height: win.height,
   },
   loginScreen: {
     flex: 1,
+    maxHeight: 500,
   },
   loginScreenHeader: {
     alignItems: "center",
+    padding: 20,
+    paddingTop: 50,
+    maxHeight: 200,
   },
   chooseLoginScreenButtons: {
-    marginTop: 25,
-    marginBottom: 5,
+    marginVertical: 5,
     flex: 0.55,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    padding: 10,
+    maxHeight: 100,
   },
   chooseLoginScreenButton: {
     height: 60,
@@ -95,14 +110,15 @@ export default StyleSheet.create({
   },
   loginFormArea: { 
     flex: 3,
-    padding: 25,
+    maxHeight: 400,
+    padding: 30,
     alignItems: "center",
   },
   buttons3rdPartyLogin: {
     flex: 1.2,
-    justifyContent: "space-around",
-    marginBottom: 15,
+    justifyContent: "center",
     width: "100%",
+    maxHeight: 100,
   },
   button3rdPartyLogin: {
     flex: 1,
@@ -112,6 +128,7 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 2,
+    maxHeight: 40,
   },
   button3rdPartyLoginText: {
     fontWeight: "bold",
@@ -119,7 +136,6 @@ export default StyleSheet.create({
   loginForm: {
     flex: 1.2,
     width: "100%",
-    marginTop: 10,
     alignItems: "center",
     justifyContent: "space-around"
   },
@@ -130,12 +146,63 @@ export default StyleSheet.create({
   loginButton: {
     flex: 0.7,
     width: "100%",
+    maxHeight: 50,
   },
   formSubmissionError: {
-    flex: 1
+    flex: 0.5,
   },
   chooseAccountTypeArea: {
     flex: 3,
-    paddingVertical: 25,
+    alignItems: 'center',
+    padding: 30,
+    maxHeight: 400,
+  },
+  chooseAccountTypeButtons: {
+    flex: 0.7,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+    paddingVertical: 20,
+  },
+  accountTypeChoice: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    height: '100%',
+  },
+  chooseAccountTypeButton: {
+    width: 80,
+    height: 80,
+    borderColor: "#97CAEF",
+    borderWidth: 2,
+    borderRadius: "50%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 20,
+  },
+  chosenAccountTypeButton: {
+    shadowColor: "#97CAEF",
+    shadowOffset: {
+      width: 4,
+      height: 4
+    },
+    shadowRadius: 5,
+    width: 100,
+    height: 100,
+    marginVertical: 10,
+  },
+  accountTypeIcon: {
+    height: "70%",
+    width: "70%",
+  },
+  accountTypeIconOwner: {
+    marginRight: "5%",
+  },
+  createAccountButton: {
+    marginTop: 25,
+    width: "100%",
+    flex: 0.25,
+    maxHeight: 50,
   }
 });

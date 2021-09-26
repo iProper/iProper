@@ -41,26 +41,52 @@ export function AccountTypeScreen({ navigation }) {
       <View style={styles.separator}></View>
 
       <View style={styles.chooseAccountTypeArea}>
-        <Text>Who are you?</Text>
+        <Text style={styles.textH1}>Who are you?</Text>
         <View
           style={[styles.separator, styles.separatorRed, styles.separator60]}
         ></View>
 
         <View style={styles.chooseAccountTypeButtons}>
           <View style={styles.accountTypeChoice}>
-            <Text>Owner</Text>
-            <Button style={styles.chooseAccountTypeButton} title='O' />
+            <Text style={styles.textH2}>Owner</Text>
+            <Pressable
+              style={[
+                styles.chooseAccountTypeButton,
+                styles.chosenAccountTypeButton,
+              ]}
+            >
+              <Image
+                style={[styles.accountTypeIcon, styles.accountTypeIconOwner]}
+                source={require("../assets/owner.png")}
+                resizeMode={"center"}
+              />
+            </Pressable>
           </View>
 
-          <Text>or</Text>
+          <View style={{ marginTop: 20 }}>
+            <Text style={styles.textH3}>or</Text>
+          </View>
 
           <View style={styles.accountTypeChoice}>
-            <Text>Renter</Text>
-            <Button style={styles.chooseAccountTypeButton} title='R' />
+            <Text style={styles.textH2}>Renter</Text>
+            <Pressable style={styles.chooseAccountTypeButton}>
+              <Image
+                style={[styles.accountTypeIcon]}
+                source={require("../assets/user.png")}
+                resizeMode={"center"}
+              />
+            </Pressable>
           </View>
         </View>
 
-        <Button title='Create Account' />
+        <Pressable
+          onPress={() => {}}
+          style={[styles.createAccountButton, styles.button, styles.buttonBig]}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextBig]}>
+            Create Account
+          </Text>
+        </Pressable>
       </View>
     </View>
   );
