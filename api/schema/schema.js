@@ -51,7 +51,7 @@ const RootQuery = new GraphQLObjectType({
         }
 
         return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET, {
-          expiresIn: "3m",
+          expiresIn: "15m",
         });
       },
     },
