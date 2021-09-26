@@ -93,5 +93,38 @@ export function AccountTypeScreen({ navigation }) {
 }
 
 export function RegistrationFormScreen(props) {
-  return;
+  return (
+    <SafeAreaView>
+      <View style={styles.separator} />
+      <Text style={styles.headerText}>First Name</Text>
+      <View style={styles.registrationBox}>
+        <TextInput style={styles.input} placeholder='First Name' />
+      </View>
+      <Text style={styles.red}>First name required</Text>
+      <Text style={styles.headerText}>Last Name</Text>
+      <View style={styles.registrationBox}>
+        <TextInput style={styles.input} placeholder='Last Name' />
+      </View>
+      <Text style={styles.headerText}>Email</Text>
+      <View style={styles.registrationBox}>
+        <TextInput style={styles.input} placeholder='email@example.com' />
+      </View>
+      <Text style={styles.headerText}>Password</Text>
+      <View style={styles.registrationBox}>
+        <TextInput style={styles.input} placeholder='Password' />
+      </View>
+      <Text style={styles.headerText}>Confirm Password</Text>
+      <View style={styles.registrationBox}>
+        <TextInput style={styles.input} placeholder='Conform Password' />
+      </View>
+      <Pressable
+        onPress={}
+        style={styles.nextStepBtn}
+      >
+        <Text style={styles.nextStepText}>{title}</Text>
+      </Pressable>
+
+      <StatusBar style='auto' />
+    </SafeAreaView>
+  );
 }
