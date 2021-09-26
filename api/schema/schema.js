@@ -1,7 +1,7 @@
 const graphql = require("graphql");
 const User = require("../models/User");
-
 const bcrypt = require("bcryptjs");
+const jsonwebtoken = require("jsonwebtoken");
 
 const {
   GraphQLObjectType,
@@ -32,7 +32,7 @@ const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
     login: {
-      type: UserType,
+      type: GraphQLString,
       args: {
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
@@ -50,15 +50,19 @@ const RootQuery = new GraphQLObjectType({
           throw new Error("Password is incorrect");
         }
 
-        return user;
+        return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET, {
+          expiresIn: "3m",
+        });
       },
     },
-    //   users: {
-    //     type: new GraphQLList(UserType),
-    //     resolve(_parent, _args) {
-    //       return User.find({});
-    //     },
-    //   },
+    current: {
+      type: UserType,
+      async resolve(_parent, _args, request) {
+        if (request.id) return await User.findById(request.id);
+
+        throw new Error("Non authenticated User");
+      },
+    },
   },
 });
 
@@ -66,7 +70,7 @@ const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
     register: {
-      type: UserType,
+      type: GraphQLBoolean,
       args: {
         firstName: { type: new GraphQLNonNull(GraphQLString) },
         lastName: { type: new GraphQLNonNull(GraphQLString) },
@@ -91,7 +95,11 @@ const Mutation = new GraphQLObjectType({
           isOwner: args.isOwner,
         });
 
-        return user.save();
+        const saved = await user.save();
+
+        if (saved) return true;
+
+        throw new Error("Error signing up");
       },
     },
     // updateUser: {

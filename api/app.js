@@ -3,13 +3,21 @@ const { graphqlHTTP } = require("express-graphql");
 const schema = require("./schema/schema");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const jwt = require("express-jwt");
 
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
 const app = express();
 
+const auth = jwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+  credentialsRequired: false,
+});
+
 app.use(cors());
+app.use(auth);
 
 mongoose
   .connect(
@@ -22,7 +30,7 @@ app.use(
   "/graphql",
   graphqlHTTP({
     schema,
-    // graphiql:true
+    graphiql: true,
   })
 );
 
