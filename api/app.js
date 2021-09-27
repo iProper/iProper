@@ -28,13 +28,15 @@ mongoose
   .then(() => console.log("Connected to database"));
 
 const getUser = (token) => {
-  if (token) {
-    try {
-      token = token.split(" ")[1];
-      return jwt_jsonwebtoken.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      throw new Error("Invalid authentication token");
-    }
+  if (!token) {
+    throw new Error("Not authenticated");
+  }
+
+  try {
+    token = token.split(" ")[1];
+    return jwt_jsonwebtoken.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    throw new Error("Invalid authentication token");
   }
 };
 

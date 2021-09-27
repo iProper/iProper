@@ -50,9 +50,7 @@ const RootQuery = new GraphQLObjectType({
           throw new Error("Password is incorrect");
         }
 
-        return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET, {
-          expiresIn: "15m",
-        });
+        return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET);
       },
     },
     current: {
