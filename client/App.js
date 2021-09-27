@@ -35,7 +35,7 @@ export default function App() {
               screenOptions={{ headerShown: false, animation: "none" }}
             >
               <Stack.Screen name='Login' option={{ title: "Login" }}>
-                {() => <LoginScreen setLoggedIn={setLoggedIn} />}
+                {(props) => <LoginScreen {...props} setLoggedIn={setLoggedIn} />}
               </Stack.Screen>
               <Stack.Screen
                 name='Registration'
