@@ -31,28 +31,6 @@ const UserType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
-    login: {
-      type: GraphQLString,
-      args: {
-        email: { type: new GraphQLNonNull(GraphQLString) },
-        password: { type: new GraphQLNonNull(GraphQLString) },
-      },
-      async resolve(_parent, args) {
-        const user = await User.findOne({ email: args.email });
-
-        if (!user) {
-          throw new Error("There is no account associated with this email");
-        }
-
-        const valid = await bcrypt.compare(args.password, user.password);
-
-        if (!valid) {
-          throw new Error("Password is incorrect");
-        }
-
-        return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET);
-      },
-    },
     current: {
       type: UserType,
       async resolve(_parent, _args, req) {
@@ -100,6 +78,28 @@ const Mutation = new GraphQLObjectType({
         if (saved) return true;
 
         throw new Error("Error signing up");
+      },
+    },
+    login: {
+      type: GraphQLString,
+      args: {
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      async resolve(_parent, args) {
+        const user = await User.findOne({ email: args.email });
+
+        if (!user) {
+          throw new Error("There is no account associated with this email");
+        }
+
+        const valid = await bcrypt.compare(args.password, user.password);
+
+        if (!valid) {
+          throw new Error("Password is incorrect");
+        }
+
+        return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET);
       },
     },
     // updateUser: {
