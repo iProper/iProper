@@ -1,8 +1,9 @@
 import { Image, Text, View, Pressable, TextInput, Button } from "react-native";
 import React, { useState } from "react";
 import styles from "../styles/App.styles";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { register } from "../queries/queries";
+import { useMutation } from "@apollo/client";
 
 export function AccountTypeScreen({ navigation }) {
   const [isOwner, setIsOwner] = useState(false);
@@ -111,8 +112,93 @@ export function AccountTypeScreen({ navigation }) {
 export function RegistrationFormScreen({ route, navigation }) {
   const { isOwner, title } = route.params;
 
+  const [firstName, changeFirstName] = useState("");
+  const [lastName, changeLastName] = useState("");
+  const [email, changeEmail] = useState("");
+  const [password, changePassword] = useState("");
+  const [confirmPassword, changeConfirmPassword] = useState("");
+
+  const [registerUser] = useMutation(register);
+
+  const [firstNameMsg, setFirstNameMsg] = useState("");
+  const [lastNameMsg, setLastNameMsg] = useState("");
+  const [emailMsg, setEmailMsg] = useState("");
+  const [passwordMsg, setPasswordMsg] = useState("");
+  const [confirmPasswordMsg, setConfirmPasswordMsg] = useState("");
+
+  const checkForm = () => {
+    // First name checks
+    if (!firstName) {
+      setFirstNameMsg("First name required.");
+    } else if (!/^[A-Za-z]+$/.test(firstName)) {
+      setFirstNameMsg("First name should only have letters.");
+    } else if (!/^[A-Za-z]{2,50}$/.test(firstName)) {
+      setFirstNameMsg("First name should be from 2 to 50 letters long.");
+    } else {
+      setFirstNameMsg("");
+    }
+
+    // Last name checks
+    if (!lastName) {
+      setLastNameMsg("Last name required.");
+    } else if (!/^[A-Za-z]+$/.test(lastName)) {
+      setLastNameMsg("Last name should only have letters.");
+    } else if (!/^[A-Za-z]{2,50}$/.test(lastName)) {
+      setLastNameMsg("Last name should be from 2 to 50 letters long.");
+    } else {
+      setLastNameMsg("");
+    }
+
+    // Email checks
+    if (!email) {
+      setEmailMsg("Email required.");
+    } else if (
+      !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        email
+      )
+    ) {
+      setEmailMsg("Invalid email format.");
+    } else {
+      setEmailMsg("");
+    }
+
+    // password checks
+    if (!password) {
+      setPasswordMsg("Password required");
+    } else if (!/^.{8,64}$/.test(password)) {
+      setPasswordMsg("Password should be from 8 to 64 characters");
+    } else if (!/^[A-Za-z\d][\w!@#$%^&*()+\-=,.;:'"<>\?/\\]{7,64}$/.test(password)) {
+      setPasswordMsg(`Password should only have A-Za-z0-9_!@#$%^&*()+-=,.;:'"<>\?/`);
+    } else {
+      setPasswordMsg("");
+    }
+
+    // confirm password checks
+    if (!confirmPassword) {
+      setConfirmPasswordMsg("Please confirm the password.");
+    } else if (confirmPassword !== password) {
+      setConfirmPasswordMsg("Passwords should match.");
+    } else {
+      setConfirmPasswordMsg("");
+    }
+
+    if (firstNameMsg || lastNameMsg || emailMsg || passwordMsg || confirmPasswordMsg)
+      return false;
+    else return true;
+  };
+
   const submitForm = () => {
-    return;
+    if (!isOwner && checkForm()) {
+      registerUser({
+        variables: {
+          firstName,
+          lastName,
+          email,
+          password,
+          isOwner,
+        },
+      }).then((result) => navigation.navigate("Login"));
+    }
   };
 
   const onPressNextStep = () => {
@@ -138,32 +224,60 @@ export function RegistrationFormScreen({ route, navigation }) {
 
       <View style={styles.formBox}>
         <Text style={[styles.textH3, styles.formLabel]}>First Name</Text>
-        <TextInput style={styles.formInput} placeholder='First Name' />
-        <Text style={styles.alarmText}>First name required</Text>
+        <TextInput
+          onChangeText={changeFirstName}
+          style={styles.formInput}
+          placeholder='First Name'
+          textContentType={"givenName"}
+        />
+        <Text style={styles.alarmText}>{firstNameMsg}</Text>
       </View>
 
       <View style={styles.formBox}>
         <Text style={[styles.textH3, styles.formLabel]}>Last Name</Text>
-        <TextInput style={styles.formInput} placeholder='Last Name' />
-        <Text style={styles.alarmText}></Text>
+        <TextInput
+          onChangeText={changeLastName}
+          style={styles.formInput}
+          placeholder='Last Name'
+          textContentType={"familyName"}
+        />
+        <Text style={styles.alarmText}>{lastNameMsg}</Text>
       </View>
 
       <View style={styles.formBox}>
         <Text style={[styles.textH3, styles.formLabel]}>Email</Text>
-        <TextInput style={styles.formInput} placeholder='email@example.com' />
-        <Text style={styles.alarmText}></Text>
+        <TextInput
+          onChangeText={changeEmail}
+          style={styles.formInput}
+          placeholder='email@example.com'
+          autoCompleteType='email'
+          textContentType={"email"}
+        />
+        <Text style={styles.alarmText}>{emailMsg}</Text>
       </View>
 
       <View style={styles.formBox}>
         <Text style={[styles.textH3, styles.formLabel]}>Password</Text>
-        <TextInput style={styles.formInput} placeholder='Password' />
-        <Text style={styles.alarmText}></Text>
+        <TextInput
+          onChangeText={changePassword}
+          style={styles.formInput}
+          placeholder='Password'
+          secureTextEntry={true}
+          textContentType={"newPassword"}
+        />
+        <Text style={styles.alarmText}>{passwordMsg}</Text>
       </View>
 
       <View style={styles.formBox}>
         <Text style={[styles.textH3, styles.formLabel]}>Confirm Password</Text>
-        <TextInput style={styles.formInput} placeholder='Confirm Password' />
-        <Text style={styles.alarmText}></Text>
+        <TextInput
+          onChangeText={changeConfirmPassword}
+          style={styles.formInput}
+          placeholder='Confirm Password'
+          secureTextEntry={true}
+          textContentType={"newPassword"}
+        />
+        <Text style={styles.alarmText}>{confirmPasswordMsg}</Text>
       </View>
 
       <Pressable
@@ -214,7 +328,9 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
           SMSrequestCode();
         }}
       >
-        <Text style={[styles.buttonText]}>{codeSent ? "Request SMS Code Again" : "Request SMS Code"}</Text>
+        <Text style={[styles.buttonText]}>
+          {codeSent ? "Request SMS Code Again" : "Request SMS Code"}
+        </Text>
       </Pressable>
 
       {codeSent && (

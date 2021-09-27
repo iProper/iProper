@@ -1,8 +1,32 @@
 import { Image, Text, View, Pressable, Button, TextInput } from "react-native";
 import styles from "../styles/App.styles";
-import React from "react";
+import React, { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { login } from "../queries/queries";
 
-export function LoginScreen({ navigation }) {
+export function LoginScreen({ setLoggedIn, navigation }) {
+  const [email, changeEmail] = useState("");
+  const [password, changePassword] = useState("");
+
+  const [loginUser] = useMutation(login);
+
+  const [displayMsg, setDisplayMsg] = useState(false);
+
+  const submitLogin = () => {
+    loginUser({
+      variables: {
+        email,
+        password,
+      },
+    })
+      .then((res) => {
+        setLoggedIn(true);
+      })
+      .catch(() => {
+        setDisplayMsg(true);
+      });
+  };
+
   return (
     <View style={(styles.loginScreen, styles.container)}>
       <View style={[styles.loginScreenHeader, styles.container]}>
@@ -41,29 +65,46 @@ export function LoginScreen({ navigation }) {
 
       <View style={styles.loginFormArea}>
         <View style={styles.buttons3rdPartyLogin}>
-          <Pressable style={styles.button3rdPartyLogin}><Text style={styles.button3rdPartyLoginText}>Sign in with Google</Text></Pressable>
-          <Pressable style={styles.button3rdPartyLogin}><Text style={styles.button3rdPartyLoginText}>Sign in with Facebook</Text></Pressable>
+          <Pressable style={styles.button3rdPartyLogin}>
+            <Text style={styles.button3rdPartyLoginText}>Sign in with Google</Text>
+          </Pressable>
+          <Pressable style={styles.button3rdPartyLogin}>
+            <Text style={styles.button3rdPartyLoginText}>Sign in with Facebook</Text>
+          </Pressable>
         </View>
 
         <View style={styles.separator}></View>
 
         <View style={styles.loginForm}>
-          <TextInput style={styles.formInput} placeholder={"email@example.com"} />
-          <TextInput style={styles.formInput} placeholder={"Password"} />
+          <TextInput
+            style={styles.formInput}
+            placeholder={"email@example.com"}
+            autoCompleteType={"email"}
+            onChangeText={changeEmail}
+          />
+          <TextInput
+            style={styles.formInput}
+            placeholder={"Password"}
+            autoCompleteType={"password"}
+            secureTextEntry={true}
+            onChangeText={changePassword}
+          />
         </View>
-        
+
         <View style={styles.forgotPassword}>
           <Text style={styles.lightText}>Forgot password?</Text>
         </View>
 
         <Pressable
           style={[styles.button, styles.buttonBig, styles.loginButton]}
-          onPress={() => {}}
+          onPress={() => submitLogin()}
           title='Log In'
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Log In</Text>
         </Pressable>
-        <Text style={styles.formSubmissionError}>Incorrect Login</Text>
+        <Text style={styles.alarmText}>
+          {displayMsg && "Incorrect email or password!"}
+        </Text>
       </View>
     </View>
   );
