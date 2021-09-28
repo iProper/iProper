@@ -1,5 +1,5 @@
 const graphql = require("graphql");
-const User = require("../models/User");
+const User = require("../models/User").default;
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
@@ -24,6 +24,7 @@ const UserType = new GraphQLObjectType({
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     phoneNumber: { type: GraphQLString },
+    propertyId: { type: GraphQLString },
     isOwner: { type: GraphQLString },
   }),
 });
@@ -55,6 +56,7 @@ const Mutation = new GraphQLObjectType({
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
         phoneNumber: { type: GraphQLString },
+        propertyId: { type: GraphQLString },
         isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
       async resolve(_parent, args) {
@@ -70,6 +72,7 @@ const Mutation = new GraphQLObjectType({
           email: args.email,
           password: await bcrypt.hash(args.password, 10),
           phoneNumber: args.phoneNumber,
+          propertyId: args.propertyId,
           isOwner: args.isOwner,
         });
 
@@ -99,7 +102,10 @@ const Mutation = new GraphQLObjectType({
           throw new Error("Password is incorrect");
         }
 
-        return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET);
+        return jsonwebtoken.sign(
+          { id: user.id, isOwner: user.isOwner },
+          process.env.JWT_SECRET
+        );
       },
     },
     // updateUser: {
