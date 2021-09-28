@@ -104,6 +104,7 @@ export default StyleSheet.create({
   App: {
     height: "100%",
     backgroundColor: "#fff",
+    marginTop: 25,
   },
   loginScreen: {
     flex: 1,
@@ -280,5 +281,10 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     margin: 20,
+  },
+
+  homeScreen: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -1,10 +1,10 @@
-import { Image, Text, View, Pressable, Button, TextInput } from "react-native";
+import { Image, Text, View, Pressable, TextInput } from "react-native";
 import styles from "../styles/App.styles";
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { login } from "../queries/queries";
 
-export function LoginScreen({ setLoggedIn, navigation }) {
+export function LoginScreen({ setJwtToken, navigation }) {
   const [email, changeEmail] = useState("");
   const [password, changePassword] = useState("");
 
@@ -19,8 +19,8 @@ export function LoginScreen({ setLoggedIn, navigation }) {
         password,
       },
     })
-      .then((res) => {
-        setLoggedIn(true);
+      .then(async ({ data }) => {
+        setJwtToken(data.login);
       })
       .catch(() => {
         setDisplayMsg(true);
@@ -102,9 +102,12 @@ export function LoginScreen({ setLoggedIn, navigation }) {
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Log In</Text>
         </Pressable>
-        <Text style={styles.alarmText}>
-          {displayMsg && "Incorrect email or password!"}
-        </Text>
+        
+        <View style={{paddingVertical: 5}}>
+          <Text style={[styles.alarmText, styles.textH4]}>
+            {displayMsg && "Incorrect email or password!"}
+          </Text>
+        </View>
       </View>
     </View>
   );
