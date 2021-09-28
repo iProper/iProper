@@ -1,4 +1,4 @@
-import { Image, Text, View, Pressable, TextInput, Button } from "react-native";
+import { Image, Text, View, Pressable, Platform, TextInput } from "react-native";
 import React, { useState } from "react";
 import styles from "../styles/App.styles";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -127,6 +127,7 @@ export function RegistrationFormScreen({ route, navigation }) {
   const [confirmPasswordMsg, setConfirmPasswordMsg] = useState("");
 
   const checkForm = () => {
+    let passed = 0;
     // First name checks
     if (!firstName) {
       setFirstNameMsg("First name required.");
@@ -136,6 +137,7 @@ export function RegistrationFormScreen({ route, navigation }) {
       setFirstNameMsg("First name should be from 2 to 50 letters long.");
     } else {
       setFirstNameMsg("");
+      passed++;
     }
 
     // Last name checks
@@ -147,10 +149,11 @@ export function RegistrationFormScreen({ route, navigation }) {
       setLastNameMsg("Last name should be from 2 to 50 letters long.");
     } else {
       setLastNameMsg("");
+      passed++;
     }
 
     // Email checks
-    if (!email) {
+    if (passed && !email) {
       setEmailMsg("Email required.");
     } else if (
       !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
@@ -160,10 +163,11 @@ export function RegistrationFormScreen({ route, navigation }) {
       setEmailMsg("Invalid email format.");
     } else {
       setEmailMsg("");
+      passed++;
     }
 
     // password checks
-    if (!password) {
+    if (passed && !password) {
       setPasswordMsg("Password required");
     } else if (!/^.{8,64}$/.test(password)) {
       setPasswordMsg("Password should be from 8 to 64 characters");
@@ -171,24 +175,35 @@ export function RegistrationFormScreen({ route, navigation }) {
       setPasswordMsg(`Password should only have A-Za-z0-9_!@#$%^&*()+-=,.;:'"<>\?/`);
     } else {
       setPasswordMsg("");
+      passed++;
     }
 
     // confirm password checks
-    if (!confirmPassword) {
+    if (passed && !confirmPassword) {
       setConfirmPasswordMsg("Please confirm the password.");
     } else if (confirmPassword !== password) {
       setConfirmPasswordMsg("Passwords should match.");
     } else {
       setConfirmPasswordMsg("");
+      passed++;
     }
 
-    if (firstNameMsg || lastNameMsg || emailMsg || passwordMsg || confirmPasswordMsg)
-      return false;
-    else return true;
+    return passed == 5;
   };
 
   const submitForm = () => {
-    if (!isOwner && checkForm()) {
+    if (!checkForm()) return;
+    console.log(123);
+
+    if (isOwner) {
+      navigation.navigate("ConfirmPhoneNumber", {
+        title,
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+    } else {
       registerUser({
         variables: {
           firstName,
@@ -201,13 +216,8 @@ export function RegistrationFormScreen({ route, navigation }) {
     }
   };
 
-  const onPressNextStep = () => {
-    if (isOwner) navigation.navigate("ConfirmPhoneNumber", { title });
-    else submitForm();
-  };
-
   return (
-    <View style={styles.registerForm}>
+    <View style={[styles.registerForm, styles.container]}>
       <View style={styles.navigationHeaderArea}>
         <View style={styles.navigationHeader}>
           <Pressable
@@ -228,7 +238,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           onChangeText={changeFirstName}
           style={styles.formInput}
           placeholder='First Name'
-          textContentType={"givenName"}
+          textContentType={Platform.OS == "ios" ? "givenName" : "none"}
         />
         <Text style={styles.alarmText}>{firstNameMsg}</Text>
       </View>
@@ -239,7 +249,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           onChangeText={changeLastName}
           style={styles.formInput}
           placeholder='Last Name'
-          textContentType={"familyName"}
+          textContentType={Platform.OS == "ios" ? "familyName" : "none"}
         />
         <Text style={styles.alarmText}>{lastNameMsg}</Text>
       </View>
@@ -251,7 +261,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           style={styles.formInput}
           placeholder='email@example.com'
           autoCompleteType='email'
-          textContentType={"email"}
+          textContentType={Platform.OS == "ios" ? "email" : "none"}
         />
         <Text style={styles.alarmText}>{emailMsg}</Text>
       </View>
@@ -263,7 +273,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           style={styles.formInput}
           placeholder='Password'
           secureTextEntry={true}
-          textContentType={"newPassword"}
+          textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
         <Text style={styles.alarmText}>{passwordMsg}</Text>
       </View>
@@ -275,13 +285,13 @@ export function RegistrationFormScreen({ route, navigation }) {
           style={styles.formInput}
           placeholder='Confirm Password'
           secureTextEntry={true}
-          textContentType={"newPassword"}
+          textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
         <Text style={styles.alarmText}>{confirmPasswordMsg}</Text>
       </View>
 
       <Pressable
-        onPress={() => onPressNextStep()}
+        onPress={() => submitForm()}
         style={[styles.button, styles.buttonBig, styles.nextStepBtn]}
       >
         <Text style={[styles.buttonText, styles.buttonTextBig]}>
@@ -294,15 +304,22 @@ export function RegistrationFormScreen({ route, navigation }) {
 
 export function ConfirmPhoneNumberScreen({ route, navigation }) {
   const { title } = route.params;
+  const { firstName, lastName, email, password } = route.params;
+  const [phoneNumber, changePhoneNumber] = useState("");
   const [codeSent, setCodeSent] = useState(false);
+  const [phoneMsg, setPhoneMsg] = useState("");
 
   const SMSrequestCode = () => {
-    setCodeSent(true);
-    return;
+    if (phoneNumber) {
+      setCodeSent(true);
+      setPhoneMsg("");
+    } else {
+      setPhoneMsg("Please enter phone number.");
+    }
   };
 
   return (
-    <View style={styles.confirmPhoneNumberScreen}>
+    <View style={[styles.confirmPhoneNumberScreen, styles.container]}>
       <View style={styles.navigationHeaderArea}>
         <View style={styles.navigationHeader}>
           <Pressable
@@ -310,16 +327,21 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
               navigation.goBack();
             }}
           >
-            <Text style={styles.navigationHeaderArrow}>{"<"}</Text>
+            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
           </Pressable>
           <Text style={styles.navigationHeaderText}>{title}</Text>
         </View>
         <View style={[styles.separator, styles.separatorBlue]} />
       </View>
 
-      <View style={styles.registrationBox}>
+      <View style={styles.formBox}>
         <Text style={styles.textH3}>Phone number</Text>
-        <TextInput style={styles.formInput} placeholder='123-345-6789' />
+        <TextInput
+          onChangeText={changePhoneNumber}
+          style={styles.formInput}
+          placeholder='123-345-6789'
+          value={phoneNumber}
+        />
       </View>
 
       <Pressable
@@ -333,6 +355,10 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         </Text>
       </Pressable>
 
+      {!codeSent && <View style={[styles.container, styles.containerAlignCenterTop]}>
+        <Text style={styles.alarmText}>{phoneMsg}</Text>
+      </View>}
+
       {codeSent && (
         <View>
           <View style={styles.formBox}>
@@ -342,7 +368,14 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
 
           <Pressable
             onPress={() => {
-              navigation.navigate("UploadOwnerDocuments", { title });
+              navigation.navigate("UploadOwnerDocuments", {
+                title,
+                firstName,
+                lastName,
+                email,
+                password,
+                phoneNumber,
+              });
             }}
             style={[styles.button, styles.buttonBig, styles.confirmButton]}
           >
@@ -356,9 +389,25 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
 
 export function UploadOwnerDocumentsScreen({ route, navigation }) {
   const { title } = route.params;
+  const { firstName, lastName, email, password, phoneNumber } = route.params;
+
+  const [registerUser] = useMutation(register);
+
+  const submitForm = () => {
+    registerUser({
+      variables: {
+        firstName,
+        lastName,
+        email,
+        password,
+        phoneNumber,
+        isOwner: true,
+      },
+    }).then((result) => navigation.navigate("Login"));
+  }
 
   return (
-    <View style={styles.uploadDocumentScreen}>
+    <View style={[styles.uploadDocumentScreen, styles.container]}>
       <View style={styles.navigationHeaderArea}>
         <View style={styles.navigationHeader}>
           <Pressable
@@ -393,7 +442,7 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
         <Text style={styles.textH4}>No files uploaded</Text>
       </View>
 
-      <Pressable onPress={() => {}} style={[styles.button, styles.buttonBig]}>
+      <Pressable onPress={() => submitForm()} style={[styles.button, styles.buttonBig]}>
         <Text style={[styles.buttonText, styles.buttonTextBig]}>
           Finish Registration
         </Text>

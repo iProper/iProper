@@ -4,7 +4,7 @@ import { LoginScreen } from "./components/LoginScreen";
 import { RegistrationScreens } from "./components/RegistrationScreens";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text } from "react-native";
+import { View, Text, KeyboardAvoidingView } from "react-native";
 import styles from "./styles/App.styles";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}>
-      <View style={[styles.App]}>
+      <KeyboardAvoidingView style={[styles.App]}>
         <NavigationContainer>
           {!loggedIn ? (
             <Stack.Navigator
@@ -56,7 +56,7 @@ export default function App() {
           )}
         </NavigationContainer>
         <StatusBar style='auto' />
-      </View>
+      </KeyboardAvoidingView>
     </ApolloProvider>
   );
 }

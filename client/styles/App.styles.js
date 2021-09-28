@@ -1,12 +1,13 @@
-import { StyleSheet, Dimensions } from "react-native";
-
-const win = Dimensions.get("window");
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     backgroundColor: "#fff",
+  },
+  containerAlignCenterTop: {
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   textH1: {
     fontSize: 30,
@@ -101,7 +102,8 @@ export default StyleSheet.create({
     height: "90%",
   },
   App: {
-    height: win.height,
+    height: "100%",
+    backgroundColor: "#fff",
   },
   loginScreen: {
     flex: 1,
@@ -130,30 +132,27 @@ export default StyleSheet.create({
   loginFormArea: {
     flex: 3,
     maxHeight: 400,
-    padding: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
     alignItems: "center",
   },
   buttons3rdPartyLogin: {
-    flex: 1.2,
     justifyContent: "center",
     width: "100%",
-    maxHeight: 100,
   },
   button3rdPartyLogin: {
-    flex: 1,
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#000",
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 2,
-    maxHeight: 40,
+    height: 40,
   },
   button3rdPartyLoginText: {
     fontWeight: "bold",
   },
   loginForm: {
-    flex: 1.2,
     width: "100%",
     alignItems: "center",
     justifyContent: "space-around",
@@ -163,7 +162,6 @@ export default StyleSheet.create({
     marginTop: 9,
   },
   loginButton: {
-    flex: 0.7,
     width: "100%",
     maxHeight: 50,
   },
