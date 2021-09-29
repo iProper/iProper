@@ -1,13 +1,16 @@
 const graphql = require("graphql");
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jsonwebtoken = require("jsonwebtoken");
 
 const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLSchema,
   GraphQLID,
-  GraphQLInt,
-  GraphQLList,
+  // GraphQLInt,
+  // GraphQLList,
+  GraphQLBoolean,
   GraphQLNonNull,
 } = graphql;
 
@@ -16,25 +19,26 @@ const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
     id: { type: GraphQLID },
-    name: { type: GraphQLString },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+    email: { type: GraphQLString },
     password: { type: GraphQLString },
+    phoneNumber: { type: GraphQLString },
+    isOwner: { type: GraphQLString },
   }),
 });
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
-    user: {
+    current: {
       type: UserType,
-      args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-      resolve(_parent, args) {
-        return User.findById(args.id);
-      },
-    },
-    users: {
-      type: new GraphQLList(UserType),
-      resolve(_parent, _args) {
-        return User.find({});
+      async resolve(_parent, _args, req) {
+        if (req) {
+          return User.findById(req.user.id);
+        }
+
+        throw new Error("Non authenticated User");
       },
     },
   },
@@ -43,47 +47,96 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
-    addUser: {
-      type: UserType,
+    register: {
+      type: GraphQLBoolean,
       args: {
-        name: { type: new GraphQLNonNull(GraphQLString) },
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        lastName: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
+        phoneNumber: { type: GraphQLString },
+        isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
-      resolve(_parent, args) {
-        let user = new User({
-          name: args.name,
-          password: args.password,
+      async resolve(_parent, args) {
+        const alreadyRegisted = await User.findOne({ email: args.email });
+
+        if (alreadyRegisted) {
+          throw new Error("User already registered with this email");
+        }
+
+        const user = new User({
+          firstName: args.firstName,
+          lastName: args.lastName,
+          email: args.email,
+          password: await bcrypt.hash(args.password, 10),
+          phoneNumber: args.phoneNumber,
+          isOwner: args.isOwner,
         });
-        return user.save();
+
+        const saved = await user.save();
+
+        if (saved) return true;
+
+        throw new Error("Error signing up");
       },
     },
-    updateUser: {
-      type: UserType,
+    login: {
+      type: GraphQLString,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
-        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
       },
-      resolve(_parent, args) {
-        return User.findByIdAndUpdate(
-          args.id,
-          {
-            name: args.name,
-            password: args.password,
-          },
-          { new: true }
-        );
+      async resolve(_parent, args) {
+        const user = await User.findOne({ email: args.email });
+
+        if (!user) {
+          throw new Error("There is no account associated with this email");
+        }
+
+        const valid = await bcrypt.compare(args.password, user.password);
+
+        if (!valid) {
+          throw new Error("Password is incorrect");
+        }
+
+        return jsonwebtoken.sign({ id: user.id }, process.env.JWT_SECRET);
       },
     },
-    deleteUser: {
-      type: UserType,
-      args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
-      },
-      resolve(_parent, args) {
-        return User.findByIdAndDelete(args.id);
-      },
-    },
+    // updateUser: {
+    //   type: UserType,
+    //   args: {
+    //     id: { type: new GraphQLNonNull(GraphQLID) },
+    //     firstName: { type: new GraphQLNonNull(GraphQLString) },
+    //     lastName: { type: new GraphQLNonNull(GraphQLString) },
+    //     email: { type: new GraphQLNonNull(GraphQLString) },
+    //     password: { type: new GraphQLNonNull(GraphQLString) },
+    //     phoneNumber: { type: GraphQLString },
+    //     isOwner: { type: new GraphQLNonNull(GraphQLString) },
+    //   },
+    //   resolve(_parent, args) {
+    //     return User.findByIdAndUpdate(
+    //       args.id,
+    //       {
+    //         firstName: args.firstName,
+    //         lastName: args.lastName,
+    //         email: args.email,
+    //         password: args.password,
+    //         phoneNumber: args.phoneNumber,
+    //         isOwner: args.isOwner,
+    //       },
+    //       { new: true }
+    //     );
+    // },
+    // },
+    // deleteUser: {
+    //   type: UserType,
+    //   args: {
+    //     id: { type: new GraphQLNonNull(GraphQLID) },
+    //   },
+    //   resolve(_parent, args) {
+    //     return User.findByIdAndDelete(args.id);
+    //   },
+    // },
   },
 });
 
