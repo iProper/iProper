@@ -1,16 +1,19 @@
 import { Image, Text, View, Pressable, Platform, TextInput } from "react-native";
 import React, { useState } from "react";
-import styles from "../styles/App.styles";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { register } from "../queries/queries";
 import { useMutation } from "@apollo/client";
+
+import styles from "../styles/App.styles";
+import loginStyles  from "../styles/LoginScreen.styles"
+import regStyles from "../styles/RegistrationScreens.styles";
 
 export function AccountTypeScreen({ navigation }) {
   const [isOwner, setIsOwner] = useState(false);
 
   return (
-    <View style={(styles.loginScreen, styles.container)}>
-      <View style={[styles.loginScreenHeader, styles.container]}>
+    <View style={(loginStyles.loginScreen, styles.container)}>
+      <View style={[loginStyles.loginScreenHeader, styles.container]}>
         <Image
           style={styles.logo}
           source={require("../assets/logo.png")}
@@ -21,14 +24,14 @@ export function AccountTypeScreen({ navigation }) {
         ></View>
       </View>
 
-      <View style={styles.chooseLoginScreenButtons}>
+      <View style={loginStyles.chooseLoginScreenButtons}>
         <Pressable
           onPress={() => navigation.navigate("Login")}
           style={[
             styles.button,
             styles.buttonBig,
             styles.buttonOff,
-            styles.chooseLoginScreenButton,
+            loginStyles.chooseLoginScreenButton,
           ]}
         >
           <Text style={[styles.buttonOffText, styles.buttonTextBig]}>Log In</Text>
@@ -37,7 +40,7 @@ export function AccountTypeScreen({ navigation }) {
 
         <Pressable
           onPress={() => navigation.navigate("Registration")}
-          style={[styles.button, styles.buttonBig, styles.chooseLoginScreenButton]}
+          style={[styles.button, styles.buttonBig, loginStyles.chooseLoginScreenButton]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Sign Up</Text>
         </Pressable>
@@ -45,24 +48,24 @@ export function AccountTypeScreen({ navigation }) {
 
       <View style={styles.separator}></View>
 
-      <View style={styles.chooseAccountTypeArea}>
+      <View style={regStyles.chooseAccountTypeArea}>
         <Text style={styles.textH1}>Who are you?</Text>
         <View
           style={[styles.separator, styles.separatorRed, styles.separator60]}
         ></View>
 
-        <View style={styles.chooseAccountTypeButtons}>
-          <View style={styles.accountTypeChoice}>
+        <View style={regStyles.chooseAccountTypeButtons}>
+          <View style={regStyles.accountTypeChoice}>
             <Text style={styles.textH2}>Owner</Text>
             <Pressable
               onPress={() => setIsOwner(true)}
               style={[
-                styles.chooseAccountTypeButton,
-                isOwner && styles.chosenAccountTypeButton,
+                regStyles.chooseAccountTypeButton,
+                isOwner && regStyles.chosenAccountTypeButton,
               ]}
             >
               <Image
-                style={[styles.accountTypeIcon, styles.accountTypeIconOwner]}
+                style={[regStyles.accountTypeIcon, regStyles.accountTypeIconOwner]}
                 source={require("../assets/owner.png")}
                 resizeMode={"center"}
               />
@@ -73,17 +76,17 @@ export function AccountTypeScreen({ navigation }) {
             <Text style={styles.textH3}>or</Text>
           </View>
 
-          <View style={styles.accountTypeChoice}>
+          <View style={regStyles.accountTypeChoice}>
             <Text style={styles.textH2}>Renter</Text>
             <Pressable
               onPress={() => setIsOwner(false)}
               style={[
-                styles.chooseAccountTypeButton,
-                !isOwner && styles.chosenAccountTypeButton,
+                regStyles.chooseAccountTypeButton,
+                !isOwner && regStyles.chosenAccountTypeButton,
               ]}
             >
               <Image
-                style={[styles.accountTypeIcon]}
+                style={[regStyles.accountTypeIcon]}
                 source={require("../assets/user.png")}
                 resizeMode={"center"}
               />
@@ -98,7 +101,7 @@ export function AccountTypeScreen({ navigation }) {
               title: isOwner ? "Owner Registration" : "Renter Registration",
             });
           }}
-          style={[styles.createAccountButton, styles.button, styles.buttonBig]}
+          style={[regStyles.createAccountButton, styles.button, styles.buttonBig]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>
             Create Account
@@ -193,7 +196,6 @@ export function RegistrationFormScreen({ route, navigation }) {
 
   const submitForm = () => {
     if (!checkForm()) return;
-    console.log(123);
 
     if (isOwner) {
       navigation.navigate("ConfirmPhoneNumber", {
@@ -217,7 +219,7 @@ export function RegistrationFormScreen({ route, navigation }) {
   };
 
   return (
-    <View style={[styles.registerForm, styles.container]}>
+    <View style={[regStyles.registerForm, styles.container]}>
       <View style={styles.navigationHeaderArea}>
         <View style={styles.navigationHeader}>
           <Pressable
@@ -319,7 +321,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
   };
 
   return (
-    <View style={[styles.confirmPhoneNumberScreen, styles.container]}>
+    <View style={[regStyles.confirmPhoneNumberScreen, styles.container]}>
       <View style={styles.navigationHeaderArea}>
         <View style={styles.navigationHeader}>
           <Pressable
@@ -345,7 +347,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
       </View>
 
       <Pressable
-        style={[styles.button, styles.requestBtn]}
+        style={[styles.button, regStyles.requestBtn]}
         onPress={() => {
           SMSrequestCode();
         }}
@@ -355,7 +357,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         </Text>
       </Pressable>
 
-      {!codeSent && <View style={[styles.container, styles.containerAlignCenterTop]}>
+      {!codeSent && <View style={[styles.container, regStyles.containerAlignCenterTop]}>
         <Text style={styles.alarmText}>{phoneMsg}</Text>
       </View>}
 
@@ -377,7 +379,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
                 phoneNumber,
               });
             }}
-            style={[styles.button, styles.buttonBig, styles.confirmButton]}
+            style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
           >
             <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
           </Pressable>
@@ -407,7 +409,7 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
   }
 
   return (
-    <View style={[styles.uploadDocumentScreen, styles.container]}>
+    <View style={[regStyles.uploadDocumentScreen, styles.container]}>
       <View style={styles.navigationHeaderArea}>
         <View style={styles.navigationHeader}>
           <Pressable
@@ -435,7 +437,7 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
       >
         Check viable proof of ownership.
       </Text>
-      <View style={styles.uploadDocumentsArea}>
+      <View style={regStyles.uploadDocumentsArea}>
         <Pressable onPress={() => {}} style={styles.button}>
           <Text style={styles.buttonText}>Upload Documents</Text>
         </Pressable>

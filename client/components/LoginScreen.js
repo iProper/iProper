@@ -1,5 +1,6 @@
 import { Image, Text, View, Pressable, TextInput } from "react-native";
 import styles from "../styles/App.styles";
+import loginStyles  from "../styles/LoginScreen.styles"
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { login } from "../queries/queries";
@@ -28,8 +29,8 @@ export function LoginScreen({ setJwtToken, navigation }) {
   };
 
   return (
-    <View style={(styles.loginScreen, styles.container)}>
-      <View style={[styles.loginScreenHeader, styles.container]}>
+    <View style={(loginStyles.loginScreen, styles.container)}>
+      <View style={[loginStyles.loginScreenHeader, styles.container]}>
         <Image
           style={styles.logo}
           source={require("../assets/logo.png")}
@@ -40,9 +41,9 @@ export function LoginScreen({ setJwtToken, navigation }) {
         ></View>
       </View>
 
-      <View style={styles.chooseLoginScreenButtons}>
+      <View style={loginStyles.chooseLoginScreenButtons}>
         <Pressable
-          style={[styles.button, styles.buttonBig, styles.chooseLoginScreenButton]}
+          style={[styles.button, styles.buttonBig, loginStyles.chooseLoginScreenButton]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Log In</Text>
         </Pressable>
@@ -54,7 +55,7 @@ export function LoginScreen({ setJwtToken, navigation }) {
             styles.button,
             styles.buttonBig,
             styles.buttonOff,
-            styles.chooseLoginScreenButton,
+            loginStyles.chooseLoginScreenButton,
           ]}
         >
           <Text style={[styles.buttonOffText, styles.buttonTextBig]}>Sign Up</Text>
@@ -63,19 +64,19 @@ export function LoginScreen({ setJwtToken, navigation }) {
 
       <View style={styles.separator}></View>
 
-      <View style={styles.loginFormArea}>
-        <View style={styles.buttons3rdPartyLogin}>
-          <Pressable style={styles.button3rdPartyLogin}>
-            <Text style={styles.button3rdPartyLoginText}>Sign in with Google</Text>
+      <View style={loginStyles.loginFormArea}>
+        <View style={loginStyles.buttons3rdPartyLogin}>
+          <Pressable style={loginStyles.button3rdPartyLogin}>
+            <Text style={loginStyles.button3rdPartyLoginText}>Sign in with Google</Text>
           </Pressable>
-          <Pressable style={styles.button3rdPartyLogin}>
-            <Text style={styles.button3rdPartyLoginText}>Sign in with Facebook</Text>
+          <Pressable style={loginStyles.button3rdPartyLogin}>
+            <Text style={loginStyles.button3rdPartyLoginText}>Sign in with Facebook</Text>
           </Pressable>
         </View>
 
         <View style={styles.separator}></View>
 
-        <View style={styles.loginForm}>
+        <View style={loginStyles.loginForm}>
           <TextInput
             style={styles.formInput}
             placeholder={"email@example.com"}
@@ -91,12 +92,12 @@ export function LoginScreen({ setJwtToken, navigation }) {
           />
         </View>
 
-        <View style={styles.forgotPassword}>
+        <View style={loginStyles.forgotPassword}>
           <Text style={styles.lightText}>Forgot password?</Text>
         </View>
 
         <Pressable
-          style={[styles.button, styles.buttonBig, styles.loginButton]}
+          style={[styles.button, styles.buttonBig, loginStyles.loginButton]}
           onPress={() => submitLogin()}
           title='Log In'
         >
