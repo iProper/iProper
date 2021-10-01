@@ -3,8 +3,8 @@ const User = require("../models/User").default;
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
-const accountSid = "process.env.TWILIO_ACCOUNT_SID";
-const authToken = "process.env.TWILIO_AUTH_TOKEN";
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
 
 const {
@@ -46,7 +46,6 @@ const RootQuery = new GraphQLObjectType({
         throw new Error("Non authenticated User");
       },
     },
-
     requestSMS: {
       type: GraphQLString,
       async resolve(_parent, _args, req) {
@@ -54,11 +53,11 @@ const RootQuery = new GraphQLObjectType({
         client.messages
           .create({
             body: `iProper Verification PIN: ${pin}`,
-            from: "twilioPhoneNumber",
+            from: `${process.env.TWILIO_NUMBER}`,
             to: req.user.phoneNumber,
           })
-          .then((message) => console.log(message.sid))
-          .catch((e) => {
+          .then((_) => {})
+          .catch((_) => {
             throw new Error("Error in sending verification message");
           });
         return pin;
