@@ -1,5 +1,6 @@
 const graphql = require("graphql");
-const User = require("../models/User").default;
+const User = require("../models/User");
+const Property = require("../models/Property");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
@@ -13,7 +14,7 @@ const {
   GraphQLSchema,
   GraphQLID,
   // GraphQLInt,
-  // GraphQLList,
+  GraphQLList,
   GraphQLBoolean,
   GraphQLNonNull,
 } = graphql;
@@ -33,10 +34,34 @@ const UserType = new GraphQLObjectType({
   }),
 });
 
+const PropertyType = new GraphQLObjectType({
+  name: "Property",
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    num: { type: GraphQLString },
+    street: { type: GraphQLString },
+    city: { type: GraphQLString },
+    province: { type: GraphQLString },
+    postalCode: { type: GraphQLString },
+    ownerId: { type: GraphQLID },
+    residents: {
+      type: new GraphQLList(UserType),
+      resolve(parent, _args, req) {
+        if (req.user.isOwner) {
+          return Property.find({ propertyId: parent.id });
+        }
+
+        throw new Error("Not the owner of this property");
+      },
+    },
+  }),
+});
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
-    current: {
+    currentUser: {
       type: UserType,
       async resolve(_parent, _args, req) {
         if (req) {
@@ -99,13 +124,7 @@ const Mutation = new GraphQLObjectType({
 
         const saved = await user.save();
 
-        if (saved) {
-          return jsonwebtoken.sign(
-            { id: user.id, isOwner: user.isOwner },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d" }
-          );
-        }
+        if (saved) return true;
 
         throw new Error("Error signing up");
       },
@@ -133,6 +152,35 @@ const Mutation = new GraphQLObjectType({
           { id: user.id, isOwner: user.isOwner },
           process.env.JWT_SECRET
         );
+      },
+    },
+    addProperty: {
+      type: PropertyType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        num: { type: new GraphQLNonNull(GraphQLString) },
+        street: { type: new GraphQLNonNull(GraphQLString) },
+        city: { type: new GraphQLNonNull(GraphQLString) },
+        province: { type: new GraphQLNonNull(GraphQLString) },
+        postalCode: { type: new GraphQLNonNull(GraphQLString) },
+        ownerId: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(_parent, args, req) {
+        if (req.user.isOwner) {
+          const property = new Property({
+            name: args.name,
+            num: args.num,
+            street: args.street,
+            city: args.city,
+            province: args.province,
+            postalCode: args.postalCode,
+            ownerId: args.ownerId,
+          });
+
+          return property.save();
+        }
+
+        throw new Error("Not an authorized owner");
       },
     },
     // updateUser: {
