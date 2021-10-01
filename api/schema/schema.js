@@ -5,7 +5,7 @@ const jsonwebtoken = require("jsonwebtoken");
 
 const accountSid = "process.env.TWILIO_ACCOUNT_SID";
 const authToken = "process.env.TWILIO_AUTH_TOKEN";
-const client = require('twilio')(accountSid, authToken);
+const client = require("twilio")(accountSid, authToken);
 
 const {
   GraphQLObjectType,
@@ -50,11 +50,20 @@ const RootQuery = new GraphQLObjectType({
     requestSMS: {
       type: GraphQLString,
       async resolve(_parent, _args, req) {
-        let pin = (Math.floor(Math.random() * 99999)).toString();
-        client.messages.create({ body: `iProper Verification PIN: ${pin}`, from: 'twilioPhoneNumber', to: req.user.phoneNumber }).then(message => console.log(message.sid)).catch((e) => { throw new Error("Error in sending verification message") });
+        let pin = Math.floor(Math.random() * 99999).toString();
+        client.messages
+          .create({
+            body: `iProper Verification PIN: ${pin}`,
+            from: "twilioPhoneNumber",
+            to: req.user.phoneNumber,
+          })
+          .then((message) => console.log(message.sid))
+          .catch((e) => {
+            throw new Error("Error in sending verification message");
+          });
         return pin;
-      }
-    }
+      },
+    },
   },
 });
 
@@ -91,7 +100,13 @@ const Mutation = new GraphQLObjectType({
 
         const saved = await user.save();
 
-        if (saved) return true;
+        if (saved) {
+          return jsonwebtoken.sign(
+            { id: user.id, isOwner: user.isOwner },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+          );
+        }
 
         throw new Error("Error signing up");
       },
