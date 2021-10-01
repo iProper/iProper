@@ -73,19 +73,31 @@ const RootQuery = new GraphQLObjectType({
     },
     requestSMS: {
       type: GraphQLString,
-      async resolve(_parent, _args, req) {
+      args: { phoneNumber: { type: new GraphQLNonNull(GraphQLString) } },
+      async resolve(_parent, _args) {
         let pin = Math.floor(Math.random() * 99999).toString();
         client.messages
           .create({
             body: `iProper Verification PIN: ${pin}`,
             from: `${process.env.TWILIO_NUMBER}`,
-            to: req.user.phoneNumber,
+            to: args.phoneNumber,
           })
           .then((_) => {})
           .catch((_) => {
             throw new Error("Error in sending verification message");
           });
         return pin;
+      },
+    },
+    getProperty: {
+      type: PropertyType,
+      args: { id: { type: new GraphQLNonNull(GraphQLString) } },
+      resolve(_parent, args, req) {
+        if (req) {
+          return Property.findById(args.id);
+        }
+
+        throw new Error("Non authenticated user");
       },
     },
   },
