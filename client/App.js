@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import { LoginScreen } from "./components/LoginScreen";
 import { RegistrationScreens } from "./components/RegistrationScreens";
+import { OwnerDashboard } from "./components/OwnerScreens";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, KeyboardAvoidingView, Platform, Pressable } from "react-native";
