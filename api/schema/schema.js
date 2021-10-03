@@ -40,7 +40,6 @@ const PropertyType = new GraphQLObjectType({
   name: "Property",
   fields: () => ({
     id: { type: GraphQLID },
-    name: { type: GraphQLString },
     num: { type: GraphQLString },
     street: { type: GraphQLString },
     city: { type: GraphQLString },
@@ -171,7 +170,6 @@ const Mutation = new GraphQLObjectType({
     addProperty: {
       type: PropertyType,
       args: {
-        name: { type: new GraphQLNonNull(GraphQLString) },
         num: { type: new GraphQLNonNull(GraphQLString) },
         street: { type: new GraphQLNonNull(GraphQLString) },
         city: { type: new GraphQLNonNull(GraphQLString) },
@@ -180,9 +178,8 @@ const Mutation = new GraphQLObjectType({
         ownerId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(_parent, args, req) {
-        if (req.user.isOwner) {
+        if (req) {
           const property = new Property({
-            name: args.name,
             num: args.num,
             street: args.street,
             city: args.city,
