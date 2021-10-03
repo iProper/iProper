@@ -4,6 +4,8 @@ const Property = require("../models/Property");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
+require("dotenv").config();
+
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
@@ -69,24 +71,6 @@ const RootQuery = new GraphQLObjectType({
         }
 
         throw new Error("Non authenticated User");
-      },
-    },
-    requestSMS: {
-      type: GraphQLString,
-      args: { phoneNumber: { type: new GraphQLNonNull(GraphQLString) } },
-      async resolve(_parent, _args) {
-        let pin = Math.floor(Math.random() * 99999).toString();
-        client.messages
-          .create({
-            body: `iProper Verification PIN: ${pin}`,
-            from: `${process.env.TWILIO_NUMBER}`,
-            to: args.phoneNumber,
-          })
-          .then((_) => {})
-          .catch((_) => {
-            throw new Error("Error in sending verification message");
-          });
-        return pin;
       },
     },
     getProperty: {
@@ -164,6 +148,24 @@ const Mutation = new GraphQLObjectType({
           { id: user.id, isOwner: user.isOwner },
           process.env.JWT_SECRET
         );
+      },
+    },
+    requestSMS: {
+      type: GraphQLString,
+      args: { phoneNumber: { type: new GraphQLNonNull(GraphQLString) } },
+      async resolve(_parent, args) {
+        let pin = Math.floor(Math.random() * 99999).toString();
+        client.messages
+          .create({
+            body: `iProper Verification PIN: ${pin}`,
+            from: `${process.env.TWILIO_NUMBER}`,
+            to: args.phoneNumber,
+          })
+          .then((_) => {})
+          .catch((_) => {
+            throw new Error("Error in sending verification message");
+          });
+        return pin;
       },
     },
     addProperty: {
