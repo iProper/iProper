@@ -127,7 +127,20 @@ export default StyleSheet.create({
   navigationHeaderText: {
     fontSize: 25,
   },
-  
+
+  loadingView: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingIcon: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#97CAEF",
+    transform: [{ rotate: "50deg" }],
+  },
+  loadingText: {
+    fontSize: 18,
+  },
 
   homeScreen: {
     alignItems: "center",

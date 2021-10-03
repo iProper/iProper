@@ -1,11 +1,12 @@
 import { Image, Text, View, Pressable, Platform, TextInput } from "react-native";
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { register } from "../queries/queries";
-import { useMutation } from "@apollo/client";
+import { register, requestSms } from "../queries/queries";
+import { useMutation, useQuery } from "@apollo/client";
+import Loading from "./Loading";
 
 import styles from "../styles/App.styles";
-import loginStyles  from "../styles/LoginScreen.styles"
+import loginStyles from "../styles/LoginScreen.styles";
 import regStyles from "../styles/RegistrationScreens.styles";
 
 export function AccountTypeScreen({ navigation }) {
@@ -40,7 +41,11 @@ export function AccountTypeScreen({ navigation }) {
 
         <Pressable
           onPress={() => navigation.navigate("Registration")}
-          style={[styles.button, styles.buttonBig, loginStyles.chooseLoginScreenButton]}
+          style={[
+            styles.button,
+            styles.buttonBig,
+            loginStyles.chooseLoginScreenButton,
+          ]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Sign Up</Text>
         </Pressable>
@@ -310,14 +315,77 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
   const [phoneNumber, changePhoneNumber] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [phoneMsg, setPhoneMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [PIN, setPIN] = useState(0); 
+
+  const [sendSMS] = useMutation(requestSms);
 
   const SMSrequestCode = () => {
     if (phoneNumber) {
+      console.log(phoneNumber);
       setCodeSent(true);
       setPhoneMsg("");
+      setLoading(true);
+      sendSMS({
+        variables: {
+          phoneNumber,
+        },
+      })
+        .then((data) => {
+          console.log(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setCodeSent(false);
+        });
     } else {
-      setPhoneMsg("Please enter phone number.");
+      setPhoneMsg("Please enter valid phone number.");
     }
+  };
+
+  // Component that display TextInput to enter the code from SMS
+  // If error occurs, sets codeSent back to false.
+  const ConfirmCode = (props) => {
+    const [code, changeCode] = useState("");
+
+    const checkCode = () => {};
+    
+    return props.loading ? (
+      <Loading text={"Sending sms..."} />
+    ) : (
+      <View>
+        <View style={styles.formBox}>
+          <Text style={styles.textH3}>Enter code</Text>
+          <TextInput
+            value={code}
+            onChangeText={changeCode}
+            style={styles.formInput}
+            placeholder='e.g. 123456'
+          />
+        </View>
+        {() => {
+          console.log(data);
+          return <View />;
+        }}
+
+        <Pressable
+          onPress={() => {
+            navigation.navigate("UploadOwnerDocuments", {
+              title,
+              firstName,
+              lastName,
+              email,
+              password,
+              phoneNumber,
+            });
+          }}
+          style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
+        </Pressable>
+      </View>
+    );
   };
 
   return (
@@ -357,33 +425,18 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         </Text>
       </Pressable>
 
-      {!codeSent && <View style={[styles.container, regStyles.containerAlignCenterTop]}>
-        <Text style={styles.alarmText}>{phoneMsg}</Text>
-      </View>}
+      {!codeSent && (
+        <View style={[styles.container, regStyles.containerAlignCenterTop]}>
+          <Text style={styles.alarmText}>{phoneMsg}</Text>
+        </View>
+      )}
 
       {codeSent && (
-        <View>
-          <View style={styles.formBox}>
-            <Text style={styles.textH3}>Enter code</Text>
-            <TextInput style={styles.formInput} placeholder='e.g. 123456' />
-          </View>
-
-          <Pressable
-            onPress={() => {
-              navigation.navigate("UploadOwnerDocuments", {
-                title,
-                firstName,
-                lastName,
-                email,
-                password,
-                phoneNumber,
-              });
-            }}
-            style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
-          >
-            <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
-          </Pressable>
-        </View>
+        <ConfirmCode
+          loading={loading}
+          setCodeSent={setCodeSent}
+          phoneNumber={phoneNumber}
+        />
       )}
     </View>
   );
@@ -406,7 +459,7 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
         isOwner: true,
       },
     }).then((result) => navigation.navigate("Login"));
-  }
+  };
 
   return (
     <View style={[regStyles.uploadDocumentScreen, styles.container]}>
@@ -444,7 +497,10 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
         <Text style={styles.textH4}>No files uploaded</Text>
       </View>
 
-      <Pressable onPress={() => submitForm()} style={[styles.button, styles.buttonBig]}>
+      <Pressable
+        onPress={() => submitForm()}
+        style={[styles.button, styles.buttonBig]}
+      >
         <Text style={[styles.buttonText, styles.buttonTextBig]}>
           Finish Registration
         </Text>
