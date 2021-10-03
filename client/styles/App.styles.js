@@ -101,9 +101,44 @@ export default StyleSheet.create({
     marginVertical: 5,
   },
 
+  searchContainer: {
+    backgroundColor: "#eee",
+    borderRadius: 5,
+    padding: 2,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchIcon: {
+    width: 18,
+    height: 18,
+    margin: 5,
+    opacity: 0.5
+  },
+  searchTextInput: {
+    fontSize: 18,
+  },
+
   logo: {
     width: "100%",
     height: "90%",
+  },
+
+  card: {
+    padding: 10,
+    borderWidth: 4,
+    borderColor: "#97CAEF",
+    borderRadius: 10,
+    marginVertical: 5,
+    backgroundColor: "#fff",
+    
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    elevation: 10,
   },
 
   App: {

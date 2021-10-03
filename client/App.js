@@ -72,7 +72,7 @@ export default function App() {
               screenOptions={{ headerShown: false, animation: "none" }}
             >
               <Stack.Screen name='Home' option={{ title: "Home" }}>
-                {(props) => <HomeScreen {...props} setJwtToken={setJwtToken} />}
+                {(props) => <OwnerDashboard {...props} setJwtToken={setJwtToken} />}
               </Stack.Screen>
             </Stack.Navigator>
           )}
