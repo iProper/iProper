@@ -4,6 +4,8 @@ const Property = require("../models/Property");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
+require("dotenv").config();
+
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
@@ -29,7 +31,6 @@ const UserType = new GraphQLObjectType({
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     phoneNumber: { type: GraphQLString },
-    propertyId: { type: GraphQLString },
     isOwner: { type: GraphQLString },
   }),
 });
@@ -38,21 +39,22 @@ const PropertyType = new GraphQLObjectType({
   name: "Property",
   fields: () => ({
     id: { type: GraphQLID },
-    name: { type: GraphQLString },
     num: { type: GraphQLString },
     street: { type: GraphQLString },
     city: { type: GraphQLString },
     province: { type: GraphQLString },
     postalCode: { type: GraphQLString },
+    residentIds: { type: new GraphQLList(GraphQLString) },
     ownerId: { type: GraphQLID },
     residents: {
       type: new GraphQLList(UserType),
-      resolve(parent, _args, req) {
-        if (req.user.isOwner) {
-          return Property.find({ propertyId: parent.id });
+      async resolve(parent, _args, req) {
+        if (req) {
+          const property = await Property.find({ propertyId: parent.id });
+          return property.residentIds;
         }
 
-        throw new Error("Not the owner of this property");
+        throw new Error("Non authenticated user");
       },
     },
   }),
@@ -71,30 +73,32 @@ const RootQuery = new GraphQLObjectType({
         throw new Error("Non authenticated User");
       },
     },
-    requestSMS: {
-      type: GraphQLString,
-      args: { phoneNumber: { type: new GraphQLNonNull(GraphQLString) } },
-      async resolve(_parent, _args) {
-        let pin = Math.floor(Math.random() * 99999).toString();
-        client.messages
-          .create({
-            body: `iProper Verification PIN: ${pin}`,
-            from: `${process.env.TWILIO_NUMBER}`,
-            to: args.phoneNumber,
-          })
-          .then((_) => {})
-          .catch((_) => {
-            throw new Error("Error in sending verification message");
-          });
-        return pin;
-      },
-    },
     getProperty: {
       type: PropertyType,
       args: { id: { type: new GraphQLNonNull(GraphQLString) } },
-      resolve(_parent, args, req) {
+      async resolve(_parent, args, req) {
         if (req) {
-          return Property.findById(args.id);
+          const property = await Property.findById(args.id);
+          if (req.user.isOwner) {
+            if (property.ownerId == req.user.id) return property;
+            throw new Error("Not the owner of this property");
+          }
+
+          if (property.residentIds.includes(req.user.id)) return property;
+
+          throw new Error("Not a resident of this property");
+        }
+
+        throw new Error("Non authenticated user");
+      },
+    },
+    getProperties: {
+      type: PropertyType,
+      resolve(_parent, _args, req) {
+        if (req) {
+          if (req.user.isOwner) {
+            return Property.find({ ownerId: req.user.id });
+          }
         }
 
         throw new Error("Non authenticated user");
@@ -114,7 +118,6 @@ const Mutation = new GraphQLObjectType({
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
         phoneNumber: { type: GraphQLString },
-        propertyId: { type: GraphQLString },
         isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
       async resolve(_parent, args) {
@@ -130,7 +133,6 @@ const Mutation = new GraphQLObjectType({
           email: args.email,
           password: await bcrypt.hash(args.password, 10),
           phoneNumber: args.phoneNumber,
-          propertyId: args.propertyId,
           isOwner: args.isOwner,
         });
 
@@ -166,33 +168,55 @@ const Mutation = new GraphQLObjectType({
         );
       },
     },
+    requestSMS: {
+      type: GraphQLString,
+      args: { phoneNumber: { type: new GraphQLNonNull(GraphQLString) } },
+      async resolve(_parent, args) {
+        let pin = Math.floor(Math.random() * 99999).toString();
+        client.messages
+          .create({
+            body: `iProper Verification PIN: ${pin}`,
+            from: `${process.env.TWILIO_NUMBER}`,
+            to: args.phoneNumber,
+          })
+          .then((_) => {})
+          .catch((_) => {
+            throw new Error("Error in sending verification message");
+          });
+        return pin;
+      },
+    },
     addProperty: {
       type: PropertyType,
       args: {
-        name: { type: new GraphQLNonNull(GraphQLString) },
         num: { type: new GraphQLNonNull(GraphQLString) },
         street: { type: new GraphQLNonNull(GraphQLString) },
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
+        residentIds: { type: new GraphQLNonNull(GraphQLList) },
         ownerId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(_parent, args, req) {
-        if (req.user.isOwner) {
-          const property = new Property({
-            name: args.name,
-            num: args.num,
-            street: args.street,
-            city: args.city,
-            province: args.province,
-            postalCode: args.postalCode,
-            ownerId: args.ownerId,
-          });
+        if (req) {
+          if (req.user.isOwner) {
+            const property = new Property({
+              num: args.num,
+              street: args.street,
+              city: args.city,
+              province: args.province,
+              postalCode: args.postalCode,
+              residentIds: args.residentIds,
+              ownerId: args.ownerId,
+            });
 
-          return property.save();
+            return property.save();
+          }
+
+          throw new Error("Not an owner");
         }
 
-        throw new Error("Not an authorized owner");
+        throw new Error("Non authenticated user");
       },
     },
     updateProperty: {
