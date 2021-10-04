@@ -1,11 +1,18 @@
-import { Image, Text, View, Pressable, Platform, TextInput } from "react-native";
+import {
+  Image,
+  Text,
+  View,
+  Pressable,
+  Platform,
+  TextInput,
+} from "react-native";
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { register } from "../queries/queries";
 import { useMutation } from "@apollo/client";
 
 import styles from "../styles/App.styles";
-import loginStyles  from "../styles/LoginScreen.styles"
+import loginStyles from "../styles/LoginScreen.styles";
 import regStyles from "../styles/RegistrationScreens.styles";
 
 export function AccountTypeScreen({ navigation }) {
@@ -34,13 +41,19 @@ export function AccountTypeScreen({ navigation }) {
             loginStyles.chooseLoginScreenButton,
           ]}
         >
-          <Text style={[styles.buttonOffText, styles.buttonTextBig]}>Log In</Text>
+          <Text style={[styles.buttonOffText, styles.buttonTextBig]}>
+            Log In
+          </Text>
         </Pressable>
         <View style={[styles.separator, styles.separatorVertical]}></View>
 
         <Pressable
           onPress={() => navigation.navigate("Registration")}
-          style={[styles.button, styles.buttonBig, loginStyles.chooseLoginScreenButton]}
+          style={[
+            styles.button,
+            styles.buttonBig,
+            loginStyles.chooseLoginScreenButton,
+          ]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Sign Up</Text>
         </Pressable>
@@ -65,7 +78,10 @@ export function AccountTypeScreen({ navigation }) {
               ]}
             >
               <Image
-                style={[regStyles.accountTypeIcon, regStyles.accountTypeIconOwner]}
+                style={[
+                  regStyles.accountTypeIcon,
+                  regStyles.accountTypeIconOwner,
+                ]}
                 source={require("../assets/owner.png")}
                 resizeMode={"center"}
               />
@@ -101,7 +117,11 @@ export function AccountTypeScreen({ navigation }) {
               title: isOwner ? "Owner Registration" : "Renter Registration",
             });
           }}
-          style={[regStyles.createAccountButton, styles.button, styles.buttonBig]}
+          style={[
+            regStyles.createAccountButton,
+            styles.button,
+            styles.buttonBig,
+          ]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>
             Create Account
@@ -174,8 +194,12 @@ export function RegistrationFormScreen({ route, navigation }) {
       setPasswordMsg("Password required");
     } else if (!/^.{8,64}$/.test(password)) {
       setPasswordMsg("Password should be from 8 to 64 characters");
-    } else if (!/^[A-Za-z\d][\w!@#$%^&*()+\-=,.;:'"<>\?/\\]{7,64}$/.test(password)) {
-      setPasswordMsg(`Password should only have A-Za-z0-9_!@#$%^&*()+-=,.;:'"<>\?/`);
+    } else if (
+      !/^[A-Za-z\d][\w!@#$%^&*()+\-=,.;:'"<>\?/\\]{7,64}$/.test(password)
+    ) {
+      setPasswordMsg(
+        `Password should only have A-Za-z0-9_!@#$%^&*()+-=,.;:'"<>\?/`
+      );
     } else {
       setPasswordMsg("");
       passed++;
@@ -239,7 +263,7 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeFirstName}
           style={styles.formInput}
-          placeholder='First Name'
+          placeholder="First Name"
           textContentType={Platform.OS == "ios" ? "givenName" : "none"}
         />
         <Text style={styles.alarmText}>{firstNameMsg}</Text>
@@ -250,7 +274,7 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeLastName}
           style={styles.formInput}
-          placeholder='Last Name'
+          placeholder="Last Name"
           textContentType={Platform.OS == "ios" ? "familyName" : "none"}
         />
         <Text style={styles.alarmText}>{lastNameMsg}</Text>
@@ -261,8 +285,8 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeEmail}
           style={styles.formInput}
-          placeholder='email@example.com'
-          autoCompleteType='email'
+          placeholder="email@example.com"
+          autoCompleteType="email"
           textContentType={Platform.OS == "ios" ? "email" : "none"}
         />
         <Text style={styles.alarmText}>{emailMsg}</Text>
@@ -273,7 +297,7 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changePassword}
           style={styles.formInput}
-          placeholder='Password'
+          placeholder="Password"
           secureTextEntry={true}
           textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
@@ -285,7 +309,7 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeConfirmPassword}
           style={styles.formInput}
-          placeholder='Confirm Password'
+          placeholder="Confirm Password"
           secureTextEntry={true}
           textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
@@ -341,7 +365,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         <TextInput
           onChangeText={changePhoneNumber}
           style={styles.formInput}
-          placeholder='123-345-6789'
+          placeholder="123-345-6789"
           value={phoneNumber}
         />
       </View>
@@ -357,15 +381,17 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         </Text>
       </Pressable>
 
-      {!codeSent && <View style={[styles.container, regStyles.containerAlignCenterTop]}>
-        <Text style={styles.alarmText}>{phoneMsg}</Text>
-      </View>}
+      {!codeSent && (
+        <View style={[styles.container, regStyles.containerAlignCenterTop]}>
+          <Text style={styles.alarmText}>{phoneMsg}</Text>
+        </View>
+      )}
 
       {codeSent && (
         <View>
           <View style={styles.formBox}>
             <Text style={styles.textH3}>Enter code</Text>
-            <TextInput style={styles.formInput} placeholder='e.g. 123456' />
+            <TextInput style={styles.formInput} placeholder="e.g. 123456" />
           </View>
 
           <Pressable
@@ -381,7 +407,9 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
             }}
             style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
           >
-            <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
+            <Text style={[styles.buttonText, styles.buttonTextBig]}>
+              Confirm
+            </Text>
           </Pressable>
         </View>
       )}
@@ -406,7 +434,7 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
         isOwner: true,
       },
     }).then((result) => navigation.navigate("Login"));
-  }
+  };
 
   return (
     <View style={[regStyles.uploadDocumentScreen, styles.container]}>
@@ -444,7 +472,10 @@ export function UploadOwnerDocumentsScreen({ route, navigation }) {
         <Text style={styles.textH4}>No files uploaded</Text>
       </View>
 
-      <Pressable onPress={() => submitForm()} style={[styles.button, styles.buttonBig]}>
+      <Pressable
+        onPress={() => submitForm()}
+        style={[styles.button, styles.buttonBig]}
+      >
         <Text style={[styles.buttonText, styles.buttonTextBig]}>
           Finish Registration
         </Text>
@@ -463,19 +494,19 @@ export function RegistrationScreens({ navigation }) {
       screenOptions={{ headerShown: false, animation: "none" }}
     >
       <RegistrationStack.Screen
-        name='ChooseAccountType'
+        name="ChooseAccountType"
         component={AccountTypeScreen}
       />
       <RegistrationStack.Screen
-        name='RegistrationForm'
+        name="RegistrationForm"
         component={RegistrationFormScreen}
       />
       <RegistrationStack.Screen
-        name='ConfirmPhoneNumber'
+        name="ConfirmPhoneNumber"
         component={ConfirmPhoneNumberScreen}
       />
       <RegistrationStack.Screen
-        name='UploadOwnerDocuments'
+        name="UploadOwnerDocuments"
         component={UploadOwnerDocumentsScreen}
       />
     </RegistrationStack.Navigator>

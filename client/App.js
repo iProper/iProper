@@ -3,9 +3,16 @@ import React, { useState, useEffect } from "react";
 import { LoginScreen } from "./components/LoginScreen";
 import { RegistrationScreens } from "./components/RegistrationScreens";
 import { OwnerDashboard } from "./components/OwnerScreens";
+import { AddProperty } from "./components/OwnerScreens";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, KeyboardAvoidingView, Platform, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+} from "react-native";
 import styles from "./styles/App.styles";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import * as SecureStore from "expo-secure-store";
@@ -17,17 +24,26 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const HomeScreen = ({ setJwtToken }) => {
+const HomeScreen = ({ setJwtToken, navigation }) => {
   const logOut = () => {
     setJwtToken("");
     SecureStore.setItemAsync("jwt_token", "").then(() => {});
   };
-
+  //const { onPress } = props;
+  // const AddNewPropertyPressed = () => {
+  //   props.navigation.navigate("OwnerScreen");
+  // };
   return (
     <View style={[styles.container, styles.homeScreen]}>
       <Text style={styles.textH2}>Home Screen</Text>
       <Pressable style={styles.button} onPress={() => logOut()}>
         <Text style={styles.buttonText}>Log Out</Text>
+      </Pressable>
+      <Pressable
+        style={styles.button}
+        onPress={() => navigation.navigate("OwnerScreens")}
+      >
+        <Text style={styles.buttonText}>AddNewProperty</Text>
       </Pressable>
     </View>
   );
@@ -58,11 +74,13 @@ export default function App() {
             <Stack.Navigator
               screenOptions={{ headerShown: false, animation: "none" }}
             >
-              <Stack.Screen name='Login' option={{ title: "Login" }}>
-                {(props) => <LoginScreen {...props} setJwtToken={setJwtToken} />}
+              <Stack.Screen name="Login" option={{ title: "Login" }}>
+                {(props) => (
+                  <LoginScreen {...props} setJwtToken={setJwtToken} />
+                )}
               </Stack.Screen>
               <Stack.Screen
-                name='Registration'
+                name="Registration"
                 component={RegistrationScreens}
                 option={{ title: "Registration" }}
               ></Stack.Screen>
@@ -71,13 +89,14 @@ export default function App() {
             <Stack.Navigator
               screenOptions={{ headerShown: false, animation: "none" }}
             >
-              <Stack.Screen name='Home' option={{ title: "Home" }}>
+              <Stack.Screen name="Home" option={{ title: "Home" }}>
                 {(props) => <HomeScreen {...props} setJwtToken={setJwtToken} />}
               </Stack.Screen>
+              <Stack.Screen name="OwnerScreens" component={OwnerDashboard} />
             </Stack.Navigator>
           )}
         </NavigationContainer>
-        <StatusBar style='auto' />
+        <StatusBar style="auto" />
       </KeyboardAvoidingView>
     </ApolloProvider>
   );

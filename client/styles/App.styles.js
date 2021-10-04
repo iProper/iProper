@@ -127,7 +127,6 @@ export default StyleSheet.create({
   navigationHeaderText: {
     fontSize: 25,
   },
-  
 
   homeScreen: {
     alignItems: "center",
