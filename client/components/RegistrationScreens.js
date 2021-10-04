@@ -316,13 +316,13 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
   const [codeSent, setCodeSent] = useState(false);
   const [phoneMsg, setPhoneMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [PIN, setPIN] = useState(0); 
+  const [PIN, setPIN] = useState(0);  
+  const [code, changeCode] = useState("");
 
   const [sendSMS] = useMutation(requestSms);
 
   const SMSrequestCode = () => {
     if (phoneNumber) {
-      console.log(phoneNumber);
       setCodeSent(true);
       setPhoneMsg("");
       setLoading(true);
@@ -331,61 +331,35 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
           phoneNumber,
         },
       })
-        .then((data) => {
-          console.log(data);
+        .then(({ data }) => {
+          setPIN(data.requestSMS);
           setLoading(false);
         })
         .catch((error) => {
-          console.log(error);
           setCodeSent(false);
+          setLoading(false);
+          setPhoneMsg("Please enter valid phone number.");
         });
     } else {
       setPhoneMsg("Please enter valid phone number.");
     }
   };
 
-  // Component that display TextInput to enter the code from SMS
-  // If error occurs, sets codeSent back to false.
-  const ConfirmCode = (props) => {
-    const [code, changeCode] = useState("");
-
-    const checkCode = () => {};
-    
-    return props.loading ? (
-      <Loading text={"Sending sms..."} />
-    ) : (
-      <View>
-        <View style={styles.formBox}>
-          <Text style={styles.textH3}>Enter code</Text>
-          <TextInput
-            value={code}
-            onChangeText={changeCode}
-            style={styles.formInput}
-            placeholder='e.g. 123456'
-          />
-        </View>
-        {() => {
-          console.log(data);
-          return <View />;
-        }}
-
-        <Pressable
-          onPress={() => {
-            navigation.navigate("UploadOwnerDocuments", {
-              title,
-              firstName,
-              lastName,
-              email,
-              password,
-              phoneNumber,
-            });
-          }}
-          style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
-        >
-          <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
-        </Pressable>
-      </View>
-    );
+  const checkCode = () => {
+    if (code == PIN) {
+      setCodeSent(false);
+      setPhoneMsg("");
+      navigation.navigate("UploadOwnerDocuments", {
+        title,
+        firstName,
+        lastName,
+        email,
+        password,
+        phoneNumber,
+      });
+    } else {
+      setPhoneMsg("Invalid confirmation code.");
+    }
   };
 
   return (
@@ -425,19 +399,34 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         </Text>
       </Pressable>
 
-      {!codeSent && (
-        <View style={[styles.container, regStyles.containerAlignCenterTop]}>
-          <Text style={styles.alarmText}>{phoneMsg}</Text>
+      {codeSent && (
+        loading ? (
+      <Loading text={"Sending sms..."} />
+    ) : (
+      <View>
+        <View style={styles.formBox}>
+          <Text style={styles.textH3}>Enter code</Text>
+          <TextInput
+            value={code}
+            onChangeText={changeCode}
+            style={styles.formInput}
+            placeholder='e.g. 123456'
+          />
         </View>
+
+        <Pressable
+          onPress={() => checkCode()}
+          style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
+        </Pressable>
+      </View>
+    )
       )}
 
-      {codeSent && (
-        <ConfirmCode
-          loading={loading}
-          setCodeSent={setCodeSent}
-          phoneNumber={phoneNumber}
-        />
-      )}
+      <View style={[styles.container, styles.containerAlignCenterTop]}>
+        <Text style={[styles.alarmText, styles.textH4]}>{phoneMsg}</Text>
+      </View>
     </View>
   );
 }

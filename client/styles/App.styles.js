@@ -31,8 +31,6 @@ export default StyleSheet.create({
     color: "#FC4445",
     fontSize: 12,
     marginLeft: 15,
-    lineHeight: 12,
-    height: 12,
   },
   separator: {
     width: "100%",

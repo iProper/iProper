@@ -7,18 +7,20 @@ const Loading = ({ text }) => {
   const rotation = useRef(new Animated.Value(0)).current;
 
   const rotate = () => {
-    Animated.sequence([
-      Animated.timing(rotation, {
-        toValue: 1,
-        duration: 1000,
-      }),
-      Animated.timing(rotation, {
-        toValue: 0,
-        duration: 0,
-      }),
-    ]).start(() => {
-      rotate();
-    });
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(rotation, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotation, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
   };
 
   useEffect(() => {
