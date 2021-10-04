@@ -194,7 +194,7 @@ const Mutation = new GraphQLObjectType({
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
-        residentIds: { type: new GraphQLNonNull(GraphQLList) },
+        residentIds: { type: GraphQLList },
         ownerId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(_parent, args, req) {
