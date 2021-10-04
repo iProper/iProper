@@ -222,29 +222,33 @@ const Mutation = new GraphQLObjectType({
     updateProperty: {
       type: PropertyType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLString) },
-        name: { type: new GraphQLNonNull(GraphQLString) },
-        num: { type: new GraphQLNonNull(GraphQLString) },
-        street: { type: new GraphQLNonNull(GraphQLString) },
-        city: { type: new GraphQLNonNull(GraphQLString) },
-        province: { type: new GraphQLNonNull(GraphQLString) },
-        postalCode: { type: new GraphQLNonNull(GraphQLString) },
-        // ownerId: { type: new GraphQLNonNull(GraphQLID) },
+          id: { type: new GraphQLNonNull(GraphQLString) },
+          num: { type: new GraphQLNonNull(GraphQLString) },
+          street: { type: new GraphQLNonNull(GraphQLString) },
+          city: { type: new GraphQLNonNull(GraphQLString) },
+          province: { type: new GraphQLNonNull(GraphQLString) },
+          postalCode: { type: new GraphQLNonNull(GraphQLString) },
+          residentIds: { type: new GraphQLNonNull(GraphQLList) },
+          ownerId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(_parent, args, req) {
         
         if (req.user.isOwner) {
 
-          const property = PropertyType.findById(args.id);
-          property.name = args.name;
-          property.num = args.num;
-          property.street = args.street;
-          property.city = args.city;
-          property.province = args.province;
-          property.postalCode = args.postalCode;
-          // property.ownerId = args.ownerId;
+          return Property.findByIdAndUpdate(
+            args.id,
+            {
+              num: args.num,
+              street: args.street,
+              city: args.city,
+              province: args.province,
+              postalCode: args.postalCode,
+              residentIds: args.residentIds,
+              ownerId: args.ownerId,
+            },
+            { new: true }
+          );
 
-          return property.save();
         }
 
         throw new Error("Not an authorized owner");
