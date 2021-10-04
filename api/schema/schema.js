@@ -219,6 +219,42 @@ const Mutation = new GraphQLObjectType({
         throw new Error("Non authenticated user");
       },
     },
+    updateProperty: {
+      type: PropertyType,
+      args: {
+          id: { type: new GraphQLNonNull(GraphQLString) },
+          num: { type: new GraphQLNonNull(GraphQLString) },
+          street: { type: new GraphQLNonNull(GraphQLString) },
+          city: { type: new GraphQLNonNull(GraphQLString) },
+          province: { type: new GraphQLNonNull(GraphQLString) },
+          postalCode: { type: new GraphQLNonNull(GraphQLString) },
+          residentIds: { type: new GraphQLNonNull(GraphQLList) },
+          ownerId: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(_parent, args, req) {
+        
+        if (req.user.isOwner) {
+
+          return Property.findByIdAndUpdate(
+            args.id,
+            {
+              num: args.num,
+              street: args.street,
+              city: args.city,
+              province: args.province,
+              postalCode: args.postalCode,
+              residentIds: args.residentIds,
+              ownerId: args.ownerId,
+            },
+            { new: true }
+          );
+
+        }
+
+        throw new Error("Not an authorized owner");
+
+      }
+    }
     // updateUser: {
     //   type: UserType,
     //   args: {
