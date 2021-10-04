@@ -96,9 +96,11 @@ const RootQuery = new GraphQLObjectType({
       type: PropertyType,
       resolve(_parent, _args, req) {
         if (req) {
-          if (req.user.isOwner) {
+          if (req.user.isOwner != null) {
             return Property.find({ ownerId: req.user.id });
           }
+
+          throw new Error("Not an owner this property");
         }
 
         throw new Error("Non authenticated user");
@@ -125,6 +127,10 @@ const Mutation = new GraphQLObjectType({
 
         if (alreadyRegisted) {
           throw new Error("User already registered with this email");
+        }
+
+        if (args.isOwner && args.phoneNumber == null) {
+          throw new Error("Owner must register phone number");
         }
 
         const user = new User({
