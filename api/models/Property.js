@@ -7,6 +7,9 @@ const propertySchema = new Schema({
   city: String,
   province: String,
   postalCode: String,
+  numOfRooms: Number,
+  description: String,
+  rules: [String],
   residentIds: [String],
   ownerId: String,
 });

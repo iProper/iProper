@@ -18,6 +18,7 @@ const {
   GraphQLList,
   GraphQLBoolean,
   GraphQLNonNull,
+  GraphQLInt,
 } = graphql;
 
 const UserType = new GraphQLObjectType({
@@ -42,6 +43,9 @@ const PropertyType = new GraphQLObjectType({
     city: { type: GraphQLString },
     province: { type: GraphQLString },
     postalCode: { type: GraphQLString },
+    numOfRooms: { type: GraphQLInt },
+    description: { type: GraphQLString },
+    rules: { type: new GraphQLList(GraphQLString) },
     residentIds: { type: new GraphQLList(GraphQLString) },
     ownerId: { type: GraphQLID },
     residents: {
@@ -214,6 +218,9 @@ const Mutation = new GraphQLObjectType({
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
+        numOfRooms: { type: new GraphqlNonNull(GraphQLInt) },
+        description: { type: GraphQLString },
+        rules: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
       },
       resolve(_parent, args, req) {
@@ -225,6 +232,9 @@ const Mutation = new GraphQLObjectType({
               city: args.city,
               province: args.province,
               postalCode: args.postalCode,
+              numOfRooms: args.numOfRooms,
+              description: args.description,
+              rules: args.rules,
               residentIds: args.residentIds,
               ownerId: req.user.id,
             });
@@ -247,6 +257,9 @@ const Mutation = new GraphQLObjectType({
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
+        numOfRooms: { type: new GraphqlNonNull(GraphQLInt) },
+        description: { type: GraphQLString },
+        rules: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
       },
       async resolve(_parent, args, req) {
@@ -262,6 +275,9 @@ const Mutation = new GraphQLObjectType({
                   city: args.city,
                   province: args.province,
                   postalCode: args.postalCode,
+                  numOfRooms: args.numOfRooms,
+                  description: args.description,
+                  rules: args.rules,
                   residentIds: args.residentIds,
                   ownerId: req.user.id,
                 },
