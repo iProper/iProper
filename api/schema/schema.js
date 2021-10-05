@@ -100,7 +100,7 @@ const RootQuery = new GraphQLObjectType({
             return Property.find({ ownerId: req.user.id });
           }
 
-          throw new Error("Not an owner this property");
+          throw new Error("Not an owner of a registered property");
         }
 
         throw new Error("Non authenticated user");
