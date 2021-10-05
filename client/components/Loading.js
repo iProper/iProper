@@ -1,4 +1,4 @@
-import { Text, View, Animated } from "react-native";
+import { Text, View, Animated, Image } from "react-native";
 import React, { useEffect, useRef } from "react";
 
 import styles from "../styles/App.styles";
@@ -43,7 +43,10 @@ const Loading = ({ text }) => {
             ],
           },
         ]}
-      ></Animated.View>
+      ><Image
+          style={{width: 50, height: 50}}
+          source={require("../assets/loading.png")}
+          resizeMode={"center"}/></Animated.View>
       <Text style={styles.loadingText}>{text}</Text>
     </View>
   );

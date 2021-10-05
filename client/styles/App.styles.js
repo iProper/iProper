@@ -133,7 +133,6 @@ export default StyleSheet.create({
   loadingIcon: {
     width: 50,
     height: 50,
-    backgroundColor: "#97CAEF",
     transform: [{ rotate: "50deg" }],
   },
   loadingText: {
