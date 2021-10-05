@@ -1,4 +1,11 @@
-import { Image, Text, View, Pressable, Platform, TextInput } from "react-native";
+import {
+  Image,
+  Text,
+  View,
+  Pressable,
+  Platform,
+  TextInput,
+} from "react-native";
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { register, requestSms } from "../queries/queries";
@@ -35,7 +42,9 @@ export function AccountTypeScreen({ navigation }) {
             loginStyles.chooseLoginScreenButton,
           ]}
         >
-          <Text style={[styles.buttonOffText, styles.buttonTextBig]}>Log In</Text>
+          <Text style={[styles.buttonOffText, styles.buttonTextBig]}>
+            Log In
+          </Text>
         </Pressable>
         <View style={[styles.separator, styles.separatorVertical]}></View>
 
@@ -70,7 +79,10 @@ export function AccountTypeScreen({ navigation }) {
               ]}
             >
               <Image
-                style={[regStyles.accountTypeIcon, regStyles.accountTypeIconOwner]}
+                style={[
+                  regStyles.accountTypeIcon,
+                  regStyles.accountTypeIconOwner,
+                ]}
                 source={require("../assets/owner.png")}
                 resizeMode={"center"}
               />
@@ -106,7 +118,11 @@ export function AccountTypeScreen({ navigation }) {
               title: isOwner ? "Owner Registration" : "Renter Registration",
             });
           }}
-          style={[regStyles.createAccountButton, styles.button, styles.buttonBig]}
+          style={[
+            regStyles.createAccountButton,
+            styles.button,
+            styles.buttonBig,
+          ]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>
             Create Account
@@ -179,8 +195,12 @@ export function RegistrationFormScreen({ route, navigation }) {
       setPasswordMsg("Password required");
     } else if (!/^.{8,64}$/.test(password)) {
       setPasswordMsg("Password should be from 8 to 64 characters");
-    } else if (!/^[A-Za-z\d][\w!@#$%^&*()+\-=,.;:'"<>\?/\\]{7,64}$/.test(password)) {
-      setPasswordMsg(`Password should only have A-Za-z0-9_!@#$%^&*()+-=,.;:'"<>\?/`);
+    } else if (
+      !/^[A-Za-z\d][\w!@#$%^&*()+\-=,.;:'"<>\?/\\]{7,64}$/.test(password)
+    ) {
+      setPasswordMsg(
+        `Password should only have A-Za-z0-9_!@#$%^&*()+-=,.;:'"<>\?/`
+      );
     } else {
       setPasswordMsg("");
       passed++;
@@ -244,7 +264,8 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeFirstName}
           style={styles.formInput}
-          placeholder='First Name'
+          placeholder="First Name"
+          value={firstName}
           textContentType={Platform.OS == "ios" ? "givenName" : "none"}
         />
         <Text style={styles.alarmText}>{firstNameMsg}</Text>
@@ -255,8 +276,9 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeLastName}
           style={styles.formInput}
-          placeholder='Last Name'
+          placeholder="Last Name"
           textContentType={Platform.OS == "ios" ? "familyName" : "none"}
+          value={lastName}
         />
         <Text style={styles.alarmText}>{lastNameMsg}</Text>
       </View>
@@ -266,8 +288,9 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeEmail}
           style={styles.formInput}
-          placeholder='email@example.com'
-          autoCompleteType='email'
+          placeholder="email@example.com"
+          autoCompleteType="email"
+          value={email}
           textContentType={Platform.OS == "ios" ? "email" : "none"}
         />
         <Text style={styles.alarmText}>{emailMsg}</Text>
@@ -278,8 +301,9 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changePassword}
           style={styles.formInput}
-          placeholder='Password'
+          placeholder="Password"
           secureTextEntry={true}
+          value={password}
           textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
         <Text style={styles.alarmText}>{passwordMsg}</Text>
@@ -290,8 +314,9 @@ export function RegistrationFormScreen({ route, navigation }) {
         <TextInput
           onChangeText={changeConfirmPassword}
           style={styles.formInput}
-          placeholder='Confirm Password'
+          placeholder="Confirm Password"
           secureTextEntry={true}
+          value={confirmPassword}
           textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
         <Text style={styles.alarmText}>{confirmPasswordMsg}</Text>
@@ -383,7 +408,7 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         <TextInput
           onChangeText={changePhoneNumber}
           style={styles.formInput}
-          placeholder='123-345-6789'
+          placeholder="123-345-6789"
           value={phoneNumber}
         />
       </View>
@@ -508,19 +533,19 @@ export function RegistrationScreens({ navigation }) {
       screenOptions={{ headerShown: false, animation: "none" }}
     >
       <RegistrationStack.Screen
-        name='ChooseAccountType'
+        name="ChooseAccountType"
         component={AccountTypeScreen}
       />
       <RegistrationStack.Screen
-        name='RegistrationForm'
+        name="RegistrationForm"
         component={RegistrationFormScreen}
       />
       <RegistrationStack.Screen
-        name='ConfirmPhoneNumber'
+        name="ConfirmPhoneNumber"
         component={ConfirmPhoneNumberScreen}
       />
       <RegistrationStack.Screen
-        name='UploadOwnerDocuments'
+        name="UploadOwnerDocuments"
         component={UploadOwnerDocumentsScreen}
       />
     </RegistrationStack.Navigator>
