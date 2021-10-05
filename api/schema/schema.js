@@ -282,6 +282,28 @@ const Mutation = new GraphQLObjectType({
         throw new Error("Non authenticated user");
       },
     },
+    deleteProperty: {
+      type: PropertyType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        async resolve(_parent, args, req) {
+          if (req) {
+            if (req.user.isOwner) {
+              const property = await Property.findById(args.id);
+              if (req.user.id == property.ownerId) {
+                Property.findByIdAndDelete(args.id);
+              }
+
+              throw new Error("Not the owner of this property");
+            }
+
+            throw new Error("Not an owner");
+          }
+
+          throw new Error("Non authenticated user");
+        },
+      },
+    },
     // updateUser: {
     //   type: UserType,
     //   args: {
