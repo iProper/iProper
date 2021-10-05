@@ -254,9 +254,6 @@ export default StyleSheet.create({
     marginVertical: 10,
     fontSize: 20,
   },
-  sideMenuMain: {
-
-  },
   sideMenuItem: {
     borderBottomWidth: 1,
     borderColor: "#97CAEF"
