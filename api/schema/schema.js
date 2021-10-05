@@ -218,7 +218,6 @@ const Mutation = new GraphQLObjectType({
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
-        ownerId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(_parent, args, req) {
         if (req) {
@@ -230,7 +229,7 @@ const Mutation = new GraphQLObjectType({
               province: args.province,
               postalCode: args.postalCode,
               residentIds: args.residentIds,
-              ownerId: args.ownerId,
+              ownerId: req.user.id,
             });
 
             return property.save();
