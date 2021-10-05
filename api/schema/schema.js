@@ -116,6 +116,19 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
+    checkEmail: {
+      type: GraphQLBoolean,
+      args: { email: { type: new GraphQLNonNull(GraphQLString) } },
+      async resolve(_parent, args) {
+        const alreadyRegisted = await User.findOne({ email: args.email });
+
+        if (alreadyRegisted) {
+          return true;
+        }
+
+        return false;
+      },
+    },
     register: {
       type: GraphQLBoolean,
       args: {
