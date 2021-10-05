@@ -209,7 +209,7 @@ const Mutation = new GraphQLObjectType({
       type: PropertyType,
       args: {
         address1: { type: new GraphQLNonNull(GraphQLString) },
-        address2: { type: new GraphQLNonNull(GraphQLString) },
+        address2: { type: GraphQLString },
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
@@ -242,7 +242,7 @@ const Mutation = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
         address1: { type: new GraphQLNonNull(GraphQLString) },
-        address2: { type: new GraphQLNonNull(GraphQLString) },
+        address2: { type: GraphQLString },
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
