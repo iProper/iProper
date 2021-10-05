@@ -6,6 +6,7 @@ import {
   Image,
   Linking,
   ScrollView,
+  Platform,
 } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 import styles from "../styles/App.styles";
@@ -55,8 +56,25 @@ const PropertyCard = ({ property }) => {
             </Text>
           </View>
           <View style={ownerStyles.propertyCardButtons}>
-            <Pressable style={ownerStyles.propertyCardReportStatusBtn}></Pressable>
-            <Pressable style={ownerStyles.propertyCardChatBtn}></Pressable>
+            <Pressable style={ownerStyles.propertyCardReportStatusBtn}>
+              <Text
+                style={{
+                  fontSize: 30,
+                  textAlign: "center",
+                  color: "#ddd",
+                  fontFamily: Platform.OS == "ios" ? "Courier" : "monospace",
+                }}
+              >
+                i
+              </Text>
+            </Pressable>
+            <Pressable style={ownerStyles.propertyCardChatBtn}>
+              <Image
+                style={ownerStyles.propertyCardChatBtn}
+                source={require("../assets/chat-red.png")}
+                resizeMode='center'
+              />
+            </Pressable>
           </View>
         </View>
       </View>
@@ -143,9 +161,8 @@ export function OwnerDashboard({ navigation, userData, jwtToken }) {
     },
   });
 
-  
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener("focus", () => {
       refetch();
     });
 
@@ -290,7 +307,10 @@ export function AddProperty({ route, navigation }) {
         <View style={[styles.separator, styles.separatorBlue]} />
       </View>
 
-      <ScrollView style={ownerStyles.addPropertyScreenForm}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={ownerStyles.addPropertyScreenForm}
+      >
         <View>
           <View style={styles.formBox}>
             <Text style={[styles.textH4, styles.formLabel]}>Address Line 1</Text>

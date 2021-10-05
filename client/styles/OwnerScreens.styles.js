@@ -10,7 +10,8 @@ export default StyleSheet.create({
     paddingBottom: 10,
   },
   ownerDashboardProperties: {
-    paddingVertical: 30,
+    paddingVertical: 15,
+    marginTop: 5,
     flexGrow: 1,
   },
   propertyCard: {
@@ -66,10 +67,6 @@ export default StyleSheet.create({
   propertyCardChatBtn: {
     width: 45,
     height: 45,
-    borderWidth: 5,
-    borderColor: "#ddd",
-    borderRadius: 50,
-    borderColor: "#FC4445",
   },
   addNewPropertyButton: {
     position: "absolute",

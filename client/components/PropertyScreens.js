@@ -177,7 +177,7 @@ export function AboutScreen({ navigation, property, route, userData, jwtToken })
         </View>
         <View style={[styles.separator, styles.separatorBlue]} />
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={propertyStyles.generalInfo}>
           <View style={[styles.flexRow, propertyStyles.infoField]}>
             <Text style={styles.textH4}>Owner:</Text>
