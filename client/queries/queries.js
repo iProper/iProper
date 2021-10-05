@@ -64,7 +64,6 @@ const getOwnerProperties = gql`
     }
   }
 `
-
 const currentUser = gql`
   {
     currentUser {
@@ -75,4 +74,10 @@ const currentUser = gql`
   }
 `;
 
-export { login, register, currentUser, addProperty, getOwnerProperties };
+const requestSms = gql`
+mutation($phoneNumber: String!) {
+  requestSMS(phoneNumber: $phoneNumber)
+}
+`
+
+export { login, register, currentUser, addProperty, getOwnerProperties, requestSms };

@@ -8,8 +8,9 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { register } from "../queries/queries";
-import { useMutation } from "@apollo/client";
+import { register, requestSms } from "../queries/queries";
+import { useMutation, useQuery } from "@apollo/client";
+import Loading from "./Loading";
 
 import styles from "../styles/App.styles";
 import loginStyles from "../styles/LoginScreen.styles";
@@ -339,13 +340,50 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
   const [phoneNumber, changePhoneNumber] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [phoneMsg, setPhoneMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [PIN, setPIN] = useState(0);  
+  const [code, changeCode] = useState("");
+
+  const [sendSMS] = useMutation(requestSms);
 
   const SMSrequestCode = () => {
     if (phoneNumber) {
       setCodeSent(true);
       setPhoneMsg("");
+      setLoading(true);
+      sendSMS({
+        variables: {
+          phoneNumber,
+        },
+      })
+        .then(({ data }) => {
+          setPIN(data.requestSMS);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setCodeSent(false);
+          setLoading(false);
+          setPhoneMsg("Please enter valid phone number.");
+        });
     } else {
-      setPhoneMsg("Please enter phone number.");
+      setPhoneMsg("Please enter valid phone number.");
+    }
+  };
+
+  const checkCode = () => {
+    if (code == PIN) {
+      setCodeSent(false);
+      setPhoneMsg("");
+      navigation.navigate("UploadOwnerDocuments", {
+        title,
+        firstName,
+        lastName,
+        email,
+        password,
+        phoneNumber,
+      });
+    } else {
+      setPhoneMsg("Invalid confirmation code.");
     }
   };
 
@@ -386,38 +424,34 @@ export function ConfirmPhoneNumberScreen({ route, navigation }) {
         </Text>
       </Pressable>
 
-      {!codeSent && (
-        <View style={[styles.container, regStyles.containerAlignCenterTop]}>
-          <Text style={styles.alarmText}>{phoneMsg}</Text>
-        </View>
-      )}
-
       {codeSent && (
-        <View>
-          <View style={styles.formBox}>
-            <Text style={styles.textH3}>Enter code</Text>
-            <TextInput style={styles.formInput} placeholder="e.g. 123456" />
-          </View>
-
-          <Pressable
-            onPress={() => {
-              navigation.navigate("UploadOwnerDocuments", {
-                title,
-                firstName,
-                lastName,
-                email,
-                password,
-                phoneNumber,
-              });
-            }}
-            style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
-          >
-            <Text style={[styles.buttonText, styles.buttonTextBig]}>
-              Confirm
-            </Text>
-          </Pressable>
+        loading ? (
+      <Loading text={"Sending sms..."} />
+    ) : (
+      <View>
+        <View style={styles.formBox}>
+          <Text style={styles.textH3}>Enter code</Text>
+          <TextInput
+            value={code}
+            onChangeText={changeCode}
+            style={styles.formInput}
+            placeholder='e.g. 123456'
+          />
         </View>
+
+        <Pressable
+          onPress={() => checkCode()}
+          style={[styles.button, styles.buttonBig, regStyles.confirmButton]}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextBig]}>Confirm</Text>
+        </Pressable>
+      </View>
+    )
       )}
+
+      <View style={[styles.container, styles.containerAlignCenterTop]}>
+        <Text style={[styles.alarmText, styles.textH4]}>{phoneMsg}</Text>
+      </View>
     </View>
   );
 }
