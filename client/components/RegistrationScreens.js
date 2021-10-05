@@ -264,6 +264,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           onChangeText={changeFirstName}
           style={styles.formInput}
           placeholder="First Name"
+          value={firstName}
           textContentType={Platform.OS == "ios" ? "givenName" : "none"}
         />
         <Text style={styles.alarmText}>{firstNameMsg}</Text>
@@ -276,6 +277,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           style={styles.formInput}
           placeholder="Last Name"
           textContentType={Platform.OS == "ios" ? "familyName" : "none"}
+          value={lastName}
         />
         <Text style={styles.alarmText}>{lastNameMsg}</Text>
       </View>
@@ -287,6 +289,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           style={styles.formInput}
           placeholder="email@example.com"
           autoCompleteType="email"
+          value={email}
           textContentType={Platform.OS == "ios" ? "email" : "none"}
         />
         <Text style={styles.alarmText}>{emailMsg}</Text>
@@ -299,6 +302,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           style={styles.formInput}
           placeholder="Password"
           secureTextEntry={true}
+          value={password}
           textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
         <Text style={styles.alarmText}>{passwordMsg}</Text>
@@ -311,6 +315,7 @@ export function RegistrationFormScreen({ route, navigation }) {
           style={styles.formInput}
           placeholder="Confirm Password"
           secureTextEntry={true}
+          value={confirmPassword}
           textContentType={Platform.OS == "ios" ? "newPassword" : "none"}
         />
         <Text style={styles.alarmText}>{confirmPasswordMsg}</Text>
