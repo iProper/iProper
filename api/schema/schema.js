@@ -52,7 +52,8 @@ const PropertyType = new GraphQLObjectType({
         if (req) {
           const property = await Property.find({ propertyId: parent.id });
           let tenants = [];
-          for (const tenant of property.residentIds) {
+          const tenantIds = property.residentIds;
+          for (const tenant of tenantIds) {
             tenants.push(await User.findById(tenant));
           }
           return tenants;
