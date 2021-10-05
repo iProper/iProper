@@ -252,7 +252,7 @@ const Mutation = new GraphQLObjectType({
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
       },
-      resolve(_parent, args, req) {
+      async resolve(_parent, args, req) {
         if (req) {
           if (req.user.isOwner) {
             const property = await Property.findById(args.id);
