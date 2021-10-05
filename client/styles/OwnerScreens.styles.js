@@ -11,6 +11,7 @@ export default StyleSheet.create({
   },
   ownerDashboardProperties: {
     paddingVertical: 30,
+    flexGrow: 1,
   },
   propertyCard: {
     height: 150,

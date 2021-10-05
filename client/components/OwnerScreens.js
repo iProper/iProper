@@ -133,9 +133,9 @@ const Rule = ({ rule, index, setRule, deleteRule }) => {
 };
 
 export function OwnerDashboard({ navigation, userData, jwtToken }) {
-  const [searchText, changeSearchText] = useState();
+  const [searchText, changeSearchText] = useState("");
 
-  const { loading, error, data } = useQuery(getOwnerProperties, {
+  const { loading, error, data, refetch } = useQuery(getOwnerProperties, {
     context: {
       headers: {
         Authorization: "Bearer " + jwtToken,
@@ -176,10 +176,11 @@ export function OwnerDashboard({ navigation, userData, jwtToken }) {
           value={searchText}
         />
       </View>
-      <ScrollView style={ownerStyles.ownerDashboardProperties}>
+      <ScrollView showsVerticalScrollIndicator={false} style={[ownerStyles.ownerDashboardProperties]}>
         {properties.map((property, index) => (
           <PropertyCard key={index} property={property} />
         ))}
+        <View style={{flex: 1, height: 150}}/>
       </ScrollView>
       <Pressable
         onPress={() => {
