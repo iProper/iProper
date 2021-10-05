@@ -147,6 +147,8 @@ export default StyleSheet.create({
   },
   addNewRuleBtn: {
     width: "100%",
+    
+    marginVertical: 8,
   },
 
 

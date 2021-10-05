@@ -13,6 +13,7 @@ import { currentUser } from "./queries/queries";
 import { useQuery } from "@apollo/client";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import SideMenu from "./components/SideMenu";
+import { PropertyTabs } from "./components/PropertyScreens";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -36,16 +37,6 @@ const OwnerStack = ({ navigation, currentUser, jwtToken }) => {
         component={AddProperty}
       />
     </Stack.Navigator>
-  );
-};
-
-const PropertyTabs = ({ navigation, route }) => {
-  const propertyId = route.params.id;
-
-  return (
-    <View>
-      <Text>Property {propertyId}</Text>
-    </View>
   );
 };
 
@@ -88,7 +79,7 @@ const LoggedInStack = ({ jwtToken }) => {
         )}
       </Drawer.Screen>
       <Drawer.Screen name='PropertyTabs'>
-        {(props) => <PropertyTabs {...props} propertyId={0} />}
+        {(props) => <PropertyTabs {...props} propertyId={0} userData={data.currentUser} jwtToken={jwtToken} />}
       </Drawer.Screen>
     </Drawer.Navigator>
   );
