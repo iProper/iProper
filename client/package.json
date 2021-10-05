@@ -10,6 +10,7 @@
   "dependencies": {
     "@apollo/client": "^3.4.13",
     "@react-native-picker/picker": "^2.1.0",
+    "@react-navigation/drawer": "^6.1.6",
     "@react-navigation/native-stack": "^6.1.0",
     "expo": "~42.0.1",
     "expo-secure-store": "^10.2.0",
