@@ -70,6 +70,7 @@ const currentUser = gql`
       id
       firstName
       lastName
+      isOwner
     }
   }
 `;

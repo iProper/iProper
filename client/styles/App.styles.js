@@ -230,4 +230,35 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  sideMenuDrawer: {
+    height: "100%",
+    flex: 1,
+  },
+  sideMenu: {
+    height: "100%",
+    backgroundColor: "#97CAEF",
+    flex: 1,
+  },
+  sideMenuHeader: {
+    backgroundColor: "#fff",
+    alignItems: "center",
+    margin: 20,
+    borderRadius: 10,
+  },
+  sideMenuLogo: {
+    width: "80%",
+    height: 80,
+  },
+  sideMenuWelcomeMessage: {
+    marginVertical: 10,
+    fontSize: 20,
+  },
+  sideMenuMain: {
+
+  },
+  sideMenuItem: {
+    borderBottomWidth: 1,
+    borderColor: "#97CAEF"
+  },
 });
