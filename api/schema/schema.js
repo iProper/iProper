@@ -292,7 +292,7 @@ const Mutation = new GraphQLObjectType({
           if (req.user.isOwner) {
             const property = await Property.findById(args.id);
             if (req.user.id == property.ownerId) {
-              return Property.findOneAndDelete({ id: args.id });
+              return Property.findByIdAndDelete(args.id);
             }
 
             throw new Error("Not the owner of this property");
