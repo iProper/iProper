@@ -15,13 +15,11 @@ const {
   GraphQLString,
   GraphQLSchema,
   GraphQLID,
-  // GraphQLInt,
   GraphQLList,
   GraphQLBoolean,
   GraphQLNonNull,
 } = graphql;
 
-//Not completed just basic for getting started
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
@@ -39,8 +37,8 @@ const PropertyType = new GraphQLObjectType({
   name: "Property",
   fields: () => ({
     id: { type: GraphQLID },
-    num: { type: GraphQLString },
-    street: { type: GraphQLString },
+    address1: { type: GraphQLString },
+    address2: { type: GraphQLString },
     city: { type: GraphQLString },
     province: { type: GraphQLString },
     postalCode: { type: GraphQLString },
@@ -50,8 +48,6 @@ const PropertyType = new GraphQLObjectType({
       type: new GraphQLList(UserType),
       async resolve(parent, _args, req) {
         if (req) {
-          const property = await Property.find({ propertyId: parent.id });
-          let tenants = [];
           for (const tenant of parent.residentIds) {
             tenants.push(await User.findById(tenant));
           }
@@ -212,8 +208,8 @@ const Mutation = new GraphQLObjectType({
     addProperty: {
       type: PropertyType,
       args: {
-        num: { type: new GraphQLNonNull(GraphQLString) },
-        street: { type: new GraphQLNonNull(GraphQLString) },
+        address1: { type: new GraphQLNonNull(GraphQLString) },
+        address2: { type: new GraphQLNonNull(GraphQLString) },
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
@@ -223,8 +219,8 @@ const Mutation = new GraphQLObjectType({
         if (req) {
           if (req.user.isOwner) {
             const property = new Property({
-              num: args.num,
-              street: args.street,
+              address1: args.address1,
+              address2: args.address2,
               city: args.city,
               province: args.province,
               postalCode: args.postalCode,
@@ -245,8 +241,8 @@ const Mutation = new GraphQLObjectType({
       type: PropertyType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
-        num: { type: new GraphQLNonNull(GraphQLString) },
-        street: { type: new GraphQLNonNull(GraphQLString) },
+        address1: { type: new GraphQLNonNull(GraphQLString) },
+        address2: { type: new GraphQLNonNull(GraphQLString) },
         city: { type: new GraphQLNonNull(GraphQLString) },
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
@@ -260,8 +256,8 @@ const Mutation = new GraphQLObjectType({
               return Property.findByIdAndUpdate(
                 args.id,
                 {
-                  num: args.num,
-                  street: args.street,
+                  address1: args.address1,
+                  address2: args.address2,
                   city: args.city,
                   province: args.province,
                   postalCode: args.postalCode,
