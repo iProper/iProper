@@ -96,7 +96,7 @@ const RootQuery = new GraphQLObjectType({
       type: PropertyType,
       resolve(_parent, _args, req) {
         if (req) {
-          if (req.user.isOwner != null) {
+          if (req.user.isOwner) {
             return Property.find({ ownerId: req.user.id });
           }
 
