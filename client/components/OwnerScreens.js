@@ -143,15 +143,22 @@ export function OwnerDashboard({ navigation, userData, jwtToken }) {
     },
   });
 
+  
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      refetch();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   let properties;
 
   if (searchText)
     properties = data.getProperties.filter((property) => {
       return property.address1.toLowerCase().includes(searchText.toLowerCase());
     });
-  else 
-    properties = data?.getProperties;
-
+  else properties = data?.getProperties;
 
   return loading ? (
     <View>
@@ -176,11 +183,14 @@ export function OwnerDashboard({ navigation, userData, jwtToken }) {
           value={searchText}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} style={[ownerStyles.ownerDashboardProperties]}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={[ownerStyles.ownerDashboardProperties]}
+      >
         {properties.map((property, index) => (
           <PropertyCard key={index} property={property} />
         ))}
-        <View style={{flex: 1, height: 150}}/>
+        <View style={{ flex: 1, height: 150 }} />
       </ScrollView>
       <Pressable
         onPress={() => {
