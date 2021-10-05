@@ -251,24 +251,28 @@ const Mutation = new GraphQLObjectType({
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
-        ownerId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(_parent, args, req) {
         if (req) {
           if (req.user.isOwner) {
-            return Property.findByIdAndUpdate(
-              args.id,
-              {
-                num: args.num,
-                street: args.street,
-                city: args.city,
-                province: args.province,
-                postalCode: args.postalCode,
-                residentIds: args.residentIds,
-                ownerId: args.ownerId,
-              },
-              { new: true }
-            );
+            const property = await Property.findById(args.id);
+            if (req.user.id == property.ownerId) {
+              return Property.findByIdAndUpdate(
+                args.id,
+                {
+                  num: args.num,
+                  street: args.street,
+                  city: args.city,
+                  province: args.province,
+                  postalCode: args.postalCode,
+                  residentIds: args.residentIds,
+                  ownerId: req.user.id,
+                },
+                { new: true }
+              );
+            }
+
+            throw new Error("Not the owner of this property");
           }
 
           throw new Error("Not an owner");
