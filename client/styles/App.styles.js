@@ -24,7 +24,7 @@ export default StyleSheet.create({
   lightText: {
     color: "#97CAEF",
     fontWeight: "500",
-    fontSize: 16,
+    fontSize: 14,
     marginVertical: 5,
   },
   alarmText: {
@@ -80,9 +80,30 @@ export default StyleSheet.create({
   buttonTextBig: {
     fontSize: 25,
   },
+  buttonRound: {
+    borderRadius: 50,
+  },
 
   formBox: {
     alignItems: "flex-start",
+  },
+  formRowContainer: {
+    flexDirection: "row",
+  },
+  formRowSpace: {
+    width: 10,
+  },
+  formBoxSize1: {
+    flex: 1,
+  },
+  formBoxSize2: {
+    flex: 2,
+  },
+  formBoxSize3: {
+    flex: 3,
+  },
+  formBoxSize4: {
+    flex: 4,
   },
 
   formLabel: {
@@ -100,6 +121,37 @@ export default StyleSheet.create({
     fontSize: 18,
     marginVertical: 5,
   },
+  formPicker: {
+    borderColor: "#000",
+    borderWidth: 1,
+    borderRadius: 5,
+    borderStyle: "solid",
+    width: 70,
+    height: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: 10,
+    alignItems: "center",
+    position: "relative",
+  },
+  formPickerValue: {
+    fontSize: 20,
+  },
+
+  flexSize1: {
+    flex: 1
+  },
+  flexSize2: {
+    flex: 2
+  },
+  
+  flexRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "space-between"
+  },
+  
 
   searchContainer: {
     backgroundColor: "#eee",

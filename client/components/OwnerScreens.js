@@ -1,10 +1,17 @@
-import { Text, View, Pressable, TextInput, Image, Linking } from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Text,
+  View,
+  Pressable,
+  TextInput,
+  Image,
+  Linking,
+  ScrollView,
+} from "react-native";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "../styles/App.styles";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
-import { registerAddress } from "../queries/queries";
+import { addProperty, getOwnerProperties } from "../queries/queries";
 
 import ownerStyles from "../styles/OwnerScreens.styles";
 
@@ -13,9 +20,9 @@ const PropertyCard = ({ property }) => {
     <View style={[styles.card]}>
       <View style={[ownerStyles.propertyCard]}>
         <View style={[ownerStyles.propertyCardHeader]}>
-          <Text style={ownerStyles.propertyCardAddress}>{property.address}</Text>
+          <Text style={ownerStyles.propertyCardAddress}>{property.address1}</Text>
           <Text style={ownerStyles.propertyCardTenantsNum}>
-            {property.tenants.length}/{property.rooms}
+            {property.residents.length}/{property.numOfRooms}
           </Text>
         </View>
         <View style={[styles.separator, styles.separatorBlue]} />
@@ -25,8 +32,9 @@ const PropertyCard = ({ property }) => {
               style={[
                 ownerStyles.propertyCardPaidBarProgress,
                 {
-                  height: (property.tenants.length / property.rooms) * 100 + "%",
-                  opacity: property.tenants.length / property.rooms,
+                  height:
+                    (property.residents.length / property.numOfRooms) * 100 + "%",
+                  opacity: property.residents.length / property.numOfRooms,
                 },
               ]}
             ></View>
@@ -34,14 +42,16 @@ const PropertyCard = ({ property }) => {
           <View style={ownerStyles.propertyCardStatuses}>
             <View style={ownerStyles.propertyCardReportMsg}>
               <Text style={ownerStyles.propertyCardReportMsgText}>
-                {property.report.msg
+                {property.report?.msg
                   ? `${property.report.sender} says: ${property.report.msg}`
                   : "Nothing happened..."}
               </Text>
             </View>
             <Text style={styles.lightText}>
-              {property.tenants.find((tenant) => tenant.isResponsible).name} is
-              responsible this week
+              {property.residents.length
+                ? property.residents.find((tenant) => tenant.isResponsible).name +
+                  " is responsible this week"
+                : "Oh no, there are no tenants!"}
             </Text>
           </View>
           <View style={ownerStyles.propertyCardButtons}>
@@ -54,36 +64,100 @@ const PropertyCard = ({ property }) => {
   );
 };
 
-export function OwnerDashboard({navigation, ownerId}) {
-  const properties = [
-    {
-      address: "Address 1",
-      rooms: 3,
-      report: {
-        msg: "",
-        sender: null,
-      },
-      tenants: [
-        { name: "Andrei", isResponsible: false, paid: true },
-        { name: "Dauren", isResponsible: false, paid: true },
-        { name: "Syed", isResponsible: true, paid: false },
-      ],
-    },
-    {
-      address: "Address 2",
-      rooms: 3,
-      report: {
-        msg: "Our AC is broken!!!",
-        sender: "Antonio",
-      },
-      tenants: [
-        { name: "Antonio", isResponsible: true, paid: true },
-        { name: "Nekeisha", isResponsible: false, paid: true },
-      ],
-    },
-  ];
+const Rule = ({ rule, index, setRule, deleteRule }) => {
+  const [edit, setEdit] = useState(false);
+  const [inputText, changeInputText] = useState(rule);
+
+  const textInputRef = useRef();
+
+  useEffect(() => {
+    if (edit) {
+      textInputRef.current.focus();
+    }
+  }, [edit]);
 
   return (
+    <View style={[ownerStyles.rule]}>
+      {edit ? (
+        <TextInput
+          ref={textInputRef}
+          style={ownerStyles.ruleTextInput}
+          onChangeText={changeInputText}
+          value={inputText}
+          placeholder='Enter rule...'
+          onBlur={() => {
+            if (edit) setRule(index, inputText);
+            setEdit(false);
+          }}
+        />
+      ) : (
+        <Text style={ownerStyles.ruleText}>
+          {index + 1}. {rule}
+        </Text>
+      )}
+      <View style={ownerStyles.ruleButtons}>
+        <Pressable
+          style={ownerStyles.ruleEditBtn}
+          onPress={() => {
+            if (edit) setRule(index, inputText);
+            setEdit(!edit);
+          }}
+        >
+          {edit ? (
+            <Image
+              style={ownerStyles.ruleSaveIcon}
+              source={require("../assets/tick-red.png")}
+              resizeMode={"center"}
+            />
+          ) : (
+            <Image
+              style={ownerStyles.ruleEditIcon}
+              source={require("../assets/pen-red.png")}
+              resizeMode={"center"}
+            />
+          )}
+        </Pressable>
+        <Pressable
+          style={ownerStyles.ruleDeleteBtn}
+          onPress={() => deleteRule(index)}
+        >
+          <Image
+            style={ownerStyles.ruleDeleteIcon}
+            resizeMode={"center"}
+            source={require("../assets/garbage-can-red.png")}
+          />
+        </Pressable>
+      </View>
+    </View>
+  );
+};
+
+export function OwnerDashboard({ navigation, userData, jwtToken }) {
+  const [searchText, changeSearchText] = useState();
+
+  const { loading, error, data } = useQuery(getOwnerProperties, {
+    context: {
+      headers: {
+        Authorization: "Bearer " + jwtToken,
+      },
+    },
+  });
+
+  let properties;
+
+  if (searchText)
+    properties = data.getProperties.filter((property) => {
+      return property.address1.toLowerCase().includes(searchText.toLowerCase());
+    });
+  else 
+    properties = data?.getProperties;
+
+
+  return loading ? (
+    <View>
+      <Text>Loading...</Text>
+    </View>
+  ) : (
     <View style={[styles.container, ownerStyles.ownerDashboard]}>
       <View style={ownerStyles.ownerDashboardHeader}>
         <Text style={styles.textH2}>Your Properties</Text>
@@ -95,18 +169,25 @@ export function OwnerDashboard({navigation, ownerId}) {
           source={require("../assets/search.png")}
           resizeMode={"center"}
         />
-        <TextInput style={styles.searchTextInput} placeholder='Search property...' />
+        <TextInput
+          onChangeText={changeSearchText}
+          style={styles.searchTextInput}
+          placeholder='Search property...'
+          value={searchText}
+        />
       </View>
-      <View style={ownerStyles.ownerDashboardProperties}>
+      <ScrollView style={ownerStyles.ownerDashboardProperties}>
         {properties.map((property, index) => (
           <PropertyCard key={index} property={property} />
         ))}
-      </View>
+      </ScrollView>
       <Pressable
-        onPress={() => {navigation.navigate("AddProperty", {
-          ownerId,
-          title: "Add new property"
-        })}}
+        onPress={() => {
+          navigation.navigate("AddProperty", {
+            title: "Add new property",
+            jwtToken,
+          });
+        }}
         style={[styles.button, styles.buttonBig, ownerStyles.addNewPropertyButton]}
       >
         <Text style={[styles.buttonText, styles.buttonTextBig]}>
@@ -115,136 +196,225 @@ export function OwnerDashboard({navigation, ownerId}) {
       </Pressable>
     </View>
   );
+}
 
-  export function AddProperty({ title, ownerId }) {
-    const [registerAddress] = useMutation(registerAddress);
+export function AddProperty({ route, navigation }) {
+  const { title, jwtToken } = route.params;
+  const [submitProperty] = useMutation(addProperty);
 
-    const [num, changeNum] = useState("");
-    const [street, changeStreet] = useState("");
-    const [city, changeCity] = useState("");
-    const [province, changeProvince] = useState("");
-    const [postalCode, changePostalCode] = useState("");
-    const [description, changeDescription] = useState("");
-/* 
-    const [cityMsg, setCityMsg] = useState("");
-    const [provinceMsg, setProvinceNameMsg] = useState("");
-    const [postalCodeMsg, setPostalCodeMsg] = useState("");
-    const [streetNumMsg, setStreetNumMsg] = useState(""); */
+  const [address1, changeAddress1] = useState("");
+  const [address2, changeAddress2] = useState("");
+  const [city, changeCity] = useState("");
+  const [province, changeProvince] = useState("");
+  const [postalCode, changePostalCode] = useState("");
+  const [description, changeDescription] = useState("");
 
-    const submitPropertyForm = () => {
-      registerAddress({
-        variables: {
-          num,
-          street,
-          city,
-          province,
-          postalCode,
-          ownerId
-        }
-      })
-    }
+  /* const [cityMsg, setCityMsg] = useState("");
+  const [provinceMsg, setProvinceNameMsg] = useState("");
+  const [postalCodeMsg, setPostalCodeMsg] = useState("");
+  const [streetNumMsg, setStreetNumMsg] = useState(""); */
 
-    return (
-      <View>
-        <View style={styles.navigationHeaderArea}>
-          <View style={styles.navigationHeader}>
-            <Pressable
-              onPress={() => {
-                navigation.goBack();
-              }}
-            >
-              <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
-            </Pressable>
-            <Text style={styles.navigationHeaderText}>{title}</Text>
-          </View>
-          <View style={[styles.separator, styles.separatorBlue]} />
+  const [numOfRooms, setNumOfRooms] = useState(3);
+  const pickerRef = useRef();
+
+  const [rules, setRules] = useState([]);
+
+  const submitPropertyForm = () => {
+    submitProperty({
+      context: {
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      },
+      variables: {
+        address1,
+        address2,
+        city,
+        province,
+        postalCode,
+        rules,
+        description,
+        numOfRooms,
+      },
+    })
+      .then((result) => navigation.goBack())
+      .catch((err) => console.log(err));
+  };
+
+  const addNewRule = () => {
+    setRules((rules) => {
+      let newRules = rules.map((r) => r);
+      newRules.push("");
+      return newRules;
+    });
+  };
+
+  const setRule = (index, newRule) => {
+    setRules((rules) => {
+      let newRules = rules.map((r) => r);
+      newRules[index] = newRule;
+      return newRules;
+    });
+  };
+
+  const deleteRule = (index) => {
+    setRules((rules) => {
+      return rules.filter((r, i) => i !== index);
+    });
+  };
+
+  return (
+    <View style={[styles.container, ownerStyles.addPropertyScreen]}>
+      <View style={styles.navigationHeaderArea}>
+        <View style={styles.navigationHeader}>
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
+          </Pressable>
+          <Text style={styles.navigationHeaderText}>{title}</Text>
         </View>
+        <View style={[styles.separator, styles.separatorBlue]} />
+      </View>
 
-        <View style={ownerStyles.addPropertyScreen}>
-          <View style={ownerStyles.lineSeparator} />
-          <View>
-            <View style={ownerStyles.addressRow}>
-              <Text style={{ marginLeft: 15 }}>Number</Text>
-              <Text style={{ marginLeft: 60 }}>Street</Text>
-            </View>
+      <ScrollView style={ownerStyles.addPropertyScreenForm}>
+        <View>
+          <View style={styles.formBox}>
+            <Text style={[styles.textH4, styles.formLabel]}>Address Line 1</Text>
+            <TextInput
+              onChangeText={changeAddress1}
+              style={styles.formInput}
+              value={address1}
+              autoCompleteType='street-address'
+            />
+            <Text style={styles.alarmText}>{}</Text>
+          </View>
 
-            <View style={ownerStyles.addressRow}>
-              <TextInput
-                onChangeText={changeNum}
-                style={[ownerStyles.streetNumberInput]}
-                value={num}
-              />
-              <TextInput
-                onChangeText={changeStreet}
-                style={[ownerStyles.streetInput]}
-                value={street}
-              />
-            </View>
+          <View style={styles.formBox}>
+            <Text style={[styles.textH4, styles.formLabel]}>Address Line 2</Text>
+            <TextInput
+              onChangeText={changeAddress2}
+              style={styles.formInput}
+              value={address2}
+            />
+            <Text style={styles.alarmText}>{}</Text>
+          </View>
 
-            <View style={ownerStyles.addressRow}>
-              <Text style={{ marginLeft: 15 }}>City</Text>
-              <Text style={{ marginLeft: 190 }}>Province</Text>
-            </View>
+          <View style={[styles.formBox]}>
+            <Text style={[styles.textH4, styles.formLabel]}>City</Text>
+            <TextInput
+              onChangeText={changeCity}
+              style={styles.formInput}
+              value={city}
+            />
+            <Text style={styles.alarmText}>{}</Text>
+          </View>
 
-            <View style={ownerStyles.addressRow}>
-              <TextInput
-                onChangeText={changeCity}
-                style={[ownerStyles.cityInput]}
-                value={city}
-              />
+          <View style={styles.formRowContainer}>
+            <View style={[styles.formBox, styles.formBoxSize1]}>
+              <Text style={[styles.textH4, styles.formLabel]}>Province</Text>
               <TextInput
                 onChangeText={changeProvince}
-                style={[ownerStyles.provinceInput]}
+                style={styles.formInput}
                 value={province}
               />
+              <Text style={styles.alarmText}>{}</Text>
+            </View>
+
+            <View style={styles.formRowSpace} />
+
+            <View style={[styles.formBox, styles.formBoxSize1]}>
+              <Text style={[styles.textH4, styles.formLabel]}>Postal Code</Text>
+              <TextInput
+                onChangeText={changePostalCode}
+                style={styles.formInput}
+                value={postalCode}
+              />
+              <Text style={styles.alarmText}>{}</Text>
             </View>
           </View>
+        </View>
 
-          <View style={ownerStyles.addressRow}>
-            <Text style={{ marginLeft: 15 }}>Postal Code</Text>
-            <Text style={{ marginLeft: 70 }}>Owner ID</Text>
-          </View>
-          <View style={ownerStyles.addressRow}>
-            <TextInput
-              onChangeText={changePostalCode}
-              style={[ownerStyles.postalCodeInput]}
-              value={postalCode}
-            />
-          </View>
-          <View style={ownerStyles.lineSeparator} />
-          <Text style={{ marginLeft: 15, marginBottom: 8, marginTop: 7 }}>
+        <View style={[styles.separator, styles.separatorBlue]} />
+
+        <View style={ownerStyles.chooseNumOfRoomsArea}>
+          <Text style={[ownerStyles.chooseNumOfRooms, styles.textH3]}>
             Number of rooms
           </Text>
-            {/* <View>
-            <Picker style={{ height: 20, width: 30 }}>
-              <Picker.Item label="1" value="1" />
-              <Picker.Item label="2" value="2" />
+          <Pressable
+            onPress={() => {
+              pickerRef.current.focus();
+            }}
+            style={styles.formPicker}
+          >
+            <Text style={[styles.formPickerValue]}>{numOfRooms}</Text>
+            <Picker
+              ref={pickerRef}
+              style={styles.formPickerButton}
+              selectedValue={numOfRooms}
+              onValueChange={(itemValue) => {
+                setNumOfRooms(itemValue);
+              }}
+            >
+              {(() => {
+                let items = [];
+                for (let i = 1; i < 13; i++)
+                  items.push(<Picker.Item value={i} label={`${i}`} key={i} />);
+                return items;
+              })()}
             </Picker>
-          </View> */}
-          <View style={ownerStyles.lineSeparator} />
-          <View>
-            <Text style={{ textAlign: "center" }}>Rules</Text>
-            <Pressable style={ownerStyles.addNewRuleBtn}>
-              <Text> Add new rule</Text>
-            </Pressable>
-          </View>
-          <View style={ownerStyles.lineSeparator} />
-          <Text style={{ textAlign: "center", marginBottom: 7 }}>Description</Text>
-          <View>
-            <TextInput
-              onChangeText={changeDescription}
-              style={ownerStyles.DescTextInput}
-              placeholder='Enter description'
-              value={description}
-            />
-          </View>
-          <View style={ownerStyles.lineSeparator} />
-          <Text style={{ marginLeft: 11 }}>
-            {" "}
+          </Pressable>
+        </View>
+
+        <View style={[styles.separator, styles.separatorBlue]} />
+
+        <View style={ownerStyles.rulesList}>
+          <Text style={[styles.textH3, ownerStyles.rulesListHeader]}>Rules</Text>
+          {rules.map((rule, index) => {
+            return (
+              <Rule
+                key={index}
+                rule={rule}
+                index={index}
+                setRule={setRule}
+                deleteRule={deleteRule}
+              />
+            );
+          })}
+          <Pressable
+            onPress={() => {
+              addNewRule();
+            }}
+            style={[styles.button, styles.buttonRound, ownerStyles.addNewRuleBtn]}
+          >
+            <Text style={styles.buttonText}>Add new rule</Text>
+          </Pressable>
+        </View>
+
+        <View style={[styles.separator, styles.separatorBlue]} />
+
+        <View style={ownerStyles.editPropertyDesc}>
+          <Text style={styles.textH3}>Description</Text>
+
+          <TextInput
+            onChangeText={changeDescription}
+            style={ownerStyles.descTextInput}
+            placeholder='Enter description'
+            value={description}
+            multiline={true}
+          />
+        </View>
+
+        <View style={[styles.separator, styles.separatorBlue]} />
+
+        <View style={ownerStyles.uploadPropertyDocumentArea}>
+          <Text style={[styles.textH3, { textAlign: "center" }]}>
             Please, provide evidence of rental property ownership
           </Text>
           <Text
-            style={ownerStyles.RegistrationProofOfOwnership}
+            style={[styles.lightText]}
             onPress={() =>
               Linking.openURL(
                 "https://www.ontario.ca/page/register-land-documents-electronically"
@@ -253,34 +423,31 @@ export function OwnerDashboard({navigation, ownerId}) {
           >
             Check viable proof of ownership.
           </Text>
-          <Pressable
-            onPress={uploadDocBtnPressed}
-            //onPress = {() => (console.log("Button press"))}
-            style={ownerStyles.uploadDocumentsBtn}
-          >
-            <Text style={ownerStyles.uploadDocText}>{uploadDoc}</Text>
-          </Pressable>
-          <Text style={{ marginTop: 7, marginLeft: 11 }}>
-            Property can be canceled or blocked if documents doesn't satisfy th
-            requirement.
-          </Text>
-          <Pressable
-            onPress={createPropertyBtnPressed}
-            style={ownerStyles.createPropertyBtnPressed}
-          >
-            <Text style={ownerStyles.createPropertyText}>{createProperty}</Text>
-          </Pressable>
+          <View style={[styles.flexRow, { margin: 10 }]}>
+            <Pressable onPress={() => {}} style={[styles.button, styles.flexSize1]}>
+              <Text style={styles.buttonText}>Upload document</Text>
+            </Pressable>
+            <Text style={[styles.textH4, styles.flexSize1, { textAlign: "center" }]}>
+              No document
+            </Text>
+          </View>
+
+          <View style={[styles.separator, styles.separatorBlue]} />
         </View>
-      </View>
-    );
-  }
 
-  export function AddProperty(route, navigation) {
-
-    const checkAddress = () => {
-      let accept = 0;
-
-      if (!postalCode) {
+        <Pressable
+          onPress={() => submitPropertyForm()}
+          style={[styles.button, styles.buttonBig]}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextBig]}>
+            Add new property
+          </Text>
+        </Pressable>
+      </ScrollView>
+    </View>
+  );
+}
+/* if (!postalCode) {
         setPostalCodeMsg("Address required.");
       } else if (/d{1,5}\s\w.\s(\b\w*\b\s){1,2}\w*\./.test(postalCode)) {
         setPostalCodeMsg("Address should only contain Letters and Numbers.");
@@ -323,36 +490,4 @@ export function OwnerDashboard({navigation, ownerId}) {
         setProvinceNameMsg("");
         accept++;
       }
-
-      const submitForm = () => {
-        registerAdress({
-          variables: {
-            num,
-            street,
-            city,
-            province,
-            postalCode,
-          },
-        }).then((result) => navigation.navigate("Home"));
-      };
-      return (
-        <View style={[styles.container, ownerStyles.ownerDashboard]}>
-          <Text style={styles.textH1}>Owner Dashboard</Text>
-        </View>
-      );
-    };
-  }
-}
-/* 
-export function OwnerDashboard(props, { navigation }) {
-  //const [registerAdress] = useMutation(registerAdress);
-  const [selectedValue, setSelectedValue] = useState("3");
-  let num, city, street, province, postalCode, ownerId;
-  const { onPress, createProperty = "Create Property" } = props;
-  const { uploadDoc = "upload documents" } = props;
-
-  const uploadDocBtnPressed = () => {};
-  const createPropertyBtnPressed = () => {
-    props.navigation.navigate("Home");
-  };
-} */
+ */
