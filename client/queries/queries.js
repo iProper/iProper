@@ -21,4 +21,9 @@ const currentUser = gql`
 }
 `
 
-export { login, register, currentUser }
+const requestSms = gql`
+mutation($phoneNumber: String!) {
+  requestSMS(phoneNumber: $phoneNumber)
+}
+`
+export { login, register, currentUser, requestSms }

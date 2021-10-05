@@ -31,8 +31,6 @@ export default StyleSheet.create({
     color: "#FC4445",
     fontSize: 12,
     marginLeft: 15,
-    lineHeight: 12,
-    height: 12,
   },
   separator: {
     width: "100%",
@@ -127,7 +125,19 @@ export default StyleSheet.create({
   navigationHeaderText: {
     fontSize: 25,
   },
-  
+
+  loadingView: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingIcon: {
+    width: 50,
+    height: 50,
+    transform: [{ rotate: "50deg" }],
+  },
+  loadingText: {
+    fontSize: 18,
+  },
 
   homeScreen: {
     alignItems: "center",

@@ -80,7 +80,7 @@ export default StyleSheet.create({
   },
   confirmButton: {
     backgroundColor: "#FC4445",
-    marginTop: 15,
+    marginVertical: 15,
   },
   confirmInput: {
     height: 40,

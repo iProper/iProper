@@ -19,6 +19,7 @@ const client = new ApolloClient({
 const HomeScreen = ({ setJwtToken }) => {
   const logOut = () => {
     setJwtToken("");
+    if (Platform.OS === "web") return;
     SecureStore.setItemAsync("jwt_token", "").then(() => {});
   };
 
