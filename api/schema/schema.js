@@ -51,7 +51,11 @@ const PropertyType = new GraphQLObjectType({
       async resolve(parent, _args, req) {
         if (req) {
           const property = await Property.find({ propertyId: parent.id });
-          return property.residentIds;
+          let tenants = [];
+          for (const tenant of property.residentIds) {
+            tenants.push(await User.findById(tenant));
+          }
+          return tenants;
         }
 
         throw new Error("Non authenticated user");
