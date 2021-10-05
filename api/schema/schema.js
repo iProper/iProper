@@ -44,7 +44,7 @@ const PropertyType = new GraphQLObjectType({
     city: { type: GraphQLString },
     province: { type: GraphQLString },
     postalCode: { type: GraphQLString },
-    userIds: { type: new GraphQLList(GraphQLString) },
+    residentIds: { type: new GraphQLList(GraphQLString) },
     ownerId: { type: GraphQLID },
     residents: {
       type: new GraphQLList(UserType),
