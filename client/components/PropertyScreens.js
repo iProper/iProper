@@ -1,4 +1,11 @@
-import { Text, View, Pressable, TextInput, Image, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  Pressable,
+  TextInput,
+  Image,
+  ScrollView,
+} from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
@@ -31,7 +38,7 @@ const Rule = ({ rule, index, setRule, deleteRule }) => {
           style={ownerStyles.ruleTextInput}
           onChangeText={changeInputText}
           value={inputText}
-          placeholder='Enter rule...'
+          placeholder="Enter rule..."
           onBlur={() => {
             if (edit) setRule(index, inputText);
             setEdit(false);
@@ -79,7 +86,31 @@ const Rule = ({ rule, index, setRule, deleteRule }) => {
   );
 };
 
-export function AboutScreen({ navigation, property, route, userData, jwtToken }) {
+export const Home = (props) => {
+  return (
+    <View style={[styles.container, propertyStyles.homeContainer]}>
+      <View style={propertyStyles.renterHomeHeader}>
+        <Text style={styles.textH2}> Home </Text>
+        <View style={propertyStyles.renterHomeHeaderButtons}>
+          <Pressable style={[styles.button, propertyStyles.payRentButton]}>
+            <Text style = {[styles.buttonText]}>Pay Rent</Text>
+          </Pressable>
+          <Pressable style={[styles.button, styles.buttonOff]}>
+            <Text style={[styles.buttonText, styles.buttonOffText]}>Report Issue</Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export function AboutScreen({
+  navigation,
+  property,
+  route,
+  userData,
+  jwtToken,
+}) {
   const [submitUpdatedProperty] = useMutation(updateProperty);
   const [edit, setEdit] = useState(false);
 
@@ -278,7 +309,9 @@ export function AboutScreen({ navigation, property, route, userData, jwtToken })
                   {(() => {
                     let items = [];
                     for (let i = 1; i < 13; i++)
-                      items.push(<Picker.Item value={i} label={`${i}`} key={i} />);
+                      items.push(
+                        <Picker.Item value={i} label={`${i}`} key={i} />
+                      );
                     return items;
                   })()}
                 </Picker>
@@ -306,7 +339,9 @@ export function AboutScreen({ navigation, property, route, userData, jwtToken })
         <View style={[styles.separator, styles.separatorBlue]} />
 
         <View style={ownerStyles.rulesList}>
-          <Text style={[styles.textH3, ownerStyles.rulesListHeader]}>Rules</Text>
+          <Text style={[styles.textH3, ownerStyles.rulesListHeader]}>
+            Rules
+          </Text>
           {rules.map((rule, index) => {
             return (
               <Rule
@@ -322,7 +357,11 @@ export function AboutScreen({ navigation, property, route, userData, jwtToken })
             onPress={() => {
               addNewRule();
             }}
-            style={[styles.button, styles.buttonRound, ownerStyles.addNewRuleBtn]}
+            style={[
+              styles.button,
+              styles.buttonRound,
+              ownerStyles.addNewRuleBtn,
+            ]}
           >
             <Text style={styles.buttonText}>Add new rule</Text>
           </Pressable>
@@ -336,7 +375,7 @@ export function AboutScreen({ navigation, property, route, userData, jwtToken })
           <TextInput
             onChangeText={changeDescription}
             style={edit ? ownerStyles.descTextInput : propertyStyles.descText}
-            placeholder='Enter description...'
+            placeholder="Enter description..."
             value={description}
             multiline={true}
             editable={edit}
@@ -348,7 +387,10 @@ export function AboutScreen({ navigation, property, route, userData, jwtToken })
 }
 
 export function PropertyTabs({ navigation, route, userData, jwtToken }) {
-  const propertyId = route.params.id;
+  let propertyId = 0;
+  if (userData.isOwner === "true") {
+    propertyId = route.params.id;
+  }
 
   const { loading, error, data } = useQuery(getPropertyById, {
     context: {
@@ -361,28 +403,41 @@ export function PropertyTabs({ navigation, route, userData, jwtToken }) {
     },
   });
 
-  return (
+  let property = data?.getProperty || null;
+
+  return loading ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      {loading ? (
-        <Tabs.Screen name='loading'>
-          {(props) => (
-            <View {...props}>
-              <Text>Loading...</Text>
-            </View>
-          )}
-        </Tabs.Screen>
-      ) : (
-        <Tabs.Screen name='About'>
-          {(props) => (
-            <AboutScreen
-              {...props}
-              property={data?.getProperty}
-              jwtToken={jwtToken}
-              userData={userData}
-            />
-          )}
-        </Tabs.Screen>
-      )}
+      <Tabs.Screen name="loading">
+        {(props) => (
+          <View {...props}>
+            <Text>Loading...</Text>
+          </View>
+        )}
+      </Tabs.Screen>
+    </Tabs.Navigator>
+  ) : (
+    <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+      <Tabs.Screen name="Home">
+        {(props) => (
+          <Home
+            {...props}
+            property={property}
+            jwtToken={jwtToken}
+            userData={userData}
+          />
+        )}
+      </Tabs.Screen>
+
+      <Tabs.Screen name="About">
+        {(props) => (
+          <AboutScreen
+            {...props}
+            property={data?.getProperty}
+            jwtToken={jwtToken}
+            userData={userData}
+          />
+        )}
+      </Tabs.Screen>
     </Tabs.Navigator>
   );
 }
