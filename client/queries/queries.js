@@ -25,7 +25,7 @@ const register = gql`
     )
   }
 `;
-const registerAdress = gql`
+const registerAddress = gql`
   mutation (
     $num: String!
     $street: String!
@@ -34,7 +34,7 @@ const registerAdress = gql`
     $postalCode: String!
     $ownerId: String!
   ) {
-    registerAdress(
+    registerAddress(
       num: $num
       street: $street
       city: $city
@@ -53,4 +53,4 @@ const currentUser = gql`
   }
 `;
 
-export { login, register, currentUser };
+export { login, register, currentUser, registerAddress };

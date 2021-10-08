@@ -6,90 +6,110 @@ import styles from "../styles/App.styles";
 import { ownerStyleSheet } from "../styles/OwnerScreens.styles";
 import { gql, useMutation } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
-import { registerAdress } from "../queries/queries";
+import { registerAddress } from "../queries/queries";
+import { from } from "zen-observable";
 
-export function AddProperty(route, navigation) {
-  const [registerAdress] = useMutation(registerAdress);
-  const [address, changeAddress] = useState("");
+// export function OwnerDashboard() {
+//   //const [registerAddress] = useMutation(registerAddress);
+//   const [address, changeAddress] = useState("");
+//   //let num, city, street, province, postalCode, ownerId;
+//   const [num, changeNum] = useState("");
+//   const [street, changeStreet] = useState("");
+//   const [city, changeCity] = useState("");
+//   const [province, changeProvince] = useState("");
+//   const [postalCode, changePostalCode] = useState("");
 
-  const [num, changeNum] = useState("");
-  const [street, changeStreet] = useState("");
-  const [city, changeCity] = useState("");
-  const [province, changeProvince] = useState("");
-  const [postalCode, changePostalCode] = useState("");
+//   const [cityMsg, setCityMsg] = useState("");
+//   const [provinceMsg, setProvinceNameMsg] = useState("");
+//   const [postalCodeMsg, setPostalCodeMsg] = useState("");
+//   const [streetNumMsg, setstreetNumMsg] = useState("");
+//   const checkAddress = () => {
+//     let accept = 0;
 
-  const [cityMsg, setCityMsg] = useState("");
-  const [provinceMsg, setProvinceNameMsg] = useState("");
-  const [postalCodeMsg, setPostalCodeMsg] = useState("");
-  const [streetNumMsg, setstreetNumMsg] = useState("");
-  const checkAddress = () => {
-    let accept = 0;
+//     if (!postalCode) {
+//       setPostalCodeMsg("Address required.");
+//     } else if (/d{1,5}\s\w.\s(\b\w*\b\s){1,2}\w*\./.test(postalCode)) {
+//       setPostalCodeMsg("Address should only contain Letters and Numbers.");
+//     } else if (!/^[A-Za-z]{7}$/.test(postalCode)) {
+//       setPostalCodeMsg("First name should be 7 letters long.");
+//     } else {
+//       setPostalCodeMsg("");
+//       accept++;
+//     }
 
-    if (!postalCode) {
-      setPostalCodeMsg("Address required.");
-    } else if (/d{1,5}\s\w.\s(\b\w*\b\s){1,2}\w*\./.test(postalCode)) {
-      setPostalCodeMsg("Address should only contain Letters and Numbers.");
-    } else if (!/^[A-Za-z]{7}$/.test(postalCode)) {
-      setPostalCodeMsg("First name should be 7 letters long.");
-    } else {
-      setPostalCodeMsg("");
-      accept++;
-    }
+//     if (!num) {
+//       setstreetNumMsg("Address required.");
+//     } else if (/^[0-9]*$/.test(num)) {
+//       setstreetNumMsg("Street Number should only contain Numbers.");
+//     } else if (!/^[0-9]{7}$/.test(num)) {
+//       setstreetNumMsg("Street Number should be 7 Numbers long.");
+//     } else {
+//       setstreetNumMsg("");
+//       accept++;
+//     }
 
-    if (!num) {
-      setstreetNumMsg("Address required.");
-    } else if (/^[0-9]*$/.test(num)) {
-      setstreetNumMsg("Street Number should only contain Numbers.");
-    } else if (!/^[0-9]{7}$/.test(num)) {
-      setstreetNumMsg("Street Number should be 7 Nubmbers long.");
-    } else {
-      setstreetNumMsg("");
-      accept++;
-    }
+//     if (!city) {
+//       setCityMsg("City name required.");
+//     } else if (!/^[A-Za-z]+$/.test(city)) {
+//       setCityMsg("City should only have letters");
+//     } else if (!/^[A-Za-z]{2,50}$/.test(city)) {
+//       setCityMsg("City should be from 2 to 50 letters long.");
+//     } else {
+//       setCityMsg("");
+//       passed++;
+//     }
 
-    if (!city) {
-      setCityMsg("City name required.");
-    } else if (!/^[A-Za-z]+$/.test(city)) {
-      setCityMsg("City should only have letters");
-    } else if (!/^[A-Za-z]{2,50}$/.test(city)) {
-      setCityMsg("City should be from 2 to 50 letters long.");
-    } else {
-      setCityMsg("");
-      passed++;
-    }
+//     if (!province) {
+//       setProvinceNameMsg("Province name required.");
+//     } else if (!/^[A-Za-z]+$/.test(province)) {
+//       setProvinceNameMsg("City should only have letters");
+//     } else if (!/^[A-Za-z]{2,50}$/.test(province)) {
+//       setProvinceNameMsg("Province should be from 2 to 50 letters long.");
+//     } else {
+//       setProvinceNameMsg("");
+//       passed++;
+//     }
 
-    if (!province) {
-      setProvinceNameMsg("Province name required.");
-    } else if (!/^[A-Za-z]+$/.test(province)) {
-      setProvinceNameMsg("City should only have letters");
-    } else if (!/^[A-Za-z]{2,50}$/.test(province)) {
-      setProvinceNameMsg("Province should be from 2 to 50 letters long.");
-    } else {
-      setProvinceNameMsg("");
-      passed++;
-    }
+//     const submitForm = () => {
+//       registerAddress({
+//         variables: {
+//           num,
+//           street,
+//           city,
+//           province,
+//           postalCode,
+//         },
+//       }).then((result) => navigation.navigate("Home"));
+//     };
+//     return (
+//       <view>
+//         <from
+//           onPress={() => submitForm()}
+//           onSubmit={(e) => {
+//             e.preventDefault();
+//             registerAddress({
+//               variables: {
+//                 num: num.value,
+//                 street: street.value,
+//                 city: city.value,
+//                 province: province.value,
+//                 postalCode: postalCode.value,
+//                 ownerId: ownerId.value,
+//               },
+//             });
+//           }}
+//         >
+//           <View style={[styles.container, ownerStyleSheet.ownerDashboard]}>
+//             <Text style={styles.textH1}>Owner Dashboard</Text>
+//           </View>
+//         </from>
+//       </view>
+//     );
+//   };
+// }
 
-    const submitForm = () => {
-      registerAdress({
-        variables: {
-          num,
-          street,
-          city,
-          province,
-          postalCode,
-        },
-      }).then((result) => navigation.navigate("Home"));
-    };
-    return (
-      <View style={[styles.container, ownerStyleSheet.ownerDashboard]}>
-        <Text style={styles.textH1}>Owner Dashboard</Text>
-      </View>
-    );
-  };
-}
-
-export function OwnerDashboard(props, { navigation }) {
-  //const [registerAdress] = useMutation(registerAdress);
+export function AddProperty(props) {
+  //const [registerAddress] = useMutation(registerAddress);
   const [selectedValue, setSelectedValue] = useState("3");
   let num, city, street, province, postalCode, ownerId;
   const { onPress, createProperty = "Create Property" } = props;
@@ -115,7 +135,8 @@ export function OwnerDashboard(props, { navigation }) {
               style={[ownerStyleSheet.streetNumberInput]}
             />
             <TextInput
-              ref={(value) => (street = value)}
+              // onChangeText={changeStreet}
+              //ref={(value) => (street = value)}
               style={[ownerStyleSheet.streetInput]}
             />
           </View>
@@ -209,7 +230,7 @@ export function OwnerDashboard(props, { navigation }) {
           //onPress={() => submitForm()}
           // onSubmit={(e) => {
           //   e.preventDefault();
-          //   registerAdress({
+          //   registerAddress({
           //     variables: {
           //       num: num.value,
           //       street: street.value,
@@ -231,4 +252,4 @@ export function OwnerDashboard(props, { navigation }) {
   );
 }
 
-export default OwnerDashboard;
+export default AddProperty;
