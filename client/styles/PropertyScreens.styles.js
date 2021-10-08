@@ -1,6 +1,26 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
+  homeContainer: {
+    padding: 30,
+    alignItems: "center",
+    justifyContent: "top",
+  },
+  
+  renterHomeHeader: {
+    alignItems: "center",
+    width: "100%",
+    padding: 15,
+  },
+
+  renterHomeHeaderButtons: {
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+  },
+
   propertyAboutScreen: {
     padding: 30,
   },

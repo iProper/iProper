@@ -169,7 +169,7 @@ export function OwnerDashboard({ navigation, userData, jwtToken }) {
     return unsubscribe;
   }, [navigation]);
 
-  let properties;
+  let properties = [];
 
   if (searchText)
     properties = data.getProperties.filter((property) => {
@@ -204,7 +204,7 @@ export function OwnerDashboard({ navigation, userData, jwtToken }) {
         showsVerticalScrollIndicator={false}
         style={[ownerStyles.ownerDashboardProperties]}
       >
-        {properties.map((property, index) => (
+        {properties?.map((property, index) => (
           <PropertyCard key={index} property={property} />
         ))}
         <View style={{ flex: 1, height: 150 }} />

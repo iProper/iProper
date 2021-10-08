@@ -13,6 +13,7 @@ import { currentUser } from "./queries/queries";
 import { useQuery } from "@apollo/client";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import SideMenu from "./components/SideMenu";
+import { RenterDashboard } from "./components/RenterDashboard";
 import { PropertyTabs } from "./components/PropertyScreens";
 
 const Stack = createNativeStackNavigator();
@@ -26,13 +27,17 @@ const client = new ApolloClient({
 const OwnerStack = ({ navigation, currentUser, jwtToken }) => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Stack.Screen name='Home' option={{ title: "Home" }}>
+      <Stack.Screen name="Home" option={{ title: "Home" }}>
         {(props) => (
-          <OwnerDashboard {...props} userData={currentUser} jwtToken={jwtToken} />
+          <OwnerDashboard
+            {...props}
+            userData={currentUser}
+            jwtToken={jwtToken}
+          />
         )}
       </Stack.Screen>
       <Stack.Screen
-        name='AddProperty'
+        name="AddProperty"
         option={{ title: "AddProperty" }}
         component={AddProperty}
       />
@@ -58,6 +63,8 @@ const LoggedInStack = ({ jwtToken }) => {
     );
   }
 
+  console.log(data);
+
   return loading && !data ? (
     <View>
       <Text>Loading...</Text>
@@ -69,17 +76,26 @@ const LoggedInStack = ({ jwtToken }) => {
       )}
       screenOptions={{ headerShown: true, headerTitle: "" }}
     >
-      <Drawer.Screen name='MainStack'>
+      {data.currentUser.isOwner === "true" && (
+        <Drawer.Screen name="MainStack">
+          {(props) => (
+            <OwnerStack
+              {...props}
+              jwtToken={jwtToken}
+              currentUser={data.currentUser}
+            />
+          )}
+        </Drawer.Screen>
+      )}  
+      <Drawer.Screen name="PropertyTabs">
         {(props) => (
-          <OwnerStack
+          <PropertyTabs
             {...props}
+            propertyId={0}
+            userData={data.currentUser}
             jwtToken={jwtToken}
-            currentUser={data.currentUser}
           />
         )}
-      </Drawer.Screen>
-      <Drawer.Screen name='PropertyTabs'>
-        {(props) => <PropertyTabs {...props} propertyId={0} userData={data.currentUser} jwtToken={jwtToken} />}
       </Drawer.Screen>
     </Drawer.Navigator>
   );
@@ -110,11 +126,13 @@ export default function App() {
             <Stack.Navigator
               screenOptions={{ headerShown: false, animation: "none" }}
             >
-              <Stack.Screen name='Login' option={{ title: "Login" }}>
-                {(props) => <LoginScreen {...props} setJwtToken={setJwtToken} />}
+              <Stack.Screen name="Login" option={{ title: "Login" }}>
+                {(props) => (
+                  <LoginScreen {...props} setJwtToken={setJwtToken} />
+                )}
               </Stack.Screen>
               <Stack.Screen
-                name='Registration'
+                name="Registration"
                 component={RegistrationScreens}
                 option={{ title: "Registration" }}
               ></Stack.Screen>
@@ -123,7 +141,7 @@ export default function App() {
             <LoggedInStack jwtToken={jwtToken} />
           )}
         </NavigationContainer>
-        <StatusBar style='auto' />
+        <StatusBar style="auto" />
       </KeyboardAvoidingView>
     </ApolloProvider>
   );
