@@ -13,6 +13,18 @@ export default StyleSheet.create({
     padding: 15,
   },
 
+  renterDueToday: {
+    alignItems: "center",
+    width: "100%",
+    padding: 145,
+  },
+
+  reportCompletionButton: {
+    flexDirection: "row",
+    width: "100%",
+    
+  },
+
   renterHomeHeaderButtons: {
     padding: 10,
     flexDirection: "row",

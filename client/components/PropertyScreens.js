@@ -98,9 +98,17 @@ export const Home = (props) => {
           <Pressable style={[styles.button, styles.buttonOff]}>
             <Text style={[styles.buttonText, styles.buttonOffText]}>Report Issue</Text>
           </Pressable>
+          
+          <View style = {propertyStyles.renterDueToday}>
+            <Text style = {styles.textH2}> Due Today </Text>
+          </View>
+          <Pressable style = {[styles.button, propertyStyles.reportCompletionButton]}>
+            <Text style = {[styles.buttonText]}>Report Completion</Text>
+          </Pressable>
+
         </View>
       </View>
-    </View>
+    </View>  
   );
 };
 

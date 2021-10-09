@@ -12,10 +12,7 @@ export default StyleSheet.create({
         paddingTop: 20,
        
     },
-
-  
     
-
     payRentContainer : {
         flex: 1,
         alignItems: 'flex-start',
