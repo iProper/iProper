@@ -2,7 +2,8 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   ownerDashboard: {
-    padding: 30
+    padding: 30,
+    paddingBottom: 0,
   }, 
   ownerDashboardHeader: {
     justifyContent: "center",
@@ -10,7 +11,6 @@ export default StyleSheet.create({
     paddingBottom: 10,
   },
   ownerDashboardProperties: {
-    paddingVertical: 15,
     marginTop: 5,
     flexGrow: 1,
   },
