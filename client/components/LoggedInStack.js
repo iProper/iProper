@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 
 // Custom components
 import OwnerStack from "./OwnerStack";
-import { PropertyTabs } from "./PropertyScreens";
+import { PropertyTabs } from "./PropertyTabs";
 import SideMenu from "./SideMenu";
 
 // Styles
@@ -45,7 +45,7 @@ const LoggedInStack = ({ jwtToken }) => {
       drawerContent={(props) => (
         <SideMenu {...props} userData={data.currentUser} jwtToken={jwtToken} />
       )}
-      screenOptions={{ headerShown: true, headerTitle: "" }}
+      screenOptions={{ headerShown: false, headerTitle: "" }}
     >
       {data.currentUser.isOwner === "true" && (
         <Drawer.Screen name='MainStack'>

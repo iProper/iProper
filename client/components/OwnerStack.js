@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import OwnerDashboard from "./OwnerScreens/OwnerDashboard";
-import AddProperty from "./OwnerScreens/AddProperty";
+import OwnerDashboard from "./owner-screens/OwnerDashboard";
+import AddProperty from "./owner-screens/AddProperty";
 
 const Stack = createNativeStackNavigator();
 

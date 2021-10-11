@@ -41,7 +41,9 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}>
-      <SafeAreaView style={[styles.App]}>
+      <SafeAreaView
+        style={[styles.App, Platform.OS === "android" && { marginTop: 15 }]}
+      >
         <NavigationContainer>
           {!jwtToken ? (
             <NotLoggedInStack setJwtToken={setJwtToken} />

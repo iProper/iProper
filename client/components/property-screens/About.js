@@ -1,124 +1,16 @@
-import {
-  Text,
-  View,
-  Pressable,
-  TextInput,
-  Image,
-  ScrollView,
-} from "react-native";
+import { Text, View, Pressable, TextInput, Image, ScrollView } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
-import { getPropertyById, updateProperty } from "../queries/queries";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { updateProperty } from "../../queries/queries";
 
-import styles from "../styles/App.styles";
-import ownerStyles from "../styles/OwnerScreens.styles";
-import propertyStyles from "../styles/PropertyScreens.styles";
+import Rule from "../small/Rule";
 
-const Tabs = createBottomTabNavigator();
+import styles from "../../styles/App.styles";
+import ownerStyles from "../../styles/OwnerScreens.styles";
+import propertyStyles from "../../styles/PropertyScreens.styles";
 
-const Rule = ({ rule, index, setRule, deleteRule }) => {
-  const [edit, setEdit] = useState(false);
-  const [inputText, changeInputText] = useState(rule);
-
-  const textInputRef = useRef();
-
-  useEffect(() => {
-    if (edit) {
-      textInputRef.current.focus();
-    }
-  }, [edit]);
-
-  return (
-    <View style={[ownerStyles.rule]}>
-      {edit ? (
-        <TextInput
-          ref={textInputRef}
-          style={ownerStyles.ruleTextInput}
-          onChangeText={changeInputText}
-          value={inputText}
-          placeholder="Enter rule..."
-          onBlur={() => {
-            if (edit) setRule(index, inputText);
-            setEdit(false);
-          }}
-        />
-      ) : (
-        <Text style={ownerStyles.ruleText}>
-          {index + 1}. {rule}
-        </Text>
-      )}
-      <View style={ownerStyles.ruleButtons}>
-        <Pressable
-          style={ownerStyles.ruleEditBtn}
-          onPress={() => {
-            if (edit) setRule(index, inputText);
-            setEdit(!edit);
-          }}
-        >
-          {edit ? (
-            <Image
-              style={ownerStyles.ruleSaveIcon}
-              source={require("../assets/tick-red.png")}
-              resizeMode={"center"}
-            />
-          ) : (
-            <Image
-              style={ownerStyles.ruleEditIcon}
-              source={require("../assets/pen-red.png")}
-              resizeMode={"center"}
-            />
-          )}
-        </Pressable>
-        <Pressable
-          style={ownerStyles.ruleDeleteBtn}
-          onPress={() => deleteRule(index)}
-        >
-          <Image
-            style={ownerStyles.ruleDeleteIcon}
-            resizeMode={"center"}
-            source={require("../assets/garbage-can-red.png")}
-          />
-        </Pressable>
-      </View>
-    </View>
-  );
-};
-
-export const Home = (props) => {
-  return (
-    <View style={[styles.container, propertyStyles.homeContainer]}>
-      <View style={propertyStyles.renterHomeHeader}>
-        <Text style={styles.textH2}> Home </Text>
-        <View style={propertyStyles.renterHomeHeaderButtons}>
-          <Pressable style={[styles.button, propertyStyles.payRentButton]}>
-            <Text style = {[styles.buttonText]}>Pay Rent</Text>
-          </Pressable>
-          <Pressable style={[styles.button, styles.buttonOff]}>
-            <Text style={[styles.buttonText, styles.buttonOffText]}>Report Issue</Text>
-          </Pressable>
-          
-          <View style = {propertyStyles.renterDueToday}>
-            <Text style = {styles.textH2}> Due Today </Text>
-          </View>
-          <Pressable style = {[styles.button, propertyStyles.reportCompletionButton]}>
-            <Text style = {[styles.buttonText]}>Report Completion</Text>
-          </Pressable>
-
-        </View>
-      </View>
-    </View>  
-  );
-};
-
-export function AboutScreen({
-  navigation,
-  property,
-  route,
-  userData,
-  jwtToken,
-}) {
+export function AboutScreen({ navigation, property, userData, jwtToken }) {
   const [submitUpdatedProperty] = useMutation(updateProperty);
   const [edit, setEdit] = useState(false);
 
@@ -202,13 +94,13 @@ export function AboutScreen({
             {edit ? (
               <Image
                 style={propertyStyles.aboutEditIcon}
-                source={require("../assets/tick-red.png")}
+                source={require("../../assets/tick-red.png")}
                 resizeMode={"center"}
               />
             ) : (
               <Image
                 style={propertyStyles.aboutEditIcon}
-                source={require("../assets/pen-red.png")}
+                source={require("../../assets/pen-red.png")}
                 resizeMode={"center"}
               />
             )}
@@ -317,9 +209,7 @@ export function AboutScreen({
                   {(() => {
                     let items = [];
                     for (let i = 1; i < 13; i++)
-                      items.push(
-                        <Picker.Item value={i} label={`${i}`} key={i} />
-                      );
+                      items.push(<Picker.Item value={i} label={`${i}`} key={i} />);
                     return items;
                   })()}
                 </Picker>
@@ -347,9 +237,7 @@ export function AboutScreen({
         <View style={[styles.separator, styles.separatorBlue]} />
 
         <View style={ownerStyles.rulesList}>
-          <Text style={[styles.textH3, ownerStyles.rulesListHeader]}>
-            Rules
-          </Text>
+          <Text style={[styles.textH3, ownerStyles.rulesListHeader]}>Rules</Text>
           {rules.map((rule, index) => {
             return (
               <Rule
@@ -365,11 +253,7 @@ export function AboutScreen({
             onPress={() => {
               addNewRule();
             }}
-            style={[
-              styles.button,
-              styles.buttonRound,
-              ownerStyles.addNewRuleBtn,
-            ]}
+            style={[styles.button, styles.buttonRound, ownerStyles.addNewRuleBtn]}
           >
             <Text style={styles.buttonText}>Add new rule</Text>
           </Pressable>
@@ -383,7 +267,7 @@ export function AboutScreen({
           <TextInput
             onChangeText={changeDescription}
             style={edit ? ownerStyles.descTextInput : propertyStyles.descText}
-            placeholder="Enter description..."
+            placeholder='Enter description...'
             value={description}
             multiline={true}
             editable={edit}
@@ -394,58 +278,4 @@ export function AboutScreen({
   );
 }
 
-export function PropertyTabs({ navigation, route, userData, jwtToken }) {
-  let propertyId = 0;
-  if (userData.isOwner === "true") {
-    propertyId = route.params.id;
-  }
-
-  const { loading, error, data } = useQuery(getPropertyById, {
-    context: {
-      headers: {
-        Authorization: "Bearer " + jwtToken,
-      },
-    },
-    variables: {
-      id: propertyId,
-    },
-  });
-
-  let property = data?.getProperty || null;
-
-  return loading ? (
-    <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Tabs.Screen name="loading">
-        {(props) => (
-          <View {...props}>
-            <Text>Loading...</Text>
-          </View>
-        )}
-      </Tabs.Screen>
-    </Tabs.Navigator>
-  ) : (
-    <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Tabs.Screen name="Home">
-        {(props) => (
-          <Home
-            {...props}
-            property={property}
-            jwtToken={jwtToken}
-            userData={userData}
-          />
-        )}
-      </Tabs.Screen>
-
-      <Tabs.Screen name="About">
-        {(props) => (
-          <AboutScreen
-            {...props}
-            property={data?.getProperty}
-            jwtToken={jwtToken}
-            userData={userData}
-          />
-        )}
-      </Tabs.Screen>
-    </Tabs.Navigator>
-  );
-}
+export default AboutScreen;

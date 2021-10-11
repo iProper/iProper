@@ -5,7 +5,7 @@ import { useMutation } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
 import { addProperty } from "../../queries/queries";
 
-import Rule from "./Rule";
+import Rule from "../small/Rule";
 
 import ownerStyles from "../../styles/OwnerScreens.styles";
 
