@@ -4,7 +4,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useQuery } from "@apollo/client";
 
 // Custom components
-import OwnerStack from "./OwnerScreens";
+import OwnerStack from "./OwnerStack";
 import { PropertyTabs } from "./PropertyScreens";
 import SideMenu from "./SideMenu";
 
