@@ -1,49 +1,32 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
-import { LoginScreen } from "./components/LoginScreen";
-import { RegistrationScreens } from "./components/RegistrationScreens";
-import { OwnerDashboard, AddProperty } from "./components/OwnerScreens";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
-import styles from "./styles/App.styles";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import * as SecureStore from "expo-secure-store";
-import { currentUser } from "./queries/queries";
-import { useQuery } from "@apollo/client";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import SideMenu from "./components/SideMenu";
-import { RenterDashboard } from "./components/RenterDashboard";
-import { PropertyTabs } from "./components/PropertyScreens";
 
-const Stack = createNativeStackNavigator();
+import * as SecureStore from "expo-secure-store";
+
+import React, { useState, useEffect } from "react";
+import { View, Text, SafeAreaView, Platform } from "react-native";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { useQuery } from "@apollo/client";
+
+// Custom components
+import NotLoggedInStack from "./components/NotLoggedInStack";
+import OwnerStack from "./components/OwnerScreens";
+import { NavigationContainer } from "@react-navigation/native";
+import { PropertyTabs } from "./components/PropertyScreens";
+import SideMenu from "./components/SideMenu";
+
+// Styles
+import styles from "./styles/App.styles";
+
+// Queries
+import { currentUser } from "./queries/queries";
+
 const Drawer = createDrawerNavigator();
 
 const client = new ApolloClient({
   uri: "https://iproper.herokuapp.com/graphql",
   cache: new InMemoryCache(),
 });
-
-const OwnerStack = ({ navigation, currentUser, jwtToken }) => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Stack.Screen name="Home" option={{ title: "Home" }}>
-        {(props) => (
-          <OwnerDashboard
-            {...props}
-            userData={currentUser}
-            jwtToken={jwtToken}
-          />
-        )}
-      </Stack.Screen>
-      <Stack.Screen
-        name="AddProperty"
-        option={{ title: "AddProperty" }}
-        component={AddProperty}
-      />
-    </Stack.Navigator>
-  );
-};
 
 const LoggedInStack = ({ jwtToken }) => {
   let { loading, error, data } = useQuery(currentUser, {
@@ -77,7 +60,7 @@ const LoggedInStack = ({ jwtToken }) => {
       screenOptions={{ headerShown: true, headerTitle: "" }}
     >
       {data.currentUser.isOwner === "true" && (
-        <Drawer.Screen name="MainStack">
+        <Drawer.Screen name='MainStack'>
           {(props) => (
             <OwnerStack
               {...props}
@@ -86,8 +69,8 @@ const LoggedInStack = ({ jwtToken }) => {
             />
           )}
         </Drawer.Screen>
-      )}  
-      <Drawer.Screen name="PropertyTabs">
+      )}
+      <Drawer.Screen name='PropertyTabs'>
         {(props) => (
           <PropertyTabs
             {...props}
@@ -104,6 +87,8 @@ const LoggedInStack = ({ jwtToken }) => {
 export default function App() {
   const [jwtToken, setJwtToken] = useState("");
 
+  //-------------------------------------------------------------------------
+  // Jwt token saving and retrieval
   useEffect(() => {
     if (Platform.OS === "web") return;
 
@@ -117,32 +102,20 @@ export default function App() {
 
     SecureStore.setItemAsync("jwt_token", jwtToken).then(() => {});
   }, [jwtToken]);
+  //-------------------------------------------------------------------------
 
   return (
     <ApolloProvider client={client}>
-      <KeyboardAvoidingView style={[styles.App]}>
+      <SafeAreaView style={[styles.App]}>
         <NavigationContainer>
           {!jwtToken ? (
-            <Stack.Navigator
-              screenOptions={{ headerShown: false, animation: "none" }}
-            >
-              <Stack.Screen name="Login" option={{ title: "Login" }}>
-                {(props) => (
-                  <LoginScreen {...props} setJwtToken={setJwtToken} />
-                )}
-              </Stack.Screen>
-              <Stack.Screen
-                name="Registration"
-                component={RegistrationScreens}
-                option={{ title: "Registration" }}
-              ></Stack.Screen>
-            </Stack.Navigator>
+            <NotLoggedInStack setJwtToken={setJwtToken} />
           ) : (
             <LoggedInStack jwtToken={jwtToken} />
           )}
         </NavigationContainer>
-        <StatusBar style="auto" />
-      </KeyboardAvoidingView>
+        <StatusBar style='auto' />
+      </SafeAreaView>
     </ApolloProvider>
   );
 }

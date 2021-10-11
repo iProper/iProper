@@ -4,7 +4,7 @@ export default StyleSheet.create({
   homeContainer: {
     padding: 30,
     alignItems: "center",
-    justifyContent: "top",
+    justifyContent: "flex-start",
   },
   
   renterHomeHeader: {

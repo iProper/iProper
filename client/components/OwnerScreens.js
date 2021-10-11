@@ -13,8 +13,11 @@ import styles from "../styles/App.styles";
 import { useMutation, useQuery } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
 import { addProperty, getOwnerProperties } from "../queries/queries";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import ownerStyles from "../styles/OwnerScreens.styles";
+
+const Stack = createNativeStackNavigator();
 
 const PropertyCard = ({ property }) => {
   return (
@@ -150,7 +153,7 @@ const Rule = ({ rule, index, setRule, deleteRule }) => {
   );
 };
 
-export function OwnerDashboard({ navigation, userData, jwtToken }) {
+function OwnerDashboard({ navigation, userData, jwtToken }) {
   const [searchText, changeSearchText] = useState("");
 
   const { loading, error, data, refetch } = useQuery(getOwnerProperties, {
@@ -226,7 +229,7 @@ export function OwnerDashboard({ navigation, userData, jwtToken }) {
   );
 }
 
-export function AddProperty({ route, navigation }) {
+function AddProperty({ route, navigation }) {
   const { title, jwtToken } = route.params;
   const [submitProperty] = useMutation(addProperty);
 
@@ -478,47 +481,26 @@ export function AddProperty({ route, navigation }) {
     </View>
   );
 }
-/* if (!postalCode) {
-        setPostalCodeMsg("Address required.");
-      } else if (/d{1,5}\s\w.\s(\b\w*\b\s){1,2}\w*\./.test(postalCode)) {
-        setPostalCodeMsg("Address should only contain Letters and Numbers.");
-      } else if (!/^[A-Za-z]{7}$/.test(postalCode)) {
-        setPostalCodeMsg("First name should be 7 letters long.");
-      } else {
-        setPostalCodeMsg("");
-        accept++;
-      }
 
-      if (!num) {
-        setstreetNumMsg("Address required.");
-      } else if (/^[0-9]*$/.test(num)) {
-        setstreetNumMsg("Street Number should only contain Numbers.");
-      } else if (!/^[0-9]{7}$/.test(num)) {
-        setstreetNumMsg("Street Number should be 7 Nubmbers long.");
-      } else {
-        setstreetNumMsg("");
-        accept++;
-      }
+const OwnerStack = ({ currentUser, jwtToken }) => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+      <Stack.Screen name="Home" option={{ title: "Home" }}>
+        {(props) => (
+          <OwnerDashboard
+            {...props}
+            userData={currentUser}
+            jwtToken={jwtToken}
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen
+        name="AddProperty"
+        option={{ title: "AddProperty" }}
+        component={AddProperty}
+      />
+    </Stack.Navigator>
+  );
+};
 
-      if (!city) {
-        setCityMsg("City name required.");
-      } else if (!/^[A-Za-z]+$/.test(city)) {
-        setCityMsg("City should only have letters");
-      } else if (!/^[A-Za-z]{2,50}$/.test(city)) {
-        setCityMsg("City should be from 2 to 50 letters long.");
-      } else {
-        setCityMsg("");
-        accept++;
-      }
-
-      if (!province) {
-        setProvinceNameMsg("Province name required.");
-      } else if (!/^[A-Za-z]+$/.test(province)) {
-        setProvinceNameMsg("City should only have letters");
-      } else if (!/^[A-Za-z]{2,50}$/.test(province)) {
-        setProvinceNameMsg("Province should be from 2 to 50 letters long.");
-      } else {
-        setProvinceNameMsg("");
-        accept++;
-      }
- */
+export default OwnerStack;

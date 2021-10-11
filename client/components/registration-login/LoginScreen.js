@@ -1,11 +1,11 @@
 import { Image, Text, View, Pressable, TextInput } from "react-native";
-import styles from "../styles/App.styles";
-import loginStyles  from "../styles/LoginScreen.styles"
+import styles from "../../styles/App.styles";
+import loginStyles  from "../../styles/LoginScreen.styles"
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { login } from "../queries/queries";
+import { login } from "../../queries/queries";
 
-export function LoginScreen({ setJwtToken, navigation }) {
+export default function LoginScreen({ setJwtToken, navigation }) {
   const [email, changeEmail] = useState("");
   const [password, changePassword] = useState("");
 
@@ -33,7 +33,7 @@ export function LoginScreen({ setJwtToken, navigation }) {
       <View style={[loginStyles.loginScreenHeader, styles.container]}>
         <Image
           style={styles.logo}
-          source={require("../assets/logo.png")}
+          source={require("../../assets/logo.png")}
           resizeMode={"center"}
         />
         <View

@@ -194,7 +194,6 @@ export default StyleSheet.create({
   App: {
     height: "100%",
     backgroundColor: "#fff",
-    marginTop: 25,
   },
 
   navigationHeaderArea: {
