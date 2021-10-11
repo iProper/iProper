@@ -2,50 +2,115 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import { LoginScreen } from "./components/LoginScreen";
 import { RegistrationScreens } from "./components/RegistrationScreens";
-import { OwnerDashboard } from "./components/OwnerScreens";
-import { AddProperty } from "./components/OwnerScreens";
+import { OwnerDashboard, AddProperty } from "./components/OwnerScreens";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-} from "react-native";
+import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import styles from "./styles/App.styles";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import * as SecureStore from "expo-secure-store";
+import { currentUser } from "./queries/queries";
+import { useQuery } from "@apollo/client";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import SideMenu from "./components/SideMenu";
+import { PropertyTabs } from "./components/PropertyScreens";
+import { PropertyHome } from "./components/PropertyHome";
+import { QRScreen } from "./components/QRScreen";
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const client = new ApolloClient({
   uri: "https://iproper.herokuapp.com/graphql",
   cache: new InMemoryCache(),
 });
 
-const HomeScreen = ({ setJwtToken, navigation }) => {
-  const logOut = () => {
-    setJwtToken("");
-    SecureStore.setItemAsync("jwt_token", "").then(() => {});
-  };
-  //const { onPress } = props;
-  // const AddNewPropertyPressed = () => {
-  //   props.navigation.navigate("OwnerScreen");
-  // };
+const OwnerStack = ({ navigation, currentUser, jwtToken }) => {
   return (
-    <View style={[styles.container, styles.homeScreen]}>
-      <Text style={styles.textH2}>Home Screen</Text>
-      <Pressable style={styles.button} onPress={() => logOut()}>
-        <Text style={styles.buttonText}>Log Out</Text>
-      </Pressable>
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate("OwnerScreens")}
-      >
-        <Text style={styles.buttonText}>AddNewProperty</Text>
-      </Pressable>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+      <Stack.Screen name="Home" option={{ title: "Home" }}>
+        {(props) => (
+          <OwnerDashboard
+            {...props}
+            userData={currentUser}
+            jwtToken={jwtToken}
+          />
+        )}
+      </Stack.Screen>
+
+      <Stack.Screen
+        name="PropertyHome"
+        option={{ title: "PropertyHome" }}
+        component={PropertyHome}
+      />
+
+      <Stack.Screen
+        name="QRScreen"
+        option={{ title: "QRScreen" }}
+        component={QRScreen}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const LoggedInStack = ({ jwtToken }) => {
+  let { loading, error, data } = useQuery(currentUser, {
+    context: {
+      headers: {
+        Authorization: "Bearer " + jwtToken,
+      },
+    },
+  });
+
+  if (error) {
+    console.log(error);
+    return (
+      <View style={styles.container}>
+        <Text>Something went wrong...</Text>
+      </View>
+    );
+  }
+
+  return loading && !data ? (
+    <View>
+      <Text>Loading...</Text>
     </View>
+  ) : (
+    <Drawer.Navigator
+      drawerContent={(props) => (
+        <SideMenu {...props} userData={data.currentUser} jwtToken={jwtToken} />
+      )}
+      screenOptions={{ headerShown: true, headerTitle: "" }}
+    >
+      <Drawer.Screen name="MainStack">
+        {(props) => (
+          <PropertyHome
+            {...props}
+            jwtToken={jwtToken}
+            currentUser={data.currentUser}
+          />
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="QRScreen">
+        {(props) => (
+          <QRScreen
+            {...props}
+            jwtToken={jwtToken}
+            currentUser={data.currentUser}
+          />
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen name="PropertyTabs">
+        {(props) => (
+          <PropertyTabs
+            {...props}
+            propertyId={0}
+            userData={data.currentUser}
+            jwtToken={jwtToken}
+          />
+        )}
+      </Drawer.Screen>
+    </Drawer.Navigator>
   );
 };
 
@@ -86,14 +151,7 @@ export default function App() {
               ></Stack.Screen>
             </Stack.Navigator>
           ) : (
-            <Stack.Navigator
-              screenOptions={{ headerShown: false, animation: "none" }}
-            >
-              <Stack.Screen name="Home" option={{ title: "Home" }}>
-                {(props) => <HomeScreen {...props} setJwtToken={setJwtToken} />}
-              </Stack.Screen>
-              <Stack.Screen name="OwnerScreens" component={AddProperty} />
-            </Stack.Navigator>
+            <LoggedInStack jwtToken={jwtToken} />
           )}
         </NavigationContainer>
         <StatusBar style="auto" />

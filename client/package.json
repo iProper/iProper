@@ -10,6 +10,8 @@
   "dependencies": {
     "@apollo/client": "^3.4.13",
     "@react-native-picker/picker": "^2.1.0",
+    "@react-navigation/bottom-tabs": "^6.0.7",
+    "@react-navigation/drawer": "^6.1.6",
     "@react-navigation/native-stack": "^6.1.0",
     "expo": "~42.0.1",
     "expo-secure-store": "^10.2.0",
@@ -17,11 +19,8 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
-    "react-native-dropdown-picker": "^5.1.28",
-    "react-native-picker-select": "^8.0.4",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
-    "react-native-select-dropdown": "^1.1.0",
     "react-native-web": "~0.13.12",
     "react-select": "^5.0.0"
   },

@@ -1,172 +1,174 @@
-import { WHEN_UNLOCKED_THIS_DEVICE_ONLY } from "expo-secure-store";
 import { StyleSheet } from "react-native";
 
-export const ownerStyleSheet = StyleSheet.create({
+export default StyleSheet.create({
   ownerDashboard: {
     padding: 30,
   },
+  ownerDashboardHeader: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 10,
+  },
+  ownerDashboardProperties: {
+    paddingVertical: 15,
+    marginTop: 5,
+    flexGrow: 1,
+  },
+  propertyCard: {
+    height: 150,
+  },
+  propertyCardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  propertyCardAddress: {
+    fontSize: 18,
+  },
+  propertyCardTenantsNum: {
+    fontSize: 18,
+  },
+  propertyCardMain: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flex: 1,
+    paddingVertical: 10,
+  },
+  propertyCardPaidBar: {
+    borderWidth: 1,
+    height: "100%",
+    width: 15,
+    justifyContent: "flex-end",
+  },
+  propertyCardPaidBarProgress: {
+    width: "100%",
+    backgroundColor: "#FC4445",
+  },
+  propertyCardStatuses: {
+    flex: 1,
+    marginHorizontal: 10,
+  },
+  propertyCardReportMsg: {
+    borderWidth: 1,
+    borderRadius: 5,
+    height: "75%",
+    padding: 5,
+  },
+  propertyCardButtons: {
+    width: "17%",
+    justifyContent: "space-between",
+  },
+  propertyCardReportStatusBtn: {
+    width: 45,
+    height: 45,
+    borderWidth: 5,
+    borderColor: "#ddd",
+    borderRadius: 50,
+  },
+  propertyCardChatBtn: {
+    width: 45,
+    height: 45,
+  },
+  addNewPropertyButton: {
+    position: "absolute",
+    bottom: 50,
+    alignSelf: "center",
+    width: "100%",
+  },
+  PropertyHomeButton: {
+    position: "absolute",
+    bottom: 120,
+    alignSelf: "center",
+    width: "100%",
+  },
 
   addPropertyScreen: {
-    //padding: 100,
-    paddingLeft: 20,
-    paddingRight: 20,
+    padding: 30,
     backgroundColor: "white",
-    height: "100%",
   },
-  lineSeparator: {
-    backgroundColor: "#97CAEF",
+  chooseNumOfRoomsArea: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    margin: 5,
+  },
+  chooseNumOfRooms: {
+    marginVertical: 5,
+  },
 
-    padding: 1,
+  rulesList: {
+    paddingVertical: 5,
+    alignItems: "center",
     width: "100%",
-    alignSelf: "center",
-    marginBottom: 10,
-    marginTop: 10,
   },
-  formInput: {
-    height: 35,
+  rulesListHeader: {
+    margin: 5,
+  },
+  rule: {
+    borderStyle: "solid",
+    borderWidth: 2,
+    borderColor: "#97CAEF",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 50,
+    padding: 8,
+    paddingHorizontal: 20,
     width: "100%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 15,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    marginVertical: 5,
+    marginVertical: 8,
   },
-  streetNumberInput: {
-    height: 35,
-    width: "25%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    marginVertical: 5,
+  ruleTextInput: {
+    fontSize: 15,
   },
-  streetInput: {
-    height: 35,
-    width: "70%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    marginVertical: 5,
-    marginLeft: 15,
+  ruleText: {
+    fontSize: 15,
   },
-  cityInput: {
-    height: 35,
-    width: "55%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    marginVertical: 5,
+  ruleButtons: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  provinceInput: {
-    height: 35,
-    width: "40%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    marginVertical: 5,
-    marginLeft: 15,
+  ruleEditBtn: {
+    width: 25,
+    height: 25,
+    marginHorizontal: 10,
   },
-  postalCodeInput: {
-    height: 35,
-    width: "33%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    marginVertical: 5,
+  ruleSaveIcon: {
+    width: 25,
+    height: 25,
   },
-  ownerIdInput: {
-    height: 35,
-    width: "60%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 18,
-    marginVertical: 5,
-    marginLeft: 23,
+  ruleEditIcon: {
+    width: 25,
+    height: 25,
   },
-  NumberOfRooms: {
-    marginRight: 10,
-    borderRadius: 6,
+  ruleDeleteBtn: {
+    width: 25,
+    height: 25,
+  },
+  ruleDeleteIcon: {
+    width: 25,
+    height: 25,
   },
   addNewRuleBtn: {
-    padding: 12,
-    width: "75%",
-    borderRadius: 10,
-    backgroundColor: "red",
+    width: "100%",
 
-    justifyContent: "center",
-    alignSelf: "center",
-    marginTop: 10,
+    marginVertical: 8,
   },
-  addNewRuleText: {
-    color: "white",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  DescTextInput: {
-    width: 330,
-    paddingBottom: 60,
-    backgroundColor: "#DCDCDC",
-    borderRadius: 3,
-  },
-  RegistrationProofOfOwnership: {
-    color: "blue",
-    margin: 10,
-    fontSize: 15,
-    backgroundColor: "white",
-    textAlign: "left",
-  },
-  uploadDocText: {
-    color: "white",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  createPropertyBtn: {},
-  createPropertyBtnPressed: {
-    width: 310,
-    borderRadius: 10,
+
+  editPropertyDesc: {
     alignItems: "center",
-    backgroundColor: "red",
-    alignSelf: "center",
-    justifyContent: "center",
-    marginTop: 20,
   },
-  createPropertyText: {
+  descTextInput: {
+    fontSize: 15,
+    width: 330,
+    textAlignVertical: "top",
+    backgroundColor: "#eee",
+    borderRadius: 5,
+    padding: 5,
+    minHeight: 60,
     margin: 10,
-    fontSize: 25,
-    marginLeft: 40,
-    textAlign: "left",
-    color: "white",
   },
-  uploadDocumentsBtn: {
-    padding: 10,
-    width: 160,
-    borderRadius: 10,
-    backgroundColor: "red",
-    alignSelf: "center",
-    justifyContent: "center",
-    marginTop: 8,
-    marginRight: 150,
-  },
-  addressRow: {
-    flexDirection: "row",
+
+  uploadPropertyDocumentArea: {
+    paddingVertical: 10,
+    alignItems: "center",
   },
 });

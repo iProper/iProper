@@ -6,6 +6,12 @@ const login = gql`
   }
 `;
 
+const requestSms = gql`
+  mutation ($phoneNumber: String!) {
+    requestSMS(phoneNumber: $phoneNumber)
+  }
+`;
+
 const register = gql`
   mutation (
     $firstName: String!
@@ -25,32 +31,115 @@ const register = gql`
     )
   }
 `;
-const registerAddress = gql`
+
+const addProperty = gql`
   mutation (
-    $num: String!
-    $street: String!
+    $address1: String!
+    $address2: String
     $city: String!
     $province: String!
     $postalCode: String!
-    $ownerId: String!
+    $rules: [String]
+    $description: String
+    $numOfRooms: Int!
   ) {
-    registerAddress(
-      num: $num
-      street: $street
+    addProperty(
+      address1: $address1
+      address2: $address2
       city: $city
       province: $province
       postalCode: $postalCode
-      ownerId: $ownerId
-    )
-  }
-`;
-const currentUser = gql`
-  {
-    current {
-      firstName
-      lastName
+      rules: $rules
+      description: $description
+      numOfRooms: $numOfRooms
+    ) {
+      id
     }
   }
 `;
 
-export { login, register, currentUser, registerAddress };
+const getOwnerProperties = gql`
+  {
+    getProperties {
+      id
+      address1
+      numOfRooms
+      residents {
+        id
+      }
+    }
+  }
+`;
+
+const getPropertyById = gql`
+  query ($id: String!) {
+    getProperty(id: $id) {
+      id
+      address1
+      address2
+      city
+      province
+      postalCode
+      numOfRooms
+      description
+      rules
+      residents {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
+const currentUser = gql`
+  {
+    currentUser {
+      id
+      firstName
+      lastName
+      isOwner
+      email
+      phoneNumber
+    }
+  }
+`;
+
+const updateProperty = gql`
+  mutation (
+    $id: String!
+    $address1: String!
+    $address2: String
+    $city: String!
+    $province: String!
+    $postalCode: String!
+    $rules: [String]
+    $description: String
+    $numOfRooms: Int!
+  ) {
+    updateProperty(
+      id: $id
+      address1: $address1
+      address2: $address2
+      city: $city
+      province: $province
+      postalCode: $postalCode
+      rules: $rules
+      description: $description
+      numOfRooms: $numOfRooms
+    ) {
+      id
+    }
+  }
+`;
+
+export {
+  login,
+  register,
+  currentUser,
+  addProperty,
+  getOwnerProperties,
+  requestSms,
+  getPropertyById,
+  updateProperty,
+};
