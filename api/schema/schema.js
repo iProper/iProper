@@ -316,6 +316,15 @@ const Mutation = new GraphQLObjectType({
         throw new Error("Non authenticated user");
       },
     },
+    deleteUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(_parent, args) {
+        return User.findByIdAndDelete(args.id);
+      },
+    },
     // updateUser: {
     //   type: UserType,
     //   args: {
@@ -342,15 +351,7 @@ const Mutation = new GraphQLObjectType({
     //     );
     // },
     // },
-    // deleteUser: {
-    //   type: UserType,
-    //   args: {
-    //     id: { type: new GraphQLNonNull(GraphQLID) },
-    //   },
-    //   resolve(_parent, args) {
-    //     return User.findByIdAndDelete(args.id);
-    //   },
-    // },
+    
   },
 });
 
