@@ -271,6 +271,7 @@ const Mutation = new GraphQLObjectType({
               postalCode: args.postalCode,
               numOfRooms: args.numOfRooms,
               description: args.description,
+              note: args.note,
               rules: args.rules,
               residentIds: args.residentIds,
               ownerId: req.user.id,
