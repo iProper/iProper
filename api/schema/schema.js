@@ -347,6 +347,9 @@ const Mutation = new GraphQLObjectType({
           if (req.user.isOwner) {
             const property = await Property.findById(args.id);
             if (req.user.id == property.ownerId) {
+              for (const tenantId of property.residentIds) {
+                await User.findByIdAndUpdate(tenantId, { propertyCode: null });
+              }
               return Property.findByIdAndDelete(args.id);
             }
 
