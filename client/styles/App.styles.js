@@ -51,6 +51,9 @@ export default StyleSheet.create({
   separator60: {
     width: "60%",
   },
+  separator20: {
+    width: "20%",
+  },
   button: {
     borderStyle: "solid",
     borderWidth: 1,
@@ -64,6 +67,9 @@ export default StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 15,
+  },
+  buttonTextBlue: {
+    color: "#97CAEF",
   },
   buttonOffText: {
     color: "#FC4445",
@@ -80,6 +86,10 @@ export default StyleSheet.create({
   },
   buttonRound: {
     borderRadius: 50,
+  },
+  buttonBlue: {
+    backgroundColor: "#97CAEF",
+    borderColor: "#97CAEF",
   },
 
   formBox: {
@@ -137,19 +147,18 @@ export default StyleSheet.create({
   },
 
   flexSize1: {
-    flex: 1
+    flex: 1,
   },
   flexSize2: {
-    flex: 2
+    flex: 2,
   },
-  
+
   flexRow: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
-  
 
   searchContainer: {
     backgroundColor: "#eee",
@@ -157,12 +166,13 @@ export default StyleSheet.create({
     padding: 2,
     flexDirection: "row",
     alignItems: "center",
+    width: "100%",
   },
   searchIcon: {
     width: 18,
     height: 18,
     margin: 5,
-    opacity: 0.5
+    opacity: 0.5,
   },
   searchTextInput: {
     fontSize: 18,
@@ -173,14 +183,28 @@ export default StyleSheet.create({
     height: "90%",
   },
 
+  iconS: {
+    width: 25,
+    height: 25,
+  },
+  iconM: {
+    width: 32,
+    height: 32,
+  },
+  iconL: {
+    width: 48,
+    height: 48,
+  },
+
   card: {
     padding: 10,
     borderWidth: 4,
     borderColor: "#97CAEF",
     borderRadius: 10,
     marginVertical: 5,
+    marginHorizontal: 10,
     backgroundColor: "#fff",
-    
+
     shadowRadius: 5,
     shadowOffset: {
       width: 5,
@@ -196,13 +220,15 @@ export default StyleSheet.create({
     backgroundColor: "#fff",
   },
 
-  navigationHeaderArea: {
-    marginBottom: 15,
-  },
   navigationHeader: {
     height: 40,
+    width: "100%",
+    marginBottom: 15,
+  },
+  navigationHeaderBackButton: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   navigationHeaderArrow: {
     color: "#97CAEF",
@@ -255,6 +281,6 @@ export default StyleSheet.create({
   },
   sideMenuItem: {
     borderBottomWidth: 1,
-    borderColor: "#97CAEF"
+    borderColor: "#97CAEF",
   },
 });

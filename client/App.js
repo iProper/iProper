@@ -48,7 +48,7 @@ export default function App() {
           {!jwtToken ? (
             <NotLoggedInStack setJwtToken={setJwtToken} />
           ) : (
-            <LoggedInStack jwtToken={jwtToken} />
+            <LoggedInStack jwtToken={jwtToken} setJwtToken={setJwtToken}/>
           )}
         </NavigationContainer>
         <StatusBar style='auto' />

@@ -4,6 +4,7 @@ export default StyleSheet.create({
   ownerDashboard: {
     padding: 30,
     paddingBottom: 0,
+    alignItems: "center",
   }, 
   ownerDashboardHeader: {
     justifyContent: "center",
@@ -13,6 +14,7 @@ export default StyleSheet.create({
   ownerDashboardProperties: {
     marginTop: 5,
     flexGrow: 1,
+    width: "104%",
   },
   propertyCard: {
     height: 150,

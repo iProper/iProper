@@ -4,7 +4,8 @@ import { useQuery } from "@apollo/client";
 import { getPropertyById } from "../queries/queries";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Home from "./property-screens/Home";
+import HomeRenter from "./property-screens/HomeRenter";
+import HomeOwner from "./property-screens/HomeOwner";
 import AboutScreen from "./property-screens/About";
 
 const Tabs = createBottomTabNavigator();
@@ -40,17 +41,29 @@ export function PropertyTabs({ route, userData, jwtToken }) {
     </Tabs.Navigator>
   ) : (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Tabs.Screen name='Home'>
-        {(props) => (
-          <Home
-            {...props}
-            property={property}
-            jwtToken={jwtToken}
-            userData={userData}
-          />
-        )}
-      </Tabs.Screen>
-
+      {userData.isOwner ? (
+        <Tabs.Screen name='Home'>
+          {(props) => (
+            <HomeOwner
+              {...props}
+              property={property}
+              jwtToken={jwtToken}
+              userData={userData}
+            />
+          )}
+        </Tabs.Screen>
+      ) : (
+        <Tabs.Screen name='Home'>
+          {(props) => (
+            <HomeRenter
+              {...props}
+              property={property}
+              jwtToken={jwtToken}
+              userData={userData}
+            />
+          )}
+        </Tabs.Screen>
+      )}
       <Tabs.Screen name='About'>
         {(props) => (
           <AboutScreen

@@ -9,6 +9,7 @@ import Rule from "../small/Rule";
 import styles from "../../styles/App.styles";
 import ownerStyles from "../../styles/OwnerScreens.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
+import NavigationHeader from "../small/NavigationHeader";
 
 export function AboutScreen({ navigation, property, userData, jwtToken }) {
   const [submitUpdatedProperty] = useMutation(updateProperty);
@@ -75,16 +76,10 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
 
   return (
     <View style={[styles.container, propertyStyles.propertyAboutScreen]}>
-      <View style={styles.navigationHeaderArea}>
-        <View style={styles.navigationHeader}>
-          <Pressable
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
-          </Pressable>
-          <Text style={styles.navigationHeaderText}>About</Text>
+      <NavigationHeader
+        goBack={() => navigation.navigate("Home")}
+        title='About'
+        Child={() => (
           <Pressable
             style={propertyStyles.aboutEditBtn}
             onPress={() => {
@@ -105,9 +100,9 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
               />
             )}
           </Pressable>
-        </View>
-        <View style={[styles.separator, styles.separatorBlue]} />
-      </View>
+        )}
+      />
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={propertyStyles.generalInfo}>
           <View style={[styles.flexRow, propertyStyles.infoField]}>

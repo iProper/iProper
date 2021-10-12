@@ -6,11 +6,12 @@ import { Picker } from "@react-native-picker/picker";
 import { addProperty } from "../../queries/queries";
 
 import Rule from "../small/Rule";
+import NavigationHeader from "../small/NavigationHeader";
 
 import ownerStyles from "../../styles/OwnerScreens.styles";
 
 function AddProperty({ route, navigation }) {
-  const { title, jwtToken } = route.params;
+  const { jwtToken } = route.params;
   const [submitProperty] = useMutation(addProperty);
 
   const [address1, changeAddress1] = useState("");
@@ -76,20 +77,7 @@ function AddProperty({ route, navigation }) {
 
   return (
     <View style={[styles.container, ownerStyles.addPropertyScreen]}>
-      <View style={styles.navigationHeaderArea}>
-        <View style={styles.navigationHeader}>
-          <Pressable
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
-          </Pressable>
-          <Text style={styles.navigationHeaderText}>{title}</Text>
-        </View>
-        <View style={[styles.separator, styles.separatorBlue]} />
-      </View>
-
+      <NavigationHeader goBack={navigation.goBack} title="Add new property"/>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={ownerStyles.addPropertyScreenForm}

@@ -3,10 +3,9 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   homeContainer: {
     padding: 30,
-    alignItems: "center",
-    justifyContent: "flex-start",
+    alignItems: "center"
   },
-  
+
   renterHomeHeader: {
     alignItems: "center",
     width: "100%",
@@ -22,7 +21,6 @@ export default StyleSheet.create({
   reportCompletionButton: {
     flexDirection: "row",
     width: "100%",
-    
   },
 
   renterHomeHeaderButtons: {
@@ -31,6 +29,56 @@ export default StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
+  },
+  note: {
+    borderStyle: "solid",
+    borderWidth: 2,
+    borderColor: "#97CAEF",
+
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 5,
+    padding: 8,
+    paddingHorizontal: 10,
+    paddingLeft: 20,
+    marginVertical: 4,
+
+    height: 45,
+    width: "100%",
+  },
+  addNoteButton: {
+    width: "100%",
+    height: 45,
+    marginVertical: 4,
+    borderWidth: 3,
+  },
+  pinnedNoteTextInput: {
+    fontSize: 15,
+  },
+  noteText: {
+    fontSize: 15,
+  },
+  noteButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  tenantText: {
+    textAlign: "center",
+    fontSize: 20,
+    marginTop: 20,
+    marginBottom: 4,
+  },
+  tenantsList: {
+    width: "104%",
+    flexGrow: 1,
+  },
+  responsibility: {
+    backgroundColor: "red",
+  },
+  QRcode: {
+    width: 350,
+    height: 350,
   },
 
   propertyAboutScreen: {
@@ -70,5 +118,5 @@ export default StyleSheet.create({
     borderRadius: 10,
     width: 60,
     height: 28,
-  }
-})
+  },
+});
