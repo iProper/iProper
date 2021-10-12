@@ -30,7 +30,7 @@ export default function App() {
     SecureStore.getItemAsync("jwt_token").then((jwt_token) => {
       setJwtToken(jwt_token);
     });
-  });
+  }, []);
 
   useEffect(() => {
     if (Platform.OS === "web" || !jwtToken) return;

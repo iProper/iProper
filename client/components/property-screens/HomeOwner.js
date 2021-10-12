@@ -136,7 +136,7 @@ export function PropertyHome({ navigation, jwtToken }) {
 
   return (
     <View style={[styles.container, propertyStyles.homeContainer]}>
-      <NavigationHeader goBack={navigation.goBack} title='Home' />
+      <NavigationHeader goBack={() => navigation.navigate("Main Stack")} title='Home' />
 
       <Note
         note={note}

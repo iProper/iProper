@@ -255,21 +255,17 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
-  sideMenuDrawer: {
-    height: "100%",
-    flex: 1,
-  },
-  sideMenu: {
-    height: "100%",
+  sideMenuHeaderArea: {
     backgroundColor: "#97CAEF",
-    flex: 1,
   },
   sideMenuHeader: {
     backgroundColor: "#fff",
     alignItems: "center",
     margin: 20,
     borderRadius: 10,
+  },
+  sideMenuMain: {
+    marginTop: 0,
   },
   sideMenuLogo: {
     width: "80%",
@@ -282,5 +278,13 @@ export default StyleSheet.create({
   sideMenuItem: {
     borderBottomWidth: 1,
     borderColor: "#97CAEF",
+  },
+  sideMenuBottomArea: {
+    marginBottom: 20,
+    padding: 15,
+    borderStyle: "solid", 
+    borderTopWidth: 3,
+    borderBottomWidth: 3,
+    borderColor: "#97CAEF"
   },
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useQuery } from "@apollo/client";
@@ -16,14 +16,18 @@ import { currentUser } from "../queries/queries";
 
 const Drawer = createDrawerNavigator();
 
-const LoggedInStack = ({ jwtToken }) => {
-  let { loading, error, data } = useQuery(currentUser, {
+const LoggedInStack = ({ jwtToken, setJwtToken }) => {
+  let { loading, error, data, refetch } = useQuery(currentUser, {
     context: {
       headers: {
         Authorization: "Bearer " + jwtToken,
       },
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [jwtToken]);
 
   if (error) {
     console.log(error);
@@ -43,12 +47,17 @@ const LoggedInStack = ({ jwtToken }) => {
   ) : (
     <Drawer.Navigator
       drawerContent={(props) => (
-        <SideMenu {...props} userData={data.currentUser} jwtToken={jwtToken} setJwtToken={setJwtToken}/>
+        <SideMenu
+          {...props}
+          userData={data.currentUser}
+          jwtToken={jwtToken}
+          setJwtToken={setJwtToken}
+        />
       )}
       screenOptions={{ headerShown: false, headerTitle: "" }}
     >
-      {data.currentUser.isOwner === "true" && (
-        <Drawer.Screen name='MainStack'>
+      {data.currentUser.isOwner && (
+        <Drawer.Screen name='Main Stack'>
           {(props) => (
             <OwnerStack
               {...props}

@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { getPropertyById } from "../queries/queries";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,7 +16,7 @@ export function PropertyTabs({ route, userData, jwtToken }) {
     propertyId = route.params.id;
   }
 
-  const { loading, error, data } = useQuery(getPropertyById, {
+  const { loading, error, data, refetch } = useQuery(getPropertyById, {
     context: {
       headers: {
         Authorization: "Bearer " + jwtToken,
@@ -26,6 +26,10 @@ export function PropertyTabs({ route, userData, jwtToken }) {
       id: propertyId,
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [jwtToken]);
 
   let property = data?.getProperty || null;
 
