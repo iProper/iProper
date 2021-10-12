@@ -21,6 +21,12 @@ export default StyleSheet.create({
   textH4: {
     fontSize: 15,
   },
+
+  textStuff: {
+    paddingTop: 5,
+    paddingLeft: 3,
+  },
+
   lightText: {
     color: "#97CAEF",
     fontWeight: "500",
@@ -48,9 +54,38 @@ export default StyleSheet.create({
   separatorBlue: {
     backgroundColor: "#97CAEF",
   },
+  separatorLine: {
+    width: "100%",
+    height: 1,
+    marginVertical: 1,
+    backgroundColor: "#aaa",
+    marginTop: 15,
+  },
+
+  separatorLine2: {
+    width: "100%",
+    height: 1,
+    marginVertical: 1,
+    backgroundColor: "#aaa",
+    marginTop: 5,
+  },
+
   separator60: {
     width: "60%",
   },
+
+  rectangle: {
+    borderStyle: "solid",
+    borderWidth: 4,
+    borderColor: "#97CAEF",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    borderRadius: 15,
+    padding: 10,
+    paddingTop: 5,
+  },
+
   button: {
     borderStyle: "solid",
     borderWidth: 1,
@@ -61,6 +96,8 @@ export default StyleSheet.create({
     borderRadius: 15,
     padding: 8,
   },
+
+
   buttonText: {
     color: "#fff",
     fontSize: 15,

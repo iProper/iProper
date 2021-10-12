@@ -92,23 +92,47 @@ export const Home = (props) => {
       <View style={propertyStyles.renterHomeHeader}>
         <Text style={styles.textH2}> Home </Text>
         <View style={propertyStyles.renterHomeHeaderButtons}>
-          <Pressable style={[styles.button, propertyStyles.payRentButton]}>
-            <Text style = {[styles.buttonText]}>Pay Rent</Text>
+          <Pressable style={[propertyStyles.buttons, propertyStyles.payRentButton]}>
+            <Text style={[propertyStyles.buttonTextProperty]}>Pay rent</Text>
           </Pressable>
-          <Pressable style={[styles.button, styles.buttonOff]}>
-            <Text style={[styles.buttonText, styles.buttonOffText]}>Report Issue</Text>
+          <Pressable style={[propertyStyles.buttons, styles.buttonOff, propertyStyles.reportIssueButton]}>
+            <Text style={[propertyStyles.buttonTextProperty, propertyStyles.buttonOffTextProperty]}>Report issue</Text>
           </Pressable>
-          
-          <View style = {propertyStyles.renterDueToday}>
-            <Text style = {styles.textH2}> Due Today </Text>
-          </View>
-          <Pressable style = {[styles.button, propertyStyles.reportCompletionButton]}>
-            <Text style = {[styles.buttonText]}>Report Completion</Text>
-          </Pressable>
-
         </View>
       </View>
-    </View>  
+
+      <View style={[styles.separatorLine, styles.separatorBlue]}>
+      </View>
+
+      <View style={propertyStyles.dueTodayHeader}>
+        <Text style={styles.textH2}>Due Today</Text>
+      </View>
+
+      <View style={propertyStyles.rectangleContainer}>
+        <Pressable style={[styles.rectangle, styles.buttonOff, propertyStyles.rectangleContainer]}>
+          <View style={styles.textStuff}>
+            <Text style={[styles.textH4]}>Do This and also that and those stuff</Text>
+          </View>
+
+          <View style={[styles.separatorLine2, styles.separatorBlue]}>
+          </View>
+
+          <Pressable style={[propertyStyles.buttonsReport, propertyStyles.reportCompletionButton, propertyStyles]}>
+            <Text style={[propertyStyles.buttonTextProperty]}>Report Completion</Text>
+          </Pressable>
+
+        </Pressable>
+      </View>
+
+      <View style={propertyStyles.bottomContainer}>
+        <Pressable style={[propertyStyles.bottomRectangle, styles.buttonOff, propertyStyles.bottomContainer]}>
+
+
+        </Pressable>
+      </View>
+
+
+    </View>
   );
 };
 
@@ -176,7 +200,7 @@ export function AboutScreen({
           numOfRooms,
         },
       })
-        .then((result) => {})
+        .then((result) => { })
         .catch((err) => console.log(err));
     }
   }, [edit]);

@@ -2,15 +2,53 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   homeContainer: {
-    padding: 30,
+    padding: 10,
     alignItems: "center",
     justifyContent: "top",
   },
   
+  buttons: {
+    borderStyle: "solid",
+    borderWidth: 3,
+    borderColor: "#FC4445",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    padding: 6,
+  },
+
+  buttonsReport: {
+    borderStyle: "solid",
+    borderWidth: 3,
+    borderColor: "#FC4445",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    padding: 1,
+  },
+
+  buttonTextProperty: {
+    color: "#fff",
+    fontSize: 18,
+  },
+  buttonOffTextProperty: {
+    color: "#FC4445",
+    fontSize: 18,
+  },
+
   renterHomeHeader: {
     alignItems: "center",
     width: "100%",
-    padding: 15,
+    padding: 5,
+  },
+
+  dueTodayHeader: {
+    alignItems: "center",
+    width: "100%",
+    padding: 5,
+    marginTop: 8,
   },
 
   renterDueToday: {
@@ -19,18 +57,50 @@ export default StyleSheet.create({
     padding: 145,
   },
 
-  reportCompletionButton: {
-    flexDirection: "row",
-    width: "100%",
-    
+  payRentButton: {
+    width: "50%",
+    marginLeft: -10,
   },
 
-  renterHomeHeaderButtons: {
+  reportIssueButton: {
+    width: "50%",
+    marginLeft: 10,
+  },
+
+  reportCompletionButton: {
+    width: "65%",
+    marginLeft: 110,
+    marginTop: 8,
+  },
+
+  rectangleContainer: {
+    width: "100%",
+    marginTop: 5,
+  },
+
+  bottomContainer: {
+    width: "100%",
+    justifyContent: "flex-end",
+  },
+
+  bottomRectangle: {
+    borderStyle: "solid",
+    borderWidth: 4,
+    borderColor: "#97CAEF",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    borderRadius: 1,
     padding: 10,
+    
+  },
+  
+  renterHomeHeaderButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
+    marginTop: 25, 
   },
 
   propertyAboutScreen: {
@@ -71,4 +141,5 @@ export default StyleSheet.create({
     width: 60,
     height: 28,
   }
+
 })
