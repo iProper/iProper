@@ -94,8 +94,11 @@ const getPropertyById = gql`
       rules
       propertyCode
       note
+      residentIds
       residents {
         id
+        firstName
+        lastName
       }
     }
   }
@@ -110,6 +113,7 @@ const currentUser = gql`
       isOwner
       email
       phoneNumber
+      propertyCode
     }
   }
 `;
@@ -144,6 +148,26 @@ const updateProperty = gql`
   }
 `;
 
+const updateUser = gql`
+  mutation (
+    $firstName: String
+    $lastName: String
+    $phoneNumber: String
+    $propertyCode: String
+    $password: String
+  ) {
+    updateUser(
+      firstName: $firstName
+      lastName: $lastName
+      phoneNumber: $phoneNumber
+      propertyCode: $propertyCode
+      password: $password
+    ) {
+      id
+    }
+  }
+`;
+
 export {
   login,
   checkEmail,
@@ -154,4 +178,5 @@ export {
   requestSms,
   getPropertyById,
   updateProperty,
+  updateUser,
 };

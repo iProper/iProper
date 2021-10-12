@@ -120,7 +120,7 @@ const Note = ({ note, setNote, deleteNote }) => {
   );
 };
 
-const AddNewTenantPopUp = ({ setPopUpOpen, code }) => {
+const AddNewTenantPopUp = ({ setPopUpOpen, propertyCode }) => {
   return (
     <Pressable onPress={() => setPopUpOpen(false)} style={styles.popUp}>
       <View style={styles.popUpCard}>
@@ -128,7 +128,7 @@ const AddNewTenantPopUp = ({ setPopUpOpen, code }) => {
         <View style={[styles.separator, styles.separatorBlue]} />
         <View style={[styles.flexRow, { padding: 10 }]}>
           <Text style={styles.textH3}>Property code:</Text>
-          <Text style={[styles.alarmText, styles.textH3]}>548189</Text>
+          <Text style={[styles.alarmText, styles.textH3]}>{propertyCode}</Text>
         </View>
         <View
           style={{
@@ -181,33 +181,11 @@ export function PropertyHome({ navigation, jwtToken, property }) {
       .catch((err) => console.log(err));
   }, [note]);
 
-  let renters = [
-    {
-      firstName: "Andrei",
-      lastName: "Fedchenko",
-      dueDate: "29th October",
-      isPaid: false,
-      isResponsible: false,
-    },
-    {
-      firstName: "Nekeisha",
-      lastName: "Pope",
-      dueDate: "2nd November",
-      isPaid: true,
-      isResponsible: true,
-    },
-    {
-      firstName: "Antonio",
-      lastName: "Morris",
-      dueDate: "19th November",
-      isPaid: true,
-      isResponsible: true,
-    },
-  ];
+  let renters = property.residents;
 
   return (
     <View style={[styles.container, { position: "relative" }]}>
-      <View style={[styles.container, propertyStyles.homeScreen]}>
+      <View style={[styles.container, propertyStyles.homeScreenOwner]}>
         <NavigationHeader
           goBack={() => navigation.navigate("Main Stack")}
           title='Home'
@@ -254,7 +232,7 @@ export function PropertyHome({ navigation, jwtToken, property }) {
           </Pressable>
         </View>
       </View>
-      {QRCodeOpen && <AddNewTenantPopUp setPopUpOpen={setQRCodeOpen} />}
+      {QRCodeOpen && <AddNewTenantPopUp propertyCode={property.propertyCode} setPopUpOpen={setQRCodeOpen} />}
     </View>
   );
 }

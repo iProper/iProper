@@ -1,5 +1,5 @@
 import styles from "../styles/App.styles";
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { View, Text, Pressable, Image } from "react-native";
 import { useQuery } from "@apollo/client";
@@ -50,19 +50,23 @@ function SideMenu(props) {
               label={"Home"}
               labelStyle={{ fontSize: 20 }}
               onPress={() => {
-                props.navigation.navigate("Main Stack");
+                props.userData.isOwner
+                  ? props.navigation.navigate("Main Stack")
+                  : props.navigation.navigate("Home");
               }}
             />
           </View>
-          <Text
-            style={[
-              styles.textH3,
-              styles.sideMenuItem,
-              { textAlign: "center", paddingTop: 20, paddingBottom: 10 },
-            ]}
-          >
-            Properties
-          </Text>
+          {props.userData.isOwner && (
+            <Text
+              style={[
+                styles.textH3,
+                styles.sideMenuItem,
+                { textAlign: "center", paddingTop: 20, paddingBottom: 10 },
+              ]}
+            >
+              Properties
+            </Text>
+          )}
           <ScrollView>
             {(() => {
               if (data?.getProperties) {

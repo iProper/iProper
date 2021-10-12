@@ -45,7 +45,7 @@ const PropertyCard = ({ navigation, property, propertyId }) => {
             </View>
             <Text style={styles.lightText}>
               {property.residents.length
-                ? property.residents.find((tenant) => tenant.isResponsible).name +
+                ? property.residents.find((tenant) => tenant?.isResponsible)?.name +
                   " is responsible this week"
                 : "Oh no, there are no tenants!"}
             </Text>

@@ -1,10 +1,12 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
+  homeScreenOwner: {
+    padding: 30,
+  },
   homeScreen: {
     alignItems: "center",
     justifyContent: "flex-start",
-    padding: 30,
   },
   noPropertyHome: {
     justifyContent: "center",

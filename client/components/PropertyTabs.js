@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 import React, { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { getPropertyById } from "../queries/queries";
@@ -10,9 +10,17 @@ import AboutScreen from "./property-screens/About";
 
 const Tabs = createBottomTabNavigator();
 
-export function PropertyTabs({ route, userData, jwtToken, propertyId }) {
+export function PropertyTabs({
+  route,
+  userData,
+  jwtToken,
+  propertyId,
+  refetchUser,
+}) {
   if (userData.isOwner) {
     propertyId = route.params.id;
+  } else {
+    propertyId = userData.propertyCode;
   }
 
   const { loading, error, data, refetch } = useQuery(getPropertyById, {
@@ -43,7 +51,46 @@ export function PropertyTabs({ route, userData, jwtToken, propertyId }) {
       </Tabs.Screen>
     </Tabs.Navigator>
   ) : (
-    <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+    <Tabs.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        animation: "none",
+        tabBarBackground: () => (
+          <View style={{ flex: 1, backgroundColor: "#FC4445" }} />
+        ),
+        tabBarLabel: () => {},
+        tabBarIcon: userData.propertyCode
+          ? ({ focused }) => {
+              let iconImg;
+              if (route.name === "Home") {
+                iconImg = (
+                  <Image
+                    source={
+                      !focused
+                        ? require("../assets/home-white.png")
+                        : require("../assets/home-blue.png")
+                    }
+                    style={{ width: 30, height: 30 }}
+                  />
+                );
+              } else if (route.name === "About") {
+                iconImg = (
+                  <Image
+                    source={
+                      !focused
+                        ? require("../assets/about-white.png")
+                        : require("../assets/about-blue.png")
+                    }
+                    style={{ width: 30, height: 30 }}
+                  />
+                );
+              }
+
+              return iconImg;
+            }
+          : () => {},
+      })}
+    >
       {userData.isOwner ? (
         <Tabs.Screen name='Home'>
           {(props) => (
@@ -63,6 +110,7 @@ export function PropertyTabs({ route, userData, jwtToken, propertyId }) {
               property={property}
               jwtToken={jwtToken}
               userData={userData}
+              refetchUser={refetchUser}
             />
           )}
         </Tabs.Screen>

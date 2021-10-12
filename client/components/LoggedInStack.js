@@ -54,7 +54,7 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
           setJwtToken={setJwtToken}
         />
       )}
-      screenOptions={{ headerShown: false, headerTitle: "" }}
+      screenOptions={{ headerShown: true, headerTitle: "" }}
     >
       {data.currentUser.isOwner && (
         <Drawer.Screen name='Main Stack'>
@@ -73,6 +73,7 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
             {...props}
             userData={data.currentUser}
             jwtToken={jwtToken}
+            refetchUser={refetch}
           />
         )}
       </Drawer.Screen>
