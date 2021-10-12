@@ -330,9 +330,13 @@ const Mutation = new GraphQLObjectType({
             }
 
             throw new Error("Not the owner of this property");
-          }
+          } else {
+            const property = await Property.findById(args.id);
+            if (!property.residentIds.includes(req.user.id))
+              property.residentIds.push(req.user.id);
 
-          throw new Error("Not an owner");
+            return property.save();
+          }
         }
 
         throw new Error("Non authenticated user");
