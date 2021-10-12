@@ -21,6 +21,10 @@ export default StyleSheet.create({
   textH4: {
     fontSize: 15,
   },
+  textCenter: {
+    textAlign: "center"
+  },
+
   lightText: {
     color: "#97CAEF",
     fontWeight: "500",
@@ -53,6 +57,18 @@ export default StyleSheet.create({
   },
   separator20: {
     width: "20%",
+  },
+
+  rectangle: {
+    borderStyle: "solid",
+    borderWidth: 4,
+    borderColor: "#97CAEF",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    borderRadius: 15,
+    padding: 15,
+    paddingTop: 5,
   },
   button: {
     borderStyle: "solid",
@@ -213,6 +229,8 @@ export default StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.2,
     elevation: 10,
+
+    width: "100%",
   },
 
   App: {
@@ -261,7 +279,7 @@ export default StyleSheet.create({
   sideMenuHeader: {
     backgroundColor: "#fff",
     alignItems: "center",
-    margin: 20,
+    margin: 10,
     borderRadius: 10,
   },
   sideMenuMain: {

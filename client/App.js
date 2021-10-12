@@ -42,7 +42,7 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <SafeAreaView
-        style={[styles.App, Platform.OS === "android" && { marginTop: 15 }]}
+        style={[styles.App, Platform.OS === "android" && { marginTop: 30 }]}
       >
         <NavigationContainer>
           {!jwtToken ? (

@@ -59,6 +59,7 @@ function OwnerDashboard({ navigation, jwtToken }) {
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{alignItems: "center", padding: 10}}
         style={[ownerStyles.ownerDashboardProperties]}
       >
         {properties?.map((property, index) => (

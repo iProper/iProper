@@ -13,10 +13,20 @@ const RenterCard = ({ firstName, lastName, dueDate, isPaid, isResponsible }) => 
         {firstName} {lastName}
       </Text>
       <View style={[styles.separator, styles.separatorBlue]} />
-      <View style={styles.flexRow}>
+      <View style={[styles.flexRow, { position: "relative" }]}>
         <Text>Payment Status:</Text>
-        <Text> </Text>
-        {isPaid ? <Text>Paid</Text> : <Text>Pending</Text>}
+        <View
+          style={[
+            styles.button,
+            styles.buttonBlue,
+            styles.buttonRound,
+            { position: "absolute", right: 0, top: 0, width: "35%", height: "200%" },
+          ]}
+        >
+          <Text style={{ color: "#fff", textAlign: "center", fontSize: 17 }}>
+            {isPaid ? "Paid" : "Pending"}
+          </Text>
+        </View>
       </View>
       <Text>Due Date: {dueDate}</Text>
       <View style={[styles.separator, styles.separatorBlue]} />
@@ -135,44 +145,50 @@ export function PropertyHome({ navigation, jwtToken }) {
   ];
 
   return (
-    <View style={[styles.container, propertyStyles.homeContainer]}>
-      <NavigationHeader goBack={() => navigation.navigate("Main Stack")} title='Home' />
-
-      <Note
-        note={note}
-        setNote={setNote}
-        deleteNote={() => {
-          setNote(null);
-        }}
+    <View style={[styles.container, propertyStyles.homeScreen]}>
+      <NavigationHeader
+        goBack={() => navigation.navigate("Main Stack")}
+        title='Home'
       />
-      <Text style={propertyStyles.tenantText}>Tenants</Text>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={propertyStyles.tenantsList}
-      >
-        {renters.map((renter, index) => (
-          <RenterCard
-            firstName={renter.firstName}
-            lastName={renter.lastName}
-            dueDate={renter.dueDate}
-            isPaid={renter.isPaid}
-            isResponsible={renter.isResponsible}
-            key={index}
-          />
-        ))}
-        <View style={{ flex: 1, height: 150 }} />
-      </ScrollView>
-      <Pressable
-        onPress={() => {
-          navigation.navigate("QRScreen", {
-            title: "Property Home",
-          });
-        }}
-        style={[styles.button, styles.buttonBig, ownerStyles.addNewPropertyButton]}
-      >
-        <Text style={[styles.buttonText, styles.buttonTextBig]}>Add new renter</Text>
-      </Pressable>
-      <View></View>
+      <View style={[propertyStyles.tenantsListArea, { position: "relative" }]}>
+        <Note
+          note={note}
+          setNote={setNote}
+          deleteNote={() => {
+            setNote(null);
+          }}
+        />
+        <Text style={propertyStyles.tenantText}>Tenants</Text>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ alignItems: "center", padding: 10 }}
+          style={propertyStyles.tenantsList}
+        >
+          {renters.map((renter, index) => (
+            <RenterCard
+              firstName={renter.firstName}
+              lastName={renter.lastName}
+              dueDate={renter.dueDate}
+              isPaid={renter.isPaid}
+              isResponsible={renter.isResponsible}
+              key={index}
+            />
+          ))}
+          <View style={{ flex: 1, height: 150 }} />
+        </ScrollView>
+        <Pressable
+          onPress={() => {
+            navigation.navigate("QRScreen", {
+              title: "Property Home",
+            });
+          }}
+          style={[styles.button, styles.buttonBig, ownerStyles.addNewPropertyButton]}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextBig]}>
+            Add new renter
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }

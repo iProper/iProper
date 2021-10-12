@@ -1,35 +1,68 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  homeContainer: {
+  homeScreen: {
+    alignItems: "center",
+    justifyContent: "flex-start",
     padding: 30,
-    alignItems: "center"
+  },
+  noPropertyHome: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   renterHomeHeader: {
-    alignItems: "center",
-    width: "100%",
     padding: 15,
-  },
-
-  renterDueToday: {
     alignItems: "center",
+    justifyContent: "space-between",
     width: "100%",
-    padding: 145,
   },
-
-  reportCompletionButton: {
-    flexDirection: "row",
+  
+  noPropertyCard: {
+    width: "75%",
+    height: 350,
+    alignItems: "center",
+  },
+  enterPropertyButtons: {
+    marginVertical: 5,
     width: "100%",
+    justifyContent: "space-between"
   },
 
   renterHomeHeaderButtons: {
-    padding: 10,
     flexDirection: "row",
+    width: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
   },
+
+  duesTodayArea: {
+    height: "100%",
+    width: "100%",
+    paddingHorizontal: 30,
+  },
+  dueTodayHeader: {
+    alignItems: "center",
+    width: "100%",
+    margin: 8,
+  },
+  duesToday: {
+    alignItems: "center",
+  },
+
+  renterHomeNote: {
+    flexDirection: "row",
+    position: "absolute",
+    alignItems: "center",
+    bottom: 10,
+    width: "85%",
+    height: 40,
+    borderWidth: 2,
+    borderColor: "#97CAEF",
+    borderStyle: "solid",
+    borderRadius: 5,
+  },
+
   note: {
     borderStyle: "solid",
     borderWidth: 2,
@@ -69,8 +102,12 @@ export default StyleSheet.create({
     marginTop: 20,
     marginBottom: 4,
   },
+  tenantsListArea: {
+    width: "100%",
+    height: "100%"
+  },
   tenantsList: {
-    width: "104%",
+    width: "100%",
     flexGrow: 1,
   },
   responsibility: {
