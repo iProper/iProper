@@ -30,6 +30,7 @@ const UserType = new GraphQLObjectType({
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     phoneNumber: { type: GraphQLString },
+    propertyCode: { type: GraphQLString },
     isOwner: { type: GraphQLBoolean },
   }),
 });
@@ -157,6 +158,7 @@ const Mutation = new GraphQLObjectType({
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
         phoneNumber: { type: new GraphQLNonNull(GraphQLString) },
+        propertyCode: { type: GraphQLString },
         isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
       async resolve(_parent, args) {
@@ -172,6 +174,7 @@ const Mutation = new GraphQLObjectType({
           email: args.email,
           password: await bcrypt.hash(args.password, 10),
           phoneNumber: args.phoneNumber,
+          propertyCode: args.propertyCode,
           isOwner: args.isOwner,
         });
 
@@ -362,6 +365,7 @@ const Mutation = new GraphQLObjectType({
         firstName: { type: GraphQLString },
         lastName: { type: GraphQLString },
         phoneNumber: { type: GraphQLString },
+        propertyCode: { type: GraphQLString },
         password: { type: GraphQLString },
       },
       async resolve(_parent, args, req) {
@@ -373,6 +377,7 @@ const Mutation = new GraphQLObjectType({
                 firstName: args.firstName,
                 lastName: args.lastName,
                 phoneNumber: args.phoneNumber,
+                propertyCode: args.propertyCode,
                 password: await bcrypt.hash(args.password, 10),
               },
               { new: true }
@@ -384,6 +389,7 @@ const Mutation = new GraphQLObjectType({
               firstName: args.firstName,
               lastName: args.lastName,
               phoneNumber: args.phoneNumber,
+              propertyCode: args.propertyCode,
             },
             { new: true }
           );
