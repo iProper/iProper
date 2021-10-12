@@ -337,6 +337,18 @@ const Mutation = new GraphQLObjectType({
       },
       async resolve(_parent, args, req) {
         if (req) {
+          if (args.password) {
+            return User.findByIdAndUpdate(
+              req.user.id,
+              {
+                firstName: args.firstName,
+                lastName: args.lastName,
+                phoneNumber: args.phoneNumber,
+                password: await bcrypt.hash(args.password, 10),
+              },
+              { new: true }
+            );
+          }
           return User.findByIdAndUpdate(
             req.user.id,
             {
