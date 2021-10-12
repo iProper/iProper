@@ -7,9 +7,14 @@ import Loading from "../small/Loading";
 import styles from "../../styles/App.styles";
 import regStyles from "../../styles/RegistrationScreens.styles";
 
+import { register } from "../../queries/queries";
+
+import NavigationHeader from "../small/NavigationHeader";
+
+
 export default function ConfirmPhoneNumberScreen({ route, navigation }) {
   const { title } = route.params;
-  const { firstName, lastName, email, password } = route.params;
+  const { firstName, lastName, email, password, isOwner } = route.params;
   const [phoneNumber, changePhoneNumber] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [phoneMsg, setPhoneMsg] = useState("");
@@ -18,6 +23,7 @@ export default function ConfirmPhoneNumberScreen({ route, navigation }) {
   const [code, changeCode] = useState("");
 
   const [sendSMS] = useMutation(requestSms);
+  const [registerUser] = useMutation(register);
 
   const SMSrequestCode = () => {
     if (phoneNumber) {
@@ -47,14 +53,29 @@ export default function ConfirmPhoneNumberScreen({ route, navigation }) {
     if (code == PIN) {
       setCodeSent(false);
       setPhoneMsg("");
-      navigation.navigate("Upload Documents", {
-        title,
-        firstName,
-        lastName,
-        email,
-        password,
-        phoneNumber,
-      });
+      if (isOwner) {
+        navigation.navigate("Upload Documents", {
+          title,
+          firstName,
+          lastName,
+          email,
+          password,
+          phoneNumber,
+        });
+      } else {
+        registerUser({
+          variables: {
+            firstName,
+            lastName,
+            email,
+            password,
+            phoneNumber,
+            isOwner: false,
+          }
+        }).then(() => {
+          navigation.navigate("Login");
+        })
+      }
     } else {
       setPhoneMsg("Invalid confirmation code.");
     }
@@ -62,19 +83,7 @@ export default function ConfirmPhoneNumberScreen({ route, navigation }) {
 
   return (
     <View style={[regStyles.confirmPhoneNumberScreen, styles.container]}>
-      <View style={styles.navigationHeaderArea}>
-        <View style={styles.navigationHeader}>
-          <Pressable
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
-          </Pressable>
-          <Text style={styles.navigationHeaderText}>{title}</Text>
-        </View>
-        <View style={[styles.separator, styles.separatorBlue]} />
-      </View>
+      <NavigationHeader goBack={navigation.goBack} title={title}/>
 
       <View style={styles.formBox}>
         <Text style={styles.textH3}>Phone number</Text>

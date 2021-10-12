@@ -12,13 +12,19 @@ const requestSms = gql`
   }
 `;
 
+const checkEmail = gql`
+  mutation ($email: String!) {
+    checkEmail(email: $email)
+  }
+`;
+
 const register = gql`
   mutation (
     $firstName: String!
     $lastName: String!
     $email: String!
     $password: String!
-    $phoneNumber: String
+    $phoneNumber: String!
     $isOwner: Boolean!
   ) {
     register(
@@ -106,14 +112,14 @@ const currentUser = gql`
 const updateProperty = gql`
   mutation (
     $id: String!
-    $address1: String!
+    $address1: String
     $address2: String
-    $city: String!
-    $province: String!
-    $postalCode: String!
+    $city: String
+    $province: String
+    $postalCode: String
     $rules: [String]
     $description: String
-    $numOfRooms: Int!
+    $numOfRooms: Int
   ) {
     updateProperty(
       id: $id
@@ -133,6 +139,7 @@ const updateProperty = gql`
 
 export {
   login,
+  checkEmail,
   register,
   currentUser,
   addProperty,

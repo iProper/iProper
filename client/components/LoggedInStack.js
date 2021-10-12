@@ -43,7 +43,7 @@ const LoggedInStack = ({ jwtToken }) => {
   ) : (
     <Drawer.Navigator
       drawerContent={(props) => (
-        <SideMenu {...props} userData={data.currentUser} jwtToken={jwtToken} />
+        <SideMenu {...props} userData={data.currentUser} jwtToken={jwtToken} setJwtToken={setJwtToken}/>
       )}
       screenOptions={{ headerShown: false, headerTitle: "" }}
     >

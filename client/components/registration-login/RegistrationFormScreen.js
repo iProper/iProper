@@ -1,10 +1,12 @@
 import { Text, View, Pressable, Platform, TextInput } from "react-native";
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { register } from "../../queries/queries";
+
+import { checkEmail } from "../../queries/queries";
 
 import styles from "../../styles/App.styles";
 import regStyles from "../../styles/RegistrationScreens.styles";
+import NavigationHeader from "../small/NavigationHeader";
 
 export default function RegistrationFormScreen({ route, navigation }) {
   const { isOwner, title } = route.params;
@@ -15,13 +17,13 @@ export default function RegistrationFormScreen({ route, navigation }) {
   const [password, changePassword] = useState("");
   const [confirmPassword, changeConfirmPassword] = useState("");
 
-  const [registerUser] = useMutation(register);
-
   const [firstNameMsg, setFirstNameMsg] = useState("");
   const [lastNameMsg, setLastNameMsg] = useState("");
   const [emailMsg, setEmailMsg] = useState("");
   const [passwordMsg, setPasswordMsg] = useState("");
   const [confirmPasswordMsg, setConfirmPasswordMsg] = useState("");
+
+  const [checkEmailRegistered] = useMutation(checkEmail);
 
   const checkForm = () => {
     let passed = 0;
@@ -91,42 +93,28 @@ export default function RegistrationFormScreen({ route, navigation }) {
   const submitForm = () => {
     if (!checkForm()) return;
 
-    if (isOwner) {
-      navigation.navigate("Confirm Phone Number", {
-        title,
-        firstName,
-        lastName,
+    checkEmailRegistered({
+      variables: {
         email,
-        password,
-      });
-    } else {
-      registerUser({
-        variables: {
+      },
+    }).then(({data}) => {
+      if (data.checkEmail)
+        setEmailMsg("This email is already registered");
+      else 
+        navigation.navigate("Confirm Phone Number", {
+          title,
           firstName,
           lastName,
           email,
           password,
           isOwner,
-        },
-      }).then((result) => navigation.navigate("Login"));
-    }
+        });
+    });
   };
 
   return (
     <View style={[regStyles.registerForm, styles.container]}>
-      <View style={styles.navigationHeaderArea}>
-        <View style={styles.navigationHeader}>
-          <Pressable
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
-          </Pressable>
-          <Text style={styles.navigationHeaderText}>{title}</Text>
-        </View>
-        <View style={[styles.separator, styles.separatorBlue]} />
-      </View>
+      <NavigationHeader goBack={navigation.goBack} title={title}/>
 
       <View style={styles.formBox}>
         <Text style={[styles.textH3, styles.formLabel]}>First Name</Text>
@@ -193,7 +181,7 @@ export default function RegistrationFormScreen({ route, navigation }) {
 
       <Pressable
         onPress={() => submitForm()}
-        style={[styles.button, styles.buttonBig, styles.nextStepBtn]}
+        style={[styles.button, styles.buttonBig, regStyles.nextStepBtn]}
       >
         <Text style={[styles.buttonText, styles.buttonTextBig]}>
           {isOwner ? "Next Step" : "Create Account"}

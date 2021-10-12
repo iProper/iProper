@@ -223,7 +223,7 @@ export default StyleSheet.create({
   navigationHeader: {
     height: 40,
     width: "100%",
-    marginBottom: 15,
+    marginBottom: 20,
   },
   navigationHeaderBackButton: {
     flexDirection: "row",
