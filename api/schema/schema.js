@@ -45,6 +45,7 @@ const PropertyType = new GraphQLObjectType({
     postalCode: { type: GraphQLString },
     numOfRooms: { type: GraphQLInt },
     description: { type: GraphQLString },
+    note: { type: GraphQLString },
     rules: { type: new GraphQLList(GraphQLString) },
     residentIds: { type: new GraphQLList(GraphQLString) },
     ownerId: { type: GraphQLID },
@@ -83,7 +84,7 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: new GraphQLNonNull(GraphQLString) } },
       async resolve(_parent, args, req) {
         if (req) {
-          const property = await Property.findById(args.id);
+          const property = await Property.findOne({ propertyCode: args.id });
           if (req.user.isOwner) {
             if (property.ownerId == req.user.id) return property;
             throw new Error("Not the owner of this property");
@@ -231,13 +232,35 @@ const Mutation = new GraphQLObjectType({
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
         numOfRooms: { type: new GraphQLNonNull(GraphQLInt) },
         description: { type: GraphQLString },
+        note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
       },
-      resolve(_parent, args, req) {
+      async resolve(_parent, args, req) {
         if (req) {
           if (req.user.isOwner) {
+            const generateCode = () => {
+              return ((Math.random() + 3 * Number.MIN_VALUE) / Math.PI)
+                .toString(36)
+                .slice(-7);
+            };
+
+            let propertyCode;
+            let unique = false;
+
+            while (!unique) {
+              propertyCode = generateCode();
+              const found = await Property.findOne({
+                propertyCode: propertyCode,
+              });
+
+              if (!found) {
+                unique = true;
+              }
+            }
+
             const property = new Property({
+              propertyCode: propertyCode,
               address1: args.address1,
               address2: args.address2,
               city: args.city,
