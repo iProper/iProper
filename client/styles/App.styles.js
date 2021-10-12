@@ -24,7 +24,7 @@ export default StyleSheet.create({
 
   textStuff: {
     paddingTop: 5,
-    paddingLeft: 3,
+    paddingLeft: 10,
   },
 
   lightText: {
@@ -82,7 +82,7 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     borderRadius: 15,
-    padding: 10,
+    padding: 15,
     paddingTop: 5,
   },
 
@@ -124,6 +124,9 @@ export default StyleSheet.create({
   },
   formRowContainer: {
     flexDirection: "row",
+  },
+  formColumn: {
+    flexDirection: "column-reverse",
   },
   formRowSpace: {
     width: 10,

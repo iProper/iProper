@@ -6,6 +6,16 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "top",
   },
+
+  separatorVert: {
+    width: "100%",
+    height: 15,
+    width: 1,
+    marginVertical: 1,
+    backgroundColor: "#aaa",
+    marginTop: 5,
+    marginRight: 290,
+  },
   
   buttons: {
     borderStyle: "solid",
@@ -17,6 +27,50 @@ export default StyleSheet.create({
     borderRadius: 10,
     padding: 6,
   },
+
+  Passbuttons: {
+    width: "75%",
+    borderStyle: "solid",
+    borderWidth: 2,
+    borderColor: "#C0C0C0",
+    backgroundColor: "#C0C0C0",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    borderRadius: 10,
+    padding: 8,
+    marginTop: 10,
+    marginLeft: 10,
+  },
+
+  passOffTextProperty: {
+    color: "#C0C0C0",
+    fontSize: 14,
+    marginLeft: 5,
+  },
+
+  fd: {
+    justifyContent: "center",
+  },
+
+  adds: {
+    width: "75%",
+    borderStyle: "solid",
+    borderWidth: 3,
+    borderColor: "#FC4445",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+    padding: 6,
+    marginTop: 10,
+    marginLeft: 10,
+  },
+
+  buttonTextAdds: {
+    color: "#fff",
+    fontSize: 16,
+  },
+ 
 
   buttonsReport: {
     borderStyle: "solid",
@@ -78,6 +132,68 @@ export default StyleSheet.create({
     marginTop: 5,
   },
 
+  rectangleContainerMiddle: {
+    width: "100%",
+    marginTop: 120,
+  },
+
+  windowContainer: {
+    width: "100%",
+    marginTop: 5,
+  },
+
+  window: {
+    borderStyle: "solid",
+    borderWidth: 4,
+    borderColor: "#97CAEF",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    borderRadius: 1,
+    padding: 15,
+    paddingTop: 140,
+  },
+
+  middleHeader: {
+    textAlign: 'center',
+  },
+
+  centerHeader: {
+    textAlign: 'center',
+    marginTop: 10,
+    paddingLeft: 50,
+    paddingRight: 50,
+  },
+
+  centerseparatorLine: {
+    width: "65%",
+    height: 2,
+    marginVertical: 1,
+    backgroundColor: "#aaa",
+    marginTop: 15,
+  },
+
+  firstseparatorLine: {
+    width: "30%",
+    height: 2,
+    backgroundColor: "#aaa",
+    marginTop: 25,
+    marginLeft: -120,
+  },
+
+  secondseparatorLine: {
+    width: "30%",
+    height: 2,
+    backgroundColor: "#aaa",
+    marginTop: 25,
+    marginRight: 40,
+  },
+
+  codeText: {
+    marginRight: 210,
+    marginTop: 12,
+  },
+
   bottomContainer: {
     width: "100%",
     justifyContent: "flex-end",
@@ -85,14 +201,14 @@ export default StyleSheet.create({
 
   bottomRectangle: {
     borderStyle: "solid",
-    borderWidth: 4,
+    borderWidth: 1,
     borderColor: "#97CAEF",
     backgroundColor: "#FC4445",
     justifyContent: "center",
     alignItems: "flex-end",
-    borderRadius: 1,
-    padding: 10,
-    
+    borderRadius: 4,
+    padding: 15,
+    marginTop: 300,
   },
   
   renterHomeHeaderButtons: {

@@ -86,6 +86,65 @@ const Rule = ({ rule, index, setRule, deleteRule }) => {
   );
 };
 
+export const AddHome = (props) => {
+  return (
+    <View style={[styles.container, propertyStyles.homeContainer]}>
+       <View style={propertyStyles.renterHomeHeader}>
+       <Text style={styles.textH2}> Home </Text>
+       <View style={[styles.separatorLine, styles.separatorBlue]}>
+      </View>
+       </View>
+
+       <View style={propertyStyles.rectangleContainerMiddle}>
+        <Pressable style={[propertyStyles.window, styles.buttonOff, propertyStyles.rectangleContainer]}>
+       
+
+      <View style={propertyStyles.middleHeader}>
+            <Text style={[styles.textH3]}>You have not been added yet to your new home</Text>
+          </View>
+
+          <View style={propertyStyles.centerHeader}>
+            <Text style={[styles.textH4]}>Enter property code to be added to the property(ask property owner)</Text>
+          </View>
+
+          <View style={[propertyStyles.centerseparatorLine, styles.separatorBlue]}>
+          </View>
+
+          <View style={propertyStyles.codeText}>
+            <Text style={[styles.textH4]}>Code</Text>
+          </View>
+
+          <Pressable style={[propertyStyles.Passbuttons, styles.buttonOff]}>
+            <Text style={[propertyStyles.buttonTextProperty, propertyStyles.passOffTextProperty]}>Password</Text>
+          </Pressable>
+
+          <Pressable style={[propertyStyles.adds]}>
+            <Text style={[propertyStyles.buttonTextAdds]}>Add me to the property</Text>
+          </Pressable>
+
+          <View style = {propertyStyles.fd}>
+          <View style={[propertyStyles.firstseparatorLine, styles.separatorBlue]}>
+
+          <View style={propertyStyles.codeText}>
+            <Text style={[styles.textH4]}>Or</Text>
+          </View>
+
+          <View style={[propertyStyles.secondseparatorLine, styles.separatorBlue]}>
+          </View>
+
+          </View>
+
+        </View>
+
+        <Pressable style={[propertyStyles.adds]}>
+            <Text style={[propertyStyles.buttonTextAdds]}>Scan QR code</Text>
+          </Pressable>
+          </Pressable>
+      </View>
+    </View>
+  );
+};
+
 export const Home = (props) => {
   return (
     <View style={[styles.container, propertyStyles.homeContainer]}>
@@ -126,12 +185,10 @@ export const Home = (props) => {
 
       <View style={propertyStyles.bottomContainer}>
         <Pressable style={[propertyStyles.bottomRectangle, styles.buttonOff, propertyStyles.bottomContainer]}>
-
-
+        <View style={[propertyStyles.separatorVert, styles.separatorBlue]}>
+          </View>
         </Pressable>
       </View>
-
-
     </View>
   );
 };
@@ -449,9 +506,9 @@ export function PropertyTabs({ navigation, route, userData, jwtToken }) {
     </Tabs.Navigator>
   ) : (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Tabs.Screen name="Home">
+      <Tabs.Screen name="Add Home">
         {(props) => (
-          <Home
+          <AddHome
             {...props}
             property={property}
             jwtToken={jwtToken}
