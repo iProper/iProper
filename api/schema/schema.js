@@ -30,7 +30,7 @@ const UserType = new GraphQLObjectType({
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     phoneNumber: { type: GraphQLString },
-    isOwner: { type: GraphQLString },
+    isOwner: { type: GraphQLBoolean },
   }),
 });
 
@@ -121,7 +121,22 @@ const Mutation = new GraphQLObjectType({
       type: GraphQLBoolean,
       args: { email: { type: new GraphQLNonNull(GraphQLString) } },
       async resolve(_parent, args) {
-        const alreadyRegisted = await User.findOne({ email: args.email });
+        const alreadyRegistered = await User.findOne({ email: args.email });
+
+        if (alreadyRegistered) {
+          return true;
+        }
+
+        return false;
+      },
+    },
+    checkPhoneNumber: {
+      type: GraphQLBoolean,
+      args: { phoneNumber: { type: new GraphQLNonNull(GraphQLString) } },
+      async resolve(_parent, args) {
+        const alreadyRegisted = await User.findOne({
+          phoneNumber: args.phoneNumber,
+        });
 
         if (alreadyRegisted) {
           return true;
@@ -137,7 +152,7 @@ const Mutation = new GraphQLObjectType({
         lastName: { type: new GraphQLNonNull(GraphQLString) },
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
-        phoneNumber: { type: GraphQLString },
+        phoneNumber: { type: new GraphQLNonNull(GraphQLString) },
         isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
       async resolve(_parent, args) {
@@ -145,10 +160,6 @@ const Mutation = new GraphQLObjectType({
 
         if (alreadyRegisted) {
           throw new Error("User already registered with this email");
-        }
-
-        if (args.isOwner && args.phoneNumber == null) {
-          throw new Error("Owner must register phone number");
         }
 
         const user = new User({
@@ -316,32 +327,30 @@ const Mutation = new GraphQLObjectType({
         throw new Error("Non authenticated user");
       },
     },
-    // updateUser: {
-    //   type: UserType,
-    //   args: {
-    //     id: { type: new GraphQLNonNull(GraphQLID) },
-    //     firstName: { type: new GraphQLNonNull(GraphQLString) },
-    //     lastName: { type: new GraphQLNonNull(GraphQLString) },
-    //     email: { type: new GraphQLNonNull(GraphQLString) },
-    //     password: { type: new GraphQLNonNull(GraphQLString) },
-    //     phoneNumber: { type: GraphQLString },
-    //     isOwner: { type: new GraphQLNonNull(GraphQLString) },
-    //   },
-    //   resolve(_parent, args) {
-    //     return User.findByIdAndUpdate(
-    //       args.id,
-    //       {
-    //         firstName: args.firstName,
-    //         lastName: args.lastName,
-    //         email: args.email,
-    //         password: args.password,
-    //         phoneNumber: args.phoneNumber,
-    //         isOwner: args.isOwner,
-    //       },
-    //       { new: true }
-    //     );
-    // },
-    // },
+    updateUser: {
+      type: UserType,
+      args: {
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        phoneNumber: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          return User.findByIdAndUpdate(
+            req.user.id,
+            {
+              firstName: args.firstName,
+              lastName: args.lastName,
+              phoneNumber: args.phoneNumber,
+            },
+            { new: true }
+          );
+        }
+
+        throw new Error("Non authenticated user");
+      },
+    },
     // deleteUser: {
     //   type: UserType,
     //   args: {
