@@ -10,7 +10,7 @@ const propertySchema = new Schema({
   postalCode: String,
   numOfRooms: Number,
   description: String,
-  notes: String,
+  note: String,
   rules: [String],
   residentIds: [String],
   ownerId: String,
