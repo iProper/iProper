@@ -292,7 +292,7 @@ const Mutation = new GraphQLObjectType({
     updateProperty: {
       type: PropertyType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
+        id: { type: new GraphQLNonNull(GraphQLString) },
         address1: { type: GraphQLString },
         address2: { type: GraphQLString },
         city: { type: GraphQLString },
@@ -331,7 +331,7 @@ const Mutation = new GraphQLObjectType({
 
             throw new Error("Not the owner of this property");
           } else {
-            const property = await Property.findById(args.id);
+            const property = await Property.findOne({ propertyCode: args.id });
             if (!property.residentIds.includes(req.user.id))
               property.residentIds.push(req.user.id);
 
