@@ -4,9 +4,16 @@ import styles from "../../styles/App.styles";
 
 import ownerStyles from "../../styles/OwnerScreens.styles";
 
-const PropertyCard = ({ property }) => {
+const PropertyCard = ({ navigation, property, propertyId }) => {
   return (
-    <View style={[styles.card]}>
+    <Pressable
+      style={[styles.card]}
+      onPress={() =>
+        navigation.navigate("PropertyTabs", {
+          id: propertyId,
+        })
+      }
+    >
       <View style={[ownerStyles.propertyCard]}>
         <View style={[ownerStyles.propertyCardHeader]}>
           <Text style={ownerStyles.propertyCardAddress}>{property.address1}</Text>
@@ -66,7 +73,7 @@ const PropertyCard = ({ property }) => {
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

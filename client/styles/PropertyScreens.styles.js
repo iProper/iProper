@@ -104,10 +104,11 @@ export default StyleSheet.create({
   },
   tenantsListArea: {
     width: "100%",
-    height: "100%"
+    height: "100%",
+    alignItems: "center",
   },
   tenantsList: {
-    width: "100%",
+    width: "105%",
     flexGrow: 1,
   },
   responsibility: {

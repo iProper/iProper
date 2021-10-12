@@ -14,7 +14,7 @@ export default StyleSheet.create({
   ownerDashboardProperties: {
     marginTop: 5,
     flexGrow: 1,
-    width: "100%",
+    width: "105%",
   },
   propertyCard: {
     height: 150,

@@ -71,7 +71,6 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
         {(props) => (
           <PropertyTabs
             {...props}
-            propertyId={0}
             userData={data.currentUser}
             jwtToken={jwtToken}
           />

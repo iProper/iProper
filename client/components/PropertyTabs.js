@@ -10,9 +10,8 @@ import AboutScreen from "./property-screens/About";
 
 const Tabs = createBottomTabNavigator();
 
-export function PropertyTabs({ route, userData, jwtToken }) {
-  let propertyId = 0;
-  if (userData.isOwner === "true") {
+export function PropertyTabs({ route, userData, jwtToken, propertyId }) {
+  if (userData.isOwner) {
     propertyId = route.params.id;
   }
 
