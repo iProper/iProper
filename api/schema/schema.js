@@ -38,6 +38,7 @@ const PropertyType = new GraphQLObjectType({
   name: "Property",
   fields: () => ({
     id: { type: GraphQLID },
+    propertyCode: { type: GraphQLString },
     address1: { type: GraphQLString },
     address2: { type: GraphQLString },
     city: { type: GraphQLString },
