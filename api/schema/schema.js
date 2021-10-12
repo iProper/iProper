@@ -292,7 +292,7 @@ const Mutation = new GraphQLObjectType({
     updateProperty: {
       type: PropertyType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLString) },
+        id: { type: new GraphQLNonNull(GraphQLID) },
         address1: { type: GraphQLString },
         address2: { type: GraphQLString },
         city: { type: GraphQLString },
