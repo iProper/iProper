@@ -115,8 +115,8 @@ export default StyleSheet.create({
     backgroundColor: "red",
   },
   QRcode: {
-    width: 350,
-    height: 350,
+    height: "50%",
+    width: "100%",
   },
 
   propertyAboutScreen: {

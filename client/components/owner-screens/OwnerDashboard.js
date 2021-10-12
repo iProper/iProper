@@ -63,7 +63,7 @@ function OwnerDashboard({ navigation, jwtToken }) {
         style={[ownerStyles.ownerDashboardProperties]}
       >
         {properties?.map((property, index) => (
-          <PropertyCard key={index} navigation={navigation} propertyId={property.id} property={property} />
+          <PropertyCard key={index} navigation={navigation} propertyId={property.propertyCode} property={property} />
         ))}
         <View style={{ flex: 1, height: 150 }} />
       </ScrollView>

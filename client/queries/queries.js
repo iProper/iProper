@@ -48,6 +48,7 @@ const addProperty = gql`
     $rules: [String]
     $description: String
     $numOfRooms: Int!
+    $note: String
   ) {
     addProperty(
       address1: $address1
@@ -58,6 +59,7 @@ const addProperty = gql`
       rules: $rules
       description: $description
       numOfRooms: $numOfRooms
+      note: $note
     ) {
       id
     }
@@ -70,6 +72,7 @@ const getOwnerProperties = gql`
       id
       address1
       numOfRooms
+      propertyCode
       residents {
         id
       }
@@ -89,6 +92,8 @@ const getPropertyById = gql`
       numOfRooms
       description
       rules
+      propertyCode
+      note
       residents {
         id
       }
@@ -120,6 +125,7 @@ const updateProperty = gql`
     $rules: [String]
     $description: String
     $numOfRooms: Int
+    $note: String
   ) {
     updateProperty(
       id: $id
@@ -131,6 +137,7 @@ const updateProperty = gql`
       rules: $rules
       description: $description
       numOfRooms: $numOfRooms
+      note: $note
     ) {
       id
     }

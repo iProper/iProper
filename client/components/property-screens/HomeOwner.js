@@ -4,6 +4,9 @@ import ownerStyles from "../../styles/OwnerScreens.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 import React, { useState, useRef, useEffect } from "react";
 
+import { useMutation } from "@apollo/client";
+import { updateProperty } from "../../queries/queries";
+
 import NavigationHeader from "../small/NavigationHeader";
 
 const RenterCard = ({ firstName, lastName, dueDate, isPaid, isResponsible }) => {
@@ -50,7 +53,7 @@ const Note = ({ note, setNote, deleteNote }) => {
     }
   }, [edit]);
 
-  return note === null ? (
+  return note === "" && !edit ? (
     <Pressable
       onPress={() => {
         setNote("");
@@ -64,7 +67,7 @@ const Note = ({ note, setNote, deleteNote }) => {
         propertyStyles.addNoteButton,
       ]}
     >
-      <Text style={[styles.buttonText, styles.buttonTextBlue]}>Add note</Text>
+      <Text style={[styles.textH3, {color: "#000"}]}>Add note</Text>
     </Pressable>
   ) : (
     <View style={[propertyStyles.note]}>
@@ -117,8 +120,66 @@ const Note = ({ note, setNote, deleteNote }) => {
   );
 };
 
-export function PropertyHome({ navigation, jwtToken }) {
-  const [note, setNote] = useState("Some note");
+const AddNewTenantPopUp = ({ setPopUpOpen, code }) => {
+  return (
+    <Pressable onPress={() => setPopUpOpen(false)} style={styles.popUp}>
+      <View style={styles.popUpCard}>
+        <Text style={styles.textH2}>Add new tenant</Text>
+        <View style={[styles.separator, styles.separatorBlue]} />
+        <View style={[styles.flexRow, { padding: 10 }]}>
+          <Text style={styles.textH3}>Property code:</Text>
+          <Text style={[styles.alarmText, styles.textH3]}>548189</Text>
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            height: 50,
+            width: "100%",
+          }}
+        >
+          <View style={[styles.separator, styles.separatorBlue]} />
+          <Text
+            style={[
+              styles.textH3,
+              { position: "absolute", backgroundColor: "#fff", padding: 5 },
+            ]}
+          >
+            Or scan QR code
+          </Text>
+        </View>
+        <Image
+          source={require("../../assets/QRCode.png")}
+          resizeMode={"center"}
+          style={propertyStyles.QRcode}
+        />
+      </View>
+    </Pressable>
+  );
+};
+
+export function PropertyHome({ navigation, jwtToken, property }) {
+  const [QRCodeOpen, setQRCodeOpen] = useState(false);
+
+  const [note, setNote] = useState(property.note);
+
+  const [submitUpdatedProperty] = useMutation(updateProperty);
+
+  useEffect(() => {
+    submitUpdatedProperty({
+      context: {
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      },
+      variables: {
+        id: property.id,
+        note,
+      },
+    })
+      .then(() => {})
+      .catch((err) => console.log(err));
+  }, [note]);
 
   let renters = [
     {
@@ -145,50 +206,55 @@ export function PropertyHome({ navigation, jwtToken }) {
   ];
 
   return (
-    <View style={[styles.container, propertyStyles.homeScreen]}>
-      <NavigationHeader
-        goBack={() => navigation.navigate("Main Stack")}
-        title='Home'
-      />
-      <View style={[propertyStyles.tenantsListArea, { position: "relative" }]}>
-        <Note
-          note={note}
-          setNote={setNote}
-          deleteNote={() => {
-            setNote(null);
-          }}
+    <View style={[styles.container, { position: "relative" }]}>
+      <View style={[styles.container, propertyStyles.homeScreen]}>
+        <NavigationHeader
+          goBack={() => navigation.navigate("Main Stack")}
+          title='Home'
         />
-        <Text style={propertyStyles.tenantText}>Tenants</Text>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ alignItems: "center", padding: 10 }}
-          style={propertyStyles.tenantsList}
-        >
-          {renters.map((renter, index) => (
-            <RenterCard
-              firstName={renter.firstName}
-              lastName={renter.lastName}
-              dueDate={renter.dueDate}
-              isPaid={renter.isPaid}
-              isResponsible={renter.isResponsible}
-              key={index}
-            />
-          ))}
-          <View style={{ flex: 1, height: 150 }} />
-        </ScrollView>
-        <Pressable
-          onPress={() => {
-            navigation.navigate("QRScreen", {
-              title: "Property Home",
-            });
-          }}
-          style={[styles.button, styles.buttonBig, ownerStyles.addNewPropertyButton]}
-        >
-          <Text style={[styles.buttonText, styles.buttonTextBig]}>
-            Add new renter
-          </Text>
-        </Pressable>
+        <View style={[propertyStyles.tenantsListArea, { position: "relative" }]}>
+          <Note
+            note={note}
+            setNote={setNote}
+            deleteNote={() => {
+              setNote("");
+            }}
+          />
+          <Text style={propertyStyles.tenantText}>Tenants</Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ alignItems: "center", padding: 10 }}
+            style={propertyStyles.tenantsList}
+          >
+            {renters.map((renter, index) => (
+              <RenterCard
+                firstName={renter.firstName}
+                lastName={renter.lastName}
+                dueDate={renter.dueDate}
+                isPaid={renter.isPaid}
+                isResponsible={renter.isResponsible}
+                key={index}
+              />
+            ))}
+            <View style={{ flex: 1, height: 150 }} />
+          </ScrollView>
+          <Pressable
+            onPress={() => {
+              setQRCodeOpen(true);
+            }}
+            style={[
+              styles.button,
+              styles.buttonBig,
+              ownerStyles.addNewPropertyButton,
+            ]}
+          >
+            <Text style={[styles.buttonText, styles.buttonTextBig]}>
+              Add new renter
+            </Text>
+          </Pressable>
+        </View>
       </View>
+      {QRCodeOpen && <AddNewTenantPopUp setPopUpOpen={setQRCodeOpen} />}
     </View>
   );
 }

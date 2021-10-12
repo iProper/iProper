@@ -47,6 +47,7 @@ function AddProperty({ route, navigation }) {
         rules,
         description,
         numOfRooms,
+        note: "",
       },
     })
       .then((result) => navigation.goBack())

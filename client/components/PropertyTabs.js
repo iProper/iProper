@@ -71,7 +71,7 @@ export function PropertyTabs({ route, userData, jwtToken, propertyId }) {
         {(props) => (
           <AboutScreen
             {...props}
-            property={data?.getProperty}
+            property={property}
             jwtToken={jwtToken}
             userData={userData}
           />

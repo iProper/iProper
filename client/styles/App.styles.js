@@ -35,6 +35,7 @@ export default StyleSheet.create({
     color: "#FC4445",
     fontSize: 12,
     marginLeft: 15,
+    fontStyle: "italic",
   },
   separator: {
     width: "100%",
@@ -305,4 +306,24 @@ export default StyleSheet.create({
     borderBottomWidth: 3,
     borderColor: "#97CAEF"
   },
+
+  popUp: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    left: 0,
+    backgroundColor: "#9995",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  popUpCard: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+    width: "80%",
+    padding: 10,
+    height: "50%",
+  }
 });

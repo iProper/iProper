@@ -74,7 +74,7 @@ function SideMenu(props) {
                         labelStyle={{ fontSize: 15 }}
                         onPress={() => {
                           props.navigation.navigate("PropertyTabs", {
-                            id: prop.id,
+                            id: prop.propertyCode,
                           });
                         }}
                       />
