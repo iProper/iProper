@@ -332,10 +332,14 @@ const Mutation = new GraphQLObjectType({
             throw new Error("Not the owner of this property");
           } else {
             const property = await Property.findOne({ propertyCode: args.id });
-            if (!property.residentIds.includes(req.user.id))
-              property.residentIds.push(req.user.id);
+            if (property) {
+              if (!property.residentIds.includes(req.user.id))
+                property.residentIds.push(req.user.id);
 
-            return property.save();
+              return property.save();
+            }
+
+            throw new Error("Incorrect Error Code");
           }
         }
 
