@@ -85,7 +85,9 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: new GraphQLNonNull(GraphQLString) } },
       async resolve(_parent, args, req) {
         if (req) {
-          const property = await Property.findOne({ propertyCode: args.id });
+          let property = await Property.findOne({ propertyCode: args.id });
+          if (!property) property = await Property.findOne({ id: args.id });
+
           if (req.user.isOwner) {
             if (property.ownerId == req.user.id) return property;
             throw new Error("Not the owner of this property");
