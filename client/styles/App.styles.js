@@ -21,6 +21,10 @@ export default StyleSheet.create({
   textH4: {
     fontSize: 15,
   },
+  textCenter: {
+    textAlign: "center"
+  },
+
   lightText: {
     color: "#97CAEF",
     fontWeight: "500",
@@ -31,6 +35,7 @@ export default StyleSheet.create({
     color: "#FC4445",
     fontSize: 12,
     marginLeft: 15,
+    fontStyle: "italic",
   },
   separator: {
     width: "100%",
@@ -51,6 +56,21 @@ export default StyleSheet.create({
   separator60: {
     width: "60%",
   },
+  separator20: {
+    width: "20%",
+  },
+
+  rectangle: {
+    borderStyle: "solid",
+    borderWidth: 4,
+    borderColor: "#97CAEF",
+    backgroundColor: "#FC4445",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    borderRadius: 15,
+    padding: 15,
+    paddingTop: 5,
+  },
   button: {
     borderStyle: "solid",
     borderWidth: 1,
@@ -64,6 +84,9 @@ export default StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 15,
+  },
+  buttonTextBlue: {
+    color: "#97CAEF",
   },
   buttonOffText: {
     color: "#FC4445",
@@ -80,6 +103,10 @@ export default StyleSheet.create({
   },
   buttonRound: {
     borderRadius: 50,
+  },
+  buttonBlue: {
+    backgroundColor: "#97CAEF",
+    borderColor: "#97CAEF",
   },
 
   formBox: {
@@ -137,19 +164,18 @@ export default StyleSheet.create({
   },
 
   flexSize1: {
-    flex: 1
+    flex: 1,
   },
   flexSize2: {
-    flex: 2
+    flex: 2,
   },
-  
+
   flexRow: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
-  
 
   searchContainer: {
     backgroundColor: "#eee",
@@ -157,12 +183,13 @@ export default StyleSheet.create({
     padding: 2,
     flexDirection: "row",
     alignItems: "center",
+    width: "100%",
   },
   searchIcon: {
     width: 18,
     height: 18,
     margin: 5,
-    opacity: 0.5
+    opacity: 0.5,
   },
   searchTextInput: {
     fontSize: 18,
@@ -173,14 +200,28 @@ export default StyleSheet.create({
     height: "90%",
   },
 
+  iconS: {
+    width: 25,
+    height: 25,
+  },
+  iconM: {
+    width: 32,
+    height: 32,
+  },
+  iconL: {
+    width: 48,
+    height: 48,
+  },
+
   card: {
     padding: 10,
     borderWidth: 4,
     borderColor: "#97CAEF",
     borderRadius: 10,
     marginVertical: 5,
+    marginHorizontal: 10,
     backgroundColor: "#fff",
-    
+
     shadowRadius: 5,
     shadowOffset: {
       width: 5,
@@ -189,21 +230,24 @@ export default StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.2,
     elevation: 10,
+
+    width: "100%",
   },
 
   App: {
     height: "100%",
     backgroundColor: "#fff",
-    marginTop: 25,
   },
 
-  navigationHeaderArea: {
-    marginBottom: 15,
-  },
   navigationHeader: {
     height: 40,
+    width: "100%",
+    marginBottom: 20,
+  },
+  navigationHeaderBackButton: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   navigationHeaderArrow: {
     color: "#97CAEF",
@@ -230,21 +274,17 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
-  sideMenuDrawer: {
-    height: "100%",
-    flex: 1,
-  },
-  sideMenu: {
-    height: "100%",
+  sideMenuHeaderArea: {
     backgroundColor: "#97CAEF",
-    flex: 1,
   },
   sideMenuHeader: {
     backgroundColor: "#fff",
     alignItems: "center",
-    margin: 20,
+    margin: 10,
     borderRadius: 10,
+  },
+  sideMenuMain: {
+    marginTop: 0,
   },
   sideMenuLogo: {
     width: "80%",
@@ -256,6 +296,34 @@ export default StyleSheet.create({
   },
   sideMenuItem: {
     borderBottomWidth: 1,
+    borderColor: "#97CAEF",
+  },
+  sideMenuBottomArea: {
+    marginBottom: 20,
+    padding: 15,
+    borderStyle: "solid", 
+    borderTopWidth: 3,
+    borderBottomWidth: 3,
     borderColor: "#97CAEF"
   },
+
+  popUp: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    left: 0,
+    backgroundColor: "#9995",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  popUpCard: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+    width: "80%",
+    padding: 10,
+    height: "50%",
+  }
 });

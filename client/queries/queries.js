@@ -12,13 +12,19 @@ const requestSms = gql`
   }
 `;
 
+const checkEmail = gql`
+  mutation ($email: String!) {
+    checkEmail(email: $email)
+  }
+`;
+
 const register = gql`
   mutation (
     $firstName: String!
     $lastName: String!
     $email: String!
     $password: String!
-    $phoneNumber: String
+    $phoneNumber: String!
     $isOwner: Boolean!
   ) {
     register(
@@ -42,6 +48,7 @@ const addProperty = gql`
     $rules: [String]
     $description: String
     $numOfRooms: Int!
+    $note: String
   ) {
     addProperty(
       address1: $address1
@@ -52,6 +59,7 @@ const addProperty = gql`
       rules: $rules
       description: $description
       numOfRooms: $numOfRooms
+      note: $note
     ) {
       id
     }
@@ -64,6 +72,7 @@ const getOwnerProperties = gql`
       id
       address1
       numOfRooms
+      propertyCode
       residents {
         id
       }
@@ -83,8 +92,13 @@ const getPropertyById = gql`
       numOfRooms
       description
       rules
+      propertyCode
+      note
+      residentIds
       residents {
         id
+        firstName
+        lastName
       }
     }
   }
@@ -99,6 +113,7 @@ const currentUser = gql`
       isOwner
       email
       phoneNumber
+      propertyCode
     }
   }
 `;
@@ -106,14 +121,15 @@ const currentUser = gql`
 const updateProperty = gql`
   mutation (
     $id: String!
-    $address1: String!
+    $address1: String
     $address2: String
-    $city: String!
-    $province: String!
-    $postalCode: String!
+    $city: String
+    $province: String
+    $postalCode: String
     $rules: [String]
     $description: String
-    $numOfRooms: Int!
+    $numOfRooms: Int
+    $note: String
   ) {
     updateProperty(
       id: $id
@@ -125,6 +141,27 @@ const updateProperty = gql`
       rules: $rules
       description: $description
       numOfRooms: $numOfRooms
+      note: $note
+    ) {
+      id
+    }
+  }
+`;
+
+const updateUser = gql`
+  mutation (
+    $firstName: String
+    $lastName: String
+    $phoneNumber: String
+    $propertyCode: String
+    $password: String
+  ) {
+    updateUser(
+      firstName: $firstName
+      lastName: $lastName
+      phoneNumber: $phoneNumber
+      propertyCode: $propertyCode
+      password: $password
     ) {
       id
     }
@@ -133,6 +170,7 @@ const updateProperty = gql`
 
 export {
   login,
+  checkEmail,
   register,
   currentUser,
   addProperty,
@@ -140,4 +178,5 @@ export {
   requestSms,
   getPropertyById,
   updateProperty,
+  updateUser,
 };

@@ -2,7 +2,9 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   ownerDashboard: {
-    padding: 30
+    padding: 30,
+    paddingBottom: 0,
+    alignItems: "center",
   }, 
   ownerDashboardHeader: {
     justifyContent: "center",
@@ -10,9 +12,9 @@ export default StyleSheet.create({
     paddingBottom: 10,
   },
   ownerDashboardProperties: {
-    paddingVertical: 15,
     marginTop: 5,
     flexGrow: 1,
+    width: "105%",
   },
   propertyCard: {
     height: 150,
@@ -109,7 +111,7 @@ export default StyleSheet.create({
     padding: 8,
     paddingHorizontal: 20,
     width: "100%",
-    marginVertical: 8,
+    marginVertical: 4,
   },
   ruleTextInput: {
     fontSize: 15,
@@ -145,7 +147,8 @@ export default StyleSheet.create({
   addNewRuleBtn: {
     width: "100%",
     
-    marginVertical: 8,
+    padding: 12,
+    marginVertical: 4,
   },
 
 

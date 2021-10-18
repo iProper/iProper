@@ -1,7 +1,7 @@
 import { Text, View, Animated, Image } from "react-native";
 import React, { useEffect, useRef } from "react";
 
-import styles from "../styles/App.styles";
+import styles from "../../styles/App.styles";
 
 const Loading = ({ text }) => {
   const rotation = useRef(new Animated.Value(0)).current;
@@ -45,7 +45,7 @@ const Loading = ({ text }) => {
         ]}
       ><Image
           style={{width: 50, height: 50}}
-          source={require("../assets/loading.png")}
+          source={require("../../assets/loading.png")}
           resizeMode={"center"}/></Animated.View>
       <Text style={styles.loadingText}>{text}</Text>
     </View>
