@@ -13,6 +13,38 @@ export default StyleSheet.create({
     alignItems: "center",
   },
 
+  QRCodeScanner: {
+    height: "100%",
+    backgroundColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 50,
+  },
+  QRCodeScannerHeader: {
+    width: "100%",
+    margin: 30,
+    width: "80%",
+    padding: 5,
+    paddingRight: 10,
+    alignItems: "center",
+    backgroundColor: "#1a3345",
+    borderRadius: 10,
+  },
+  QRCodeScannerHeaderBackButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  QRCodeBackArrow: {
+    color: "#fff",
+    fontSize: 32,
+  },
+  QRCodeScannerMessage: {
+    padding: 10,
+    width: "70%",
+    backgroundColor: "#1a3345",
+    borderRadius: 10,
+  },
+
   renterHomeHeader: {
     padding: 15,
     alignItems: "center",

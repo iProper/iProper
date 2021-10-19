@@ -54,7 +54,7 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
           setJwtToken={setJwtToken}
         />
       )}
-      screenOptions={{ headerShown: true, headerTitle: "" }}
+      screenOptions={{ headerShown: false, headerTitle: "" }}
     >
       {data.currentUser.isOwner && (
         <Drawer.Screen name='Main Stack'>
