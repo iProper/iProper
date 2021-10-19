@@ -3,6 +3,7 @@ import styles from "../../styles/App.styles";
 import ownerStyles from "../../styles/OwnerScreens.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 import React, { useState, useRef, useEffect } from "react";
+import QRCode from "react-native-qrcode-svg";
 
 import { useMutation } from "@apollo/client";
 import { updateProperty } from "../../queries/queries";
@@ -67,7 +68,7 @@ const Note = ({ note, setNote, deleteNote }) => {
         propertyStyles.addNoteButton,
       ]}
     >
-      <Text style={[styles.textH3, {color: "#000"}]}>Add note</Text>
+      <Text style={[styles.textH3, { color: "#000" }]}>Add note</Text>
     </Pressable>
   ) : (
     <View style={[propertyStyles.note]}>
@@ -148,11 +149,7 @@ const AddNewTenantPopUp = ({ setPopUpOpen, propertyCode }) => {
             Or scan QR code
           </Text>
         </View>
-        <Image
-          source={require("../../assets/QRCode.png")}
-          resizeMode={"center"}
-          style={propertyStyles.QRcode}
-        />
+        <QRCode value={propertyCode} size={150}/>
       </View>
     </Pressable>
   );
@@ -232,7 +229,12 @@ export function PropertyHome({ navigation, jwtToken, property }) {
           </Pressable>
         </View>
       </View>
-      {QRCodeOpen && <AddNewTenantPopUp propertyCode={property.propertyCode} setPopUpOpen={setQRCodeOpen} />}
+      {QRCodeOpen && (
+        <AddNewTenantPopUp
+          propertyCode={property.propertyCode}
+          setPopUpOpen={setQRCodeOpen}
+        />
+      )}
     </View>
   );
 }
