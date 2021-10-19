@@ -111,6 +111,7 @@ export default StyleSheet.create({
     padding: 8,
     paddingHorizontal: 20,
     width: "100%",
+    height: 45,
     marginVertical: 4,
   },
   ruleTextInput: {
@@ -160,6 +161,7 @@ export default StyleSheet.create({
     width: 330,
     textAlignVertical: "top",
     backgroundColor: "#eee",
+    color: "#000",
     borderRadius: 5,
     padding: 5,
     minHeight: 60,

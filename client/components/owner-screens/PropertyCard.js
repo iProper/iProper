@@ -51,7 +51,7 @@ const PropertyCard = ({ navigation, property, propertyId }) => {
             </Text>
           </View>
           <View style={ownerStyles.propertyCardButtons}>
-            <Pressable style={ownerStyles.propertyCardReportStatusBtn}>
+            <Pressable style={[ownerStyles.propertyCardReportStatusBtn, {justifyContent: "center"}]}>
               <Text
                 style={{
                   fontSize: 30,
