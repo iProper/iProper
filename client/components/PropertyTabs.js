@@ -43,7 +43,10 @@ export function PropertyTabs({
 
   return loading ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Tabs.Screen name='loading'>
+      <Tabs.Screen
+        name='loading'
+        options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
+      >
         {(props) => (
           <View {...props}>
             <Text>Loading...</Text>
@@ -60,7 +63,7 @@ export function PropertyTabs({
           <View style={{ flex: 1, backgroundColor: "#FC4445" }} />
         ),
         tabBarLabel: () => {},
-        tabBarIcon: userData.propertyCode
+        tabBarIcon: userData.propertyCode || userData.isOwner
           ? ({ focused }) => {
               let iconImg;
               if (route.name === "Home") {
