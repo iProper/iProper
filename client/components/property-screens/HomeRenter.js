@@ -1,7 +1,17 @@
-import { Text, View, Pressable, ScrollView, Image, TextInput } from "react-native";
+import {
+  Text,
+  View,
+  Pressable,
+  ScrollView,
+  Image,
+  TextInput,
+  StyleSheet,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { updateProperty, updateUser } from "../../queries/queries";
 import { useMutation } from "@apollo/client";
+
+import { BarCodeScanner } from "expo-barcode-scanner";
 
 import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
@@ -12,6 +22,16 @@ const NoPropertyHome = ({ jwtToken, refetchUser }) => {
 
   const [addUser] = useMutation(updateProperty);
   const [changeUser] = useMutation(updateUser);
+
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
   const addUserToProperty = () => {
     addUser({
@@ -43,6 +63,11 @@ const NoPropertyHome = ({ jwtToken, refetchUser }) => {
         console.log(err);
         setErr("Wrong code");
       });
+  };
+
+  const onQRCodeScan = ({ type, data }) => {
+    setScanned(true);
+    console.log(data);
   };
 
   return (
@@ -116,6 +141,12 @@ const NoPropertyHome = ({ jwtToken, refetchUser }) => {
           </View>
         </View>
       </View>
+      {!scanned && hasPermission && (
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : onQRCodeScan}
+          style={StyleSheet.absoluteFillObject}
+        />
+      )}
     </View>
   );
 };
@@ -173,15 +204,24 @@ export const Home = ({ userData, jwtToken, refetchUser, property }) => {
       </ScrollView>
 
       <View style={propertyStyles.renterHomeNote}>
-        <Image style={[styles.iconS, { marginHorizontal: 5 }]} source={require("../../assets/pin.png")}/>
+        <Image
+          style={[styles.iconS, { marginHorizontal: 5 }]}
+          source={require("../../assets/pin.png")}
+        />
         <View
           style={[styles.separator, styles.separatorBlue, styles.separatorVertical]}
         />
-        <Text style={[styles.textH3, { marginHorizontal: 15 }]}>{property.note}</Text>
+        <Text style={[styles.textH3, { marginHorizontal: 15 }]}>
+          {property.note}
+        </Text>
       </View>
     </View>
   ) : (
-    <NoPropertyHome refetchUser={refetchUser} jwtToken={jwtToken} userData={userData} />
+    <NoPropertyHome
+      refetchUser={refetchUser}
+      jwtToken={jwtToken}
+      userData={userData}
+    />
   );
 };
 
