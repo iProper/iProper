@@ -201,7 +201,7 @@ export function PropertyHome({ navigation, jwtToken, property }) {
             contentContainerStyle={{ alignItems: "center", padding: 10 }}
             style={propertyStyles.tenantsList}
           >
-            {renters.map((renter, index) => (
+            {renters.length ? renters.map((renter, index) => (
               <RenterCard
                 firstName={renter.firstName}
                 lastName={renter.lastName}
@@ -210,7 +210,7 @@ export function PropertyHome({ navigation, jwtToken, property }) {
                 isResponsible={renter.isResponsible}
                 key={index}
               />
-            ))}
+            )) : <Text style={{color: "#555"}}>Oops... No tenants found.</Text>}
             <View style={{ flex: 1, height: 150 }} />
           </ScrollView>
           <Pressable
