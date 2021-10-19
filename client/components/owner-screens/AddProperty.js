@@ -4,6 +4,9 @@ import styles from "../../styles/App.styles";
 import { useMutation } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
 import { addProperty } from "../../queries/queries";
+import * as DocumentPicker from "expo-document-picker";
+
+import * as firebase from "firebase";
 
 import Rule from "../small/Rule";
 import NavigationHeader from "../small/NavigationHeader";
@@ -31,28 +34,8 @@ function AddProperty({ route, navigation }) {
 
   const [rules, setRules] = useState([]);
 
-  const submitPropertyForm = () => {
-    submitProperty({
-      context: {
-        headers: {
-          Authorization: "Bearer " + jwtToken,
-        },
-      },
-      variables: {
-        address1,
-        address2,
-        city,
-        province,
-        postalCode,
-        rules,
-        description,
-        numOfRooms,
-        note: "",
-      },
-    })
-      .then((result) => navigation.goBack())
-      .catch((err) => console.log(err));
-  };
+  const [uri, setUri] = useState("");
+  const [filename, setFilename] = useState("");
 
   const addNewRule = () => {
     setRules((rules) => {
@@ -74,6 +57,65 @@ function AddProperty({ route, navigation }) {
     setRules((rules) => {
       return rules.filter((r, i) => i !== index);
     });
+  };
+
+  const uploadDocumentFromSystem = () => {
+    DocumentPicker.getDocumentAsync({
+      copyToCacheDirectory: false,
+      type: "*/*",
+    }).then(({ type, uri, name }) => {
+      if (type === "cancel") return;
+
+      setUri(uri);
+      setFilename(name);
+    });
+  };
+
+  const uploadDocumentToStorage = async () => {
+    try {
+      const fetchRes = await fetch(uri);
+      const blob = await fetchRes.blob();
+
+      firebase
+        .storage()
+        .ref()
+        .child("documents/" + address1 + filename)
+        .put(blob, {
+          contentType: "confirmOwnerDocument",
+        })
+        .then((snapshot) => {
+          blob.close();
+          navigation.goBack()
+          console.log("File uploaded!");
+        });
+    } catch (err) {
+      console.log("Error uploading file:" + err.message);
+    }
+  };
+
+  const submitPropertyForm = () => {
+    submitProperty({
+      context: {
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      },
+      variables: {
+        address1,
+        address2,
+        city,
+        province,
+        postalCode,
+        rules,
+        description,
+        numOfRooms,
+        note: "",
+      },
+    })
+      .then((result) => {
+        uploadDocumentToStorage()
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -227,11 +269,11 @@ function AddProperty({ route, navigation }) {
             Check viable proof of ownership.
           </Text>
           <View style={[styles.flexRow, { margin: 10 }]}>
-            <Pressable onPress={() => {}} style={[styles.button, styles.flexSize1]}>
+            <Pressable onPress={() => uploadDocumentFromSystem()} style={[styles.button, styles.flexSize1]}>
               <Text style={styles.buttonText}>Upload document</Text>
             </Pressable>
             <Text style={[styles.textH4, styles.flexSize1, { textAlign: "center" }]}>
-              No document
+              {filename || "No file uploaded"}
             </Text>
           </View>
 

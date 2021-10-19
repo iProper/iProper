@@ -92,7 +92,7 @@ export default function UploadOwnerDocumentsScreen({ route, navigation }) {
         <Pressable onPress={uploadDocumentFromSystem} style={styles.button}>
           <Text style={styles.buttonText}>Upload Documents</Text>
         </Pressable>
-        <Text style={styles.textH4}>{filename || "No files uploaded"}</Text>
+        <Text style={styles.textH4}>{filename || "No file uploaded"}</Text>
       </View>
 
       <Pressable
