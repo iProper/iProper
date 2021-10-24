@@ -319,10 +319,20 @@ const Mutation = new GraphQLObjectType({
     deleteUser: {
       type: UserType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
+        // id: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(_parent, args) {
-        return User.findByIdAndDelete(args.id);
+        if (req.user.isOwner) {
+          let properties = getProperties();
+          let propertyIDs = []
+          for (let property of properties) {
+            propertyIDs.push(property.id);
+          }
+          for (let property of propertyIDs) {
+            deleteProperty(property);
+          }
+        }
+        User.findByIdAndDelete(req.user.id);
       },
     },
     // updateUser: {
