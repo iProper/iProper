@@ -324,9 +324,8 @@ const Mutation = new GraphQLObjectType({
             await Property.deleteMany({ ownerId: req.user.id });
           }
         return User.findByIdAndDelete(req.user.id);
-        } else {
-          throw new Error("Bad request.");
         }
+        throw new Error("Non authenticated user");
       },
     },
     // updateUser: {
