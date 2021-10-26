@@ -30,7 +30,8 @@ const UserType = new GraphQLObjectType({
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     phoneNumber: { type: GraphQLString },
-    isOwner: { type: GraphQLString },
+    propertyCode: { type: GraphQLString },
+    isOwner: { type: GraphQLBoolean },
   }),
 });
 
@@ -38,6 +39,7 @@ const PropertyType = new GraphQLObjectType({
   name: "Property",
   fields: () => ({
     id: { type: GraphQLID },
+    propertyCode: { type: GraphQLString },
     address1: { type: GraphQLString },
     address2: { type: GraphQLString },
     city: { type: GraphQLString },
@@ -45,6 +47,7 @@ const PropertyType = new GraphQLObjectType({
     postalCode: { type: GraphQLString },
     numOfRooms: { type: GraphQLInt },
     description: { type: GraphQLString },
+    note: { type: GraphQLString },
     rules: { type: new GraphQLList(GraphQLString) },
     residentIds: { type: new GraphQLList(GraphQLString) },
     ownerId: { type: GraphQLID },
@@ -83,7 +86,9 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: new GraphQLNonNull(GraphQLString) } },
       async resolve(_parent, args, req) {
         if (req) {
-          const property = await Property.findById(args.id);
+          let property = await Property.findOne({ propertyCode: args.id });
+          if (!property) property = await Property.findOne({ id: args.id });
+
           if (req.user.isOwner) {
             if (property.ownerId == req.user.id) return property;
             throw new Error("Not the owner of this property");
@@ -121,7 +126,22 @@ const Mutation = new GraphQLObjectType({
       type: GraphQLBoolean,
       args: { email: { type: new GraphQLNonNull(GraphQLString) } },
       async resolve(_parent, args) {
-        const alreadyRegisted = await User.findOne({ email: args.email });
+        const alreadyRegistered = await User.findOne({ email: args.email });
+
+        if (alreadyRegistered) {
+          return true;
+        }
+
+        return false;
+      },
+    },
+    checkPhoneNumber: {
+      type: GraphQLBoolean,
+      args: { phoneNumber: { type: new GraphQLNonNull(GraphQLString) } },
+      async resolve(_parent, args) {
+        const alreadyRegisted = await User.findOne({
+          phoneNumber: args.phoneNumber,
+        });
 
         if (alreadyRegisted) {
           return true;
@@ -137,7 +157,8 @@ const Mutation = new GraphQLObjectType({
         lastName: { type: new GraphQLNonNull(GraphQLString) },
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) },
-        phoneNumber: { type: GraphQLString },
+        phoneNumber: { type: new GraphQLNonNull(GraphQLString) },
+        propertyCode: { type: GraphQLString },
         isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
       async resolve(_parent, args) {
@@ -147,16 +168,13 @@ const Mutation = new GraphQLObjectType({
           throw new Error("User already registered with this email");
         }
 
-        if (args.isOwner && args.phoneNumber == null) {
-          throw new Error("Owner must register phone number");
-        }
-
         const user = new User({
           firstName: args.firstName,
           lastName: args.lastName,
           email: args.email,
           password: await bcrypt.hash(args.password, 10),
           phoneNumber: args.phoneNumber,
+          propertyCode: args.propertyCode,
           isOwner: args.isOwner,
         });
 
@@ -220,13 +238,35 @@ const Mutation = new GraphQLObjectType({
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
         numOfRooms: { type: new GraphQLNonNull(GraphQLInt) },
         description: { type: GraphQLString },
+        note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
       },
-      resolve(_parent, args, req) {
+      async resolve(_parent, args, req) {
         if (req) {
           if (req.user.isOwner) {
+            const generateCode = () => {
+              return ((Math.random() + 3 * Number.MIN_VALUE) / Math.PI)
+                .toString(36)
+                .slice(-7);
+            };
+
+            let propertyCode;
+            let unique = false;
+
+            while (!unique) {
+              propertyCode = generateCode();
+              const found = await Property.findOne({
+                propertyCode: propertyCode,
+              });
+
+              if (!found) {
+                unique = true;
+              }
+            }
+
             const property = new Property({
+              propertyCode: propertyCode,
               address1: args.address1,
               address2: args.address2,
               city: args.city,
@@ -234,6 +274,7 @@ const Mutation = new GraphQLObjectType({
               postalCode: args.postalCode,
               numOfRooms: args.numOfRooms,
               description: args.description,
+              note: args.note,
               rules: args.rules,
               residentIds: args.residentIds,
               ownerId: req.user.id,
@@ -252,13 +293,14 @@ const Mutation = new GraphQLObjectType({
       type: PropertyType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
-        address1: { type: new GraphQLNonNull(GraphQLString) },
+        address1: { type: GraphQLString },
         address2: { type: GraphQLString },
-        city: { type: new GraphQLNonNull(GraphQLString) },
-        province: { type: new GraphQLNonNull(GraphQLString) },
-        postalCode: { type: new GraphQLNonNull(GraphQLString) },
-        numOfRooms: { type: new GraphQLNonNull(GraphQLInt) },
+        city: { type: GraphQLString },
+        province: { type: GraphQLString },
+        postalCode: { type: GraphQLString },
+        numOfRooms: { type: GraphQLInt },
         description: { type: GraphQLString },
+        note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
       },
@@ -267,6 +309,12 @@ const Mutation = new GraphQLObjectType({
           if (req.user.isOwner) {
             const property = await Property.findById(args.id);
             if (req.user.id == property.ownerId) {
+              if (args.residentIds) {
+                args.residentIds = property.residentIds.concat(
+                  args.residentIds
+                );
+              }
+
               return Property.findByIdAndUpdate(
                 args.id,
                 {
@@ -277,6 +325,7 @@ const Mutation = new GraphQLObjectType({
                   postalCode: args.postalCode,
                   numOfRooms: args.numOfRooms,
                   description: args.description,
+                  note: args.note,
                   rules: args.rules,
                   residentIds: args.residentIds,
                   ownerId: req.user.id,
@@ -286,9 +335,17 @@ const Mutation = new GraphQLObjectType({
             }
 
             throw new Error("Not the owner of this property");
-          }
+          } else {
+            const property = await Property.findOne({ propertyCode: args.id });
+            if (property) {
+              if (!property.residentIds.includes(req.user.id))
+                property.residentIds.push(req.user.id);
 
-          throw new Error("Not an owner");
+              return property.save();
+            }
+
+            throw new Error("Incorrect Error Code");
+          }
         }
 
         throw new Error("Non authenticated user");
@@ -304,6 +361,9 @@ const Mutation = new GraphQLObjectType({
           if (req.user.isOwner) {
             const property = await Property.findById(args.id);
             if (req.user.id == property.ownerId) {
+              for (const tenantId of property.residentIds) {
+                await User.findByIdAndUpdate(tenantId, { propertyCode: null });
+              }
               return Property.findByIdAndDelete(args.id);
             }
 
@@ -316,32 +376,45 @@ const Mutation = new GraphQLObjectType({
         throw new Error("Non authenticated user");
       },
     },
-    // updateUser: {
-    //   type: UserType,
-    //   args: {
-    //     id: { type: new GraphQLNonNull(GraphQLID) },
-    //     firstName: { type: new GraphQLNonNull(GraphQLString) },
-    //     lastName: { type: new GraphQLNonNull(GraphQLString) },
-    //     email: { type: new GraphQLNonNull(GraphQLString) },
-    //     password: { type: new GraphQLNonNull(GraphQLString) },
-    //     phoneNumber: { type: GraphQLString },
-    //     isOwner: { type: new GraphQLNonNull(GraphQLString) },
-    //   },
-    //   resolve(_parent, args) {
-    //     return User.findByIdAndUpdate(
-    //       args.id,
-    //       {
-    //         firstName: args.firstName,
-    //         lastName: args.lastName,
-    //         email: args.email,
-    //         password: args.password,
-    //         phoneNumber: args.phoneNumber,
-    //         isOwner: args.isOwner,
-    //       },
-    //       { new: true }
-    //     );
-    // },
-    // },
+    updateUser: {
+      type: UserType,
+      args: {
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        phoneNumber: { type: GraphQLString },
+        propertyCode: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          if (args.password) {
+            return User.findByIdAndUpdate(
+              req.user.id,
+              {
+                firstName: args.firstName,
+                lastName: args.lastName,
+                phoneNumber: args.phoneNumber,
+                propertyCode: args.propertyCode,
+                password: await bcrypt.hash(args.password, 10),
+              },
+              { new: true }
+            );
+          }
+          return User.findByIdAndUpdate(
+            req.user.id,
+            {
+              firstName: args.firstName,
+              lastName: args.lastName,
+              phoneNumber: args.phoneNumber,
+              propertyCode: args.propertyCode,
+            },
+            { new: true }
+          );
+        }
+
+        throw new Error("Non authenticated user");
+      },
+    },
     // deleteUser: {
     //   type: UserType,
     //   args: {
