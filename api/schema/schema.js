@@ -46,6 +46,7 @@ const EventType = new GraphQLObjectType({
     assignedTo: { type: GraphQLString },
     ownerId: { type: GraphQLID },
     isExpired: { type: GraphQLBoolean },
+    isRepeatable: { type: GraphQLBoolean },
   }),
 });
 
