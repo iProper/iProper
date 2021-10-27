@@ -464,12 +464,11 @@ const Mutation = new GraphQLObjectType({
               const event = new Event({
                 name: args.name,
                 description: args.description,
-                toBeCompleted: args.toBeCompleted,
+                toBeCompleted: new Date(args.toBeCompleted),
                 isRepeatable: args.isRepeatable,
                 isExpired: false,
                 assignedTo: args.assignedTo,
                 ownerId: req.user.id,
-                propertyId: args.propertyId,
               });
 
               const saved_event = await event.save();
