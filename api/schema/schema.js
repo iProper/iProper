@@ -454,7 +454,7 @@ const Mutation = new GraphQLObjectType({
         toBeCompleted: { type: new GraphQLNonNull(GraphQLString) },
         assignedTo: { type: GraphQLID },
         isRepeatable: { type: new GraphQLNonNull(GraphQLBoolean) },
-        propertyId: { type: GraphQLID },
+        propertyId: { type: new GraphQLNonNull(GraphQLID) },
       },
       async resolve(_parent, args, req) {
         if (req) {
