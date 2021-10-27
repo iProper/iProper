@@ -1,6 +1,7 @@
 const graphql = require("graphql");
 const User = require("../models/User");
 const Property = require("../models/Property");
+const Event = require("../models/Event");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
@@ -35,6 +36,19 @@ const UserType = new GraphQLObjectType({
   }),
 });
 
+const EventType = new GraphQLObjectType({
+  name: "Event",
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    description: { type: GraphQLString },
+    toBeCompleted: { type: GraphQLString },
+    assignedTo: { type: GraphQLString },
+    ownerId: { type: GraphQLID },
+    isExpired: { type: GraphQLBoolean },
+  }),
+});
+
 const PropertyType = new GraphQLObjectType({
   name: "Property",
   fields: () => ({
@@ -50,6 +64,7 @@ const PropertyType = new GraphQLObjectType({
     note: { type: GraphQLString },
     rules: { type: new GraphQLList(GraphQLString) },
     residentIds: { type: new GraphQLList(GraphQLString) },
+    eventIds: { type: new GraphQLList(GraphQLString) },
     ownerId: { type: GraphQLID },
     residents: {
       type: new GraphQLList(UserType),
@@ -60,6 +75,20 @@ const PropertyType = new GraphQLObjectType({
             tenants.push(await User.findById(tenant));
           }
           return tenants;
+        }
+
+        throw new Error("Non authenticated user");
+      },
+    },
+    events: {
+      type: new GraphQLList(EventType),
+      async resolve(parent, _args, req) {
+        if (req) {
+          let events = [];
+          for (const event of parent.eventIds) {
+            events.push(await Event.findById(event));
+          }
+          return events;
         }
 
         throw new Error("Non authenticated user");
@@ -413,6 +442,51 @@ const Mutation = new GraphQLObjectType({
         }
 
         throw new Error("Non authenticated user");
+      },
+    },
+    addEvent: {
+      type: EventType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        description: { type: new GraphQLNonNull(GraphQLString) },
+        toBeCompleted: { type: new GraphQLNonNull(GraphQLString) },
+        assignedTo: { type: new GraphQLNonNull(GraphQLString) },
+        isRepeatable: { type: new GraphQLNonNull(GraphQLBoolean) },
+        propertyId: { type: GraphQLID },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          if (req.user.isOwner) {
+            let property = await Property.findById(args.propertyId);
+            if (req.user.id == property.ownerId) {
+              const event = new Event({
+                name: args.name,
+                description: args.description,
+                toBeCompleted: args.toBeCompleted,
+                assignedTo: args.assignedTo,
+                isRepeatable: args.isRepeatable,
+                isExpired: false,
+                ownerId: req.user.id,
+                propertyId: args.propertyId,
+              });
+
+              const saved_event = await event.save();
+              let newIds = property.eventIds;
+              newIds.push(saved_event.id);
+
+              await Property.findByIdAndUpdate(property.id, {
+                eventIds: newIds,
+              });
+
+              return saved_event;
+            }
+            throw new Error("Not the owner of this property");
+          }
+
+          throw new Error("Not an owner");
+        }
+
+        throw new Error("Non Authenticated User");
       },
     },
     // deleteUser: {
