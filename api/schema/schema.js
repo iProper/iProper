@@ -270,6 +270,7 @@ const Mutation = new GraphQLObjectType({
         note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
+        residentIds: { type: new GraphQLList(GraphQLString) },
       },
       async resolve(_parent, args, req) {
         if (req) {
@@ -306,6 +307,7 @@ const Mutation = new GraphQLObjectType({
               note: args.note,
               rules: args.rules,
               residentIds: args.residentIds,
+              eventIds: args.eventIds,
               ownerId: req.user.id,
             });
 
