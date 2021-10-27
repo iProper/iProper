@@ -474,7 +474,7 @@ const Mutation = new GraphQLObjectType({
 
               const saved_event = await event.save();
               let newIds = property.eventIds;
-              newIds.push(saved_event.id);
+              newIds.push(saved_event._id);
 
               await Property.findByIdAndUpdate(property.id, {
                 eventIds: newIds,
