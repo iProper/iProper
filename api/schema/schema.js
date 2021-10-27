@@ -460,7 +460,7 @@ const Mutation = new GraphQLObjectType({
       async resolve(_parent, args, req) {
         if (req) {
           if (req.user.isOwner) {
-            let property = await Property.findById(args.propertyId);
+            const property = await Property.findById(args.propertyId);
             if (req.user.id == property.ownerId) {
               const event = new Event({
                 name: args.name,
@@ -473,13 +473,9 @@ const Mutation = new GraphQLObjectType({
               });
 
               const saved_event = await event.save();
-              let newIds = property.eventIds;
-              newIds.push(saved_event._id);
+              property.eventIds.push(saved_event.id);
 
-              await Property.findByIdAndUpdate(property.id, {
-                eventIds: newIds,
-              });
-
+              await property.save();
               return saved_event;
             }
             throw new Error("Not the owner of this property");

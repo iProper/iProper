@@ -13,6 +13,7 @@ const propertySchema = new Schema({
   note: String,
   rules: [String],
   residentIds: [String],
+  eventIds: [String],
   ownerId: String,
 });
 
