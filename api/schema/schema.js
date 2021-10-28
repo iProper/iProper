@@ -20,7 +20,26 @@ const {
   GraphQLBoolean,
   GraphQLNonNull,
   GraphQLInt,
+  GraphQLScalarType,
+  Kind,
 } = graphql;
+
+const dateScalar = new GraphQLScalarType({
+  name: "Date",
+  description: "Date custom scalar type",
+  serialize(value) {
+    return value.getTime(); // Convert outgoing Date to integer for JSON
+  },
+  parseValue(value) {
+    return new Date(value); // Convert incoming integer to Date
+  },
+  parseLiteral(ast) {
+    if (ast.kind === Kind.INT) {
+      return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
+    }
+    return null; // Invalid hard-coded value (not an integer)
+  },
+});
 
 const UserType = new GraphQLObjectType({
   name: "User",
@@ -42,7 +61,7 @@ const EventType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     description: { type: GraphQLString },
-    toBeCompleted: { type: GraphQLString },
+    toBeCompleted: { type: dateScalar },
     assignedTo: { type: GraphQLString },
     ownerId: { type: GraphQLID },
     isExpired: { type: GraphQLBoolean },
@@ -87,14 +106,14 @@ const PropertyType = new GraphQLObjectType({
         if (req) {
           let events = [];
           for (const eventId of parent.eventIds) {
-            const event = await Event.findById(eventId);
+            // const event = await Event.findById(eventId);
 
-            const d = event.toBeCompleted;
-            const day = d.getDay();
-            const diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-            const firstDay = new Date(d.setDate(diff));
+            // const d = event.toBeCompleted;
+            // const day = d.getDay();
+            // const diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+            // const firstDay = new Date(d.setDate(diff));
 
-            // events.push(await Event.findById(event));
+            events.push(await Event.findById(eventId));
           }
           return events;
         }
@@ -459,7 +478,7 @@ const Mutation = new GraphQLObjectType({
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
         description: { type: new GraphQLNonNull(GraphQLString) },
-        toBeCompleted: { type: new GraphQLNonNull(GraphQLString) },
+        toBeCompleted: { type: new GraphQLNonNull(dateScalar) },
         assignedTo: { type: GraphQLID },
         isRepeatable: { type: new GraphQLNonNull(GraphQLBoolean) },
         propertyId: { type: new GraphQLNonNull(GraphQLID) },
@@ -472,7 +491,7 @@ const Mutation = new GraphQLObjectType({
               const event = new Event({
                 name: args.name,
                 description: args.description,
-                toBeCompleted: new Date(args.toBeCompleted),
+                toBeCompleted: args.toBeCompleted,
                 isRepeatable: args.isRepeatable,
                 isExpired: false,
                 assignedTo: args.assignedTo,
