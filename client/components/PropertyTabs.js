@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeRenter from "./property-screens/HomeRenter";
 import HomeOwner from "./property-screens/HomeOwner";
 import AboutScreen from "./property-screens/About";
+import NoPropertyHome from "./property-screens/NoPropertyHomeRenter";
 
 const Tabs = createBottomTabNavigator();
 
@@ -36,13 +37,16 @@ export function PropertyTabs({
 
   useEffect(() => {
     refetch();
-  }, [jwtToken]);
+  }, [jwtToken, propertyId]);
 
   let property = data?.getProperty || null;
 
   return loading ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Tabs.Screen name='loading'>
+      <Tabs.Screen
+        name='loading'
+        options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
+      >
         {(props) => (
           <View {...props}>
             <Text>Loading...</Text>
@@ -59,7 +63,7 @@ export function PropertyTabs({
           <View style={{ flex: 1, backgroundColor: "#FC4445" }} />
         ),
         tabBarLabel: () => {},
-        tabBarIcon: userData.propertyCode
+        tabBarIcon: userData.propertyCode || userData.isOwner
           ? ({ focused }) => {
               let iconImg;
               if (route.name === "Home") {
@@ -102,10 +106,25 @@ export function PropertyTabs({
             />
           )}
         </Tabs.Screen>
-      ) : (
+      ) : userData.propertyCode ? (
         <Tabs.Screen name='Home'>
           {(props) => (
             <HomeRenter
+              {...props}
+              property={property}
+              jwtToken={jwtToken}
+              userData={userData}
+              refetchUser={refetchUser}
+            />
+          )}
+        </Tabs.Screen>
+      ) : (
+        <Tabs.Screen
+          name='Home'
+          options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
+        >
+          {(props) => (
+            <NoPropertyHome
               {...props}
               property={property}
               jwtToken={jwtToken}

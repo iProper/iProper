@@ -5,6 +5,8 @@ import styles from "../../styles/App.styles";
 import ownerStyles from "../../styles/OwnerScreens.styles";
 
 const PropertyCard = ({ navigation, property, propertyId }) => {
+  const residents = property.residents || [];
+
   return (
     <Pressable
       style={[styles.card]}
@@ -18,7 +20,7 @@ const PropertyCard = ({ navigation, property, propertyId }) => {
         <View style={[ownerStyles.propertyCardHeader]}>
           <Text style={ownerStyles.propertyCardAddress}>{property.address1}</Text>
           <Text style={ownerStyles.propertyCardTenantsNum}>
-            {property.residents.length}/{property.numOfRooms}
+            {residents.length}/{property.numOfRooms}
           </Text>
         </View>
         <View style={[styles.separator, styles.separatorBlue]} />
@@ -29,8 +31,8 @@ const PropertyCard = ({ navigation, property, propertyId }) => {
                 ownerStyles.propertyCardPaidBarProgress,
                 {
                   height:
-                    (property.residents.length / property.numOfRooms) * 100 + "%",
-                  opacity: property.residents.length / property.numOfRooms,
+                    (residents.length / property.numOfRooms) * 100 + "%",
+                  opacity: residents.length / property.numOfRooms,
                 },
               ]}
             ></View>
@@ -44,14 +46,14 @@ const PropertyCard = ({ navigation, property, propertyId }) => {
               </Text>
             </View>
             <Text style={styles.lightText}>
-              {property.residents.length
+              {residents.length
                 ? property.residents.find((tenant) => tenant?.isResponsible)?.name +
                   " is responsible this week"
                 : "Oh no, there are no tenants!"}
             </Text>
           </View>
           <View style={ownerStyles.propertyCardButtons}>
-            <Pressable style={ownerStyles.propertyCardReportStatusBtn}>
+            <Pressable style={[ownerStyles.propertyCardReportStatusBtn, {justifyContent: "center"}]}>
               <Text
                 style={{
                   fontSize: 30,

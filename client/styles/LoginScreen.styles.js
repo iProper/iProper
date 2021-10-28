@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   loginScreen: {
@@ -37,16 +37,28 @@ export default StyleSheet.create({
     width: "100%",
   },
   button3rdPartyLogin: {
+    height: 40,
     borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    flexDirection: "row",
+    alignItems: "center",
+
+    elevation: 1,
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 2,
-    height: 40,
   },
   button3rdPartyLoginText: {
     fontWeight: "bold",
+    color: "#555",
   },
   loginForm: {
     width: "100%",
@@ -64,4 +76,4 @@ export default StyleSheet.create({
   formSubmissionError: {
     flex: 0.5,
   },
-})
+});

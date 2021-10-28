@@ -74,12 +74,14 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
     }
   }, [edit]);
 
+  console.log(property.residents);
+
   return (
     <View style={[styles.container, propertyStyles.propertyAboutScreen]}>
       <NavigationHeader
         goBack={() => navigation.navigate("Home")}
         title='About'
-        Child={() => (
+        Child={() => userData.isOwner && (
           <Pressable
             style={propertyStyles.aboutEditBtn}
             onPress={() => {
@@ -183,7 +185,7 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
             <Text style={styles.textH4}>Rooms:</Text>
             {!edit ? (
               <Text style={styles.textH4}>
-                {property.residents.length}/{numOfRooms}
+                {property.residentIds.length}/{numOfRooms}
               </Text>
             ) : (
               <Pressable
@@ -241,24 +243,25 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
                 index={index}
                 setRule={setRule}
                 deleteRule={deleteRule}
+                displayOnly={!userData.isOwner}
               />
             );
           })}
-          <Pressable
+          {userData.isOwner && <Pressable
             onPress={() => {
               addNewRule();
             }}
             style={[styles.button, styles.buttonRound, ownerStyles.addNewRuleBtn]}
           >
             <Text style={styles.buttonText}>Add new rule</Text>
-          </Pressable>
+          </Pressable>}
         </View>
 
         <View style={[styles.separator, styles.separatorBlue]} />
 
         <View style={ownerStyles.editPropertyDesc}>
           <Text style={styles.textH3}>Description</Text>
-
+          
           <TextInput
             onChangeText={changeDescription}
             style={edit ? ownerStyles.descTextInput : propertyStyles.descText}

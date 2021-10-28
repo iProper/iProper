@@ -1,6 +1,6 @@
 import { Image, Text, View, Pressable, TextInput } from "react-native";
 import styles from "../../styles/App.styles";
-import loginStyles  from "../../styles/LoginScreen.styles"
+import loginStyles from "../../styles/LoginScreen.styles";
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { login } from "../../queries/queries";
@@ -43,7 +43,11 @@ export default function LoginScreen({ setJwtToken, navigation }) {
 
       <View style={loginStyles.chooseLoginScreenButtons}>
         <Pressable
-          style={[styles.button, styles.buttonBig, loginStyles.chooseLoginScreenButton]}
+          style={[
+            styles.button,
+            styles.buttonBig,
+            loginStyles.chooseLoginScreenButton,
+          ]}
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Log In</Text>
         </Pressable>
@@ -66,11 +70,23 @@ export default function LoginScreen({ setJwtToken, navigation }) {
 
       <View style={loginStyles.loginFormArea}>
         <View style={loginStyles.buttons3rdPartyLogin}>
-          <Pressable style={loginStyles.button3rdPartyLogin}>
-            <Text style={loginStyles.button3rdPartyLoginText}>Sign in with Google</Text>
+          <Pressable style={[loginStyles.button3rdPartyLogin, {justifyContent: "flex-start"}]}>
+            <Image
+              style={[styles.iconS, {marginHorizontal: 35}]}
+              source={require("../../assets/google-icon.png")}
+            />
+            <Text style={loginStyles.button3rdPartyLoginText}>
+              Sign in with Google
+            </Text>
           </Pressable>
-          <Pressable style={loginStyles.button3rdPartyLogin}>
-            <Text style={loginStyles.button3rdPartyLoginText}>Sign in with Facebook</Text>
+          <Pressable style={[loginStyles.button3rdPartyLogin, {backgroundColor: "#45619D", justifyContent: "flex-start"}]}>
+            <Image
+              style={[styles.iconS, {marginHorizontal: 35}]}
+              source={require("../../assets/facebook-icon.png")}
+            />
+            <Text style={[loginStyles.button3rdPartyLoginText, {color: "#fff"}]}>
+              Sign in with Facebook
+            </Text>
           </Pressable>
         </View>
 
@@ -103,8 +119,8 @@ export default function LoginScreen({ setJwtToken, navigation }) {
         >
           <Text style={[styles.buttonText, styles.buttonTextBig]}>Log In</Text>
         </Pressable>
-        
-        <View style={{paddingVertical: 5}}>
+
+        <View style={{ paddingVertical: 5 }}>
           <Text style={[styles.alarmText, styles.textH4]}>
             {displayMsg && "Incorrect email or password!"}
           </Text>

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 import ownerStyles from "../../styles/OwnerScreens.styles";
 
-const Rule = ({ rule, index, setRule, deleteRule }) => {
+const Rule = ({ rule, index, setRule, deleteRule, displayOnly }) => {
   const [edit, setEdit] = useState(false);
   const [inputText, changeInputText] = useState(rule);
 
@@ -34,7 +34,7 @@ const Rule = ({ rule, index, setRule, deleteRule }) => {
           {index + 1}. {rule}
         </Text>
       )}
-      <View style={ownerStyles.ruleButtons}>
+      {!displayOnly && <View style={ownerStyles.ruleButtons}>
         <Pressable
           style={ownerStyles.ruleEditBtn}
           onPress={() => {
@@ -66,7 +66,7 @@ const Rule = ({ rule, index, setRule, deleteRule }) => {
             source={require("../../assets/garbage-can-red.png")}
           />
         </Pressable>
-      </View>
+      </View>}
     </View>
   );
 };
