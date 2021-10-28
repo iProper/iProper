@@ -90,11 +90,10 @@ const PropertyType = new GraphQLObjectType({
           for (const event of parent.eventIds) {
             const event_obj = await Event.findById(event);
 
-            const date = event_obj.toBeCompleted;
-            const today = date.getDate();
-            const dayOfTheWeek = date.getDay();
-            const newDate = date.setDate(today - (dayOfTheWeek || 7));
-            throw new Error(`The new date is: ${new Date(newDate)}`);
+            const d = event_obj.toBeCompleted;
+            const day = d.getDay(),
+              diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+            throw new Error(`First monday is: ${new Date(d.setDate(diff))}`);
             // events.push(await Event.findById(event));
           }
           return events;
