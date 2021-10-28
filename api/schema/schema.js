@@ -79,9 +79,9 @@ const PropertyType = new GraphQLObjectType({
             const today = date.getDate();
             const dayOfTheWeek = date.getDay();
             const newDate = date.setDate(today - (dayOfTheWeek || 7));
-            return new Date(newDate);
+            tenants.push(new Date(newDate));
 
-            tenants.push(await User.findById(tenant));
+            // tenants.push(await User.findById(tenant));
           }
           return tenants;
         }
