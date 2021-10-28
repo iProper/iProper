@@ -92,10 +92,9 @@ const PropertyType = new GraphQLObjectType({
 
             const date = event_obj.toBeCompleted;
             const today = date.getDate();
-            throw new Error(`The new date is: ${today}`);
             const dayOfTheWeek = date.getDay();
             const newDate = date.setDate(today - (dayOfTheWeek || 7));
-            // throw new Error(`The new date is: ${newDate.toString()}`);
+            throw new Error(`The new date is: ${newDate}`);
             // events.push(await Event.findById(event));
           }
           return events;
