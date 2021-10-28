@@ -178,7 +178,7 @@ export function PropertyHome({ navigation, jwtToken, property }) {
       .catch((err) => console.log(err));
   }, [note]);
 
-  let renters = property.residents;
+  let renters = property.residents || [];
 
   return (
     <View style={[styles.container, { position: "relative" }]}>

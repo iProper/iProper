@@ -17,7 +17,7 @@ function SideMenu(props) {
 
   useEffect(() => {
     refetch();
-  }, [props.jwtToken]);
+  }, [props.jwtToken, props.userData]);
 
   return (
     <DrawerContentScrollView
@@ -69,7 +69,7 @@ function SideMenu(props) {
           )}
           <ScrollView>
             {(() => {
-              if (data?.getProperties) {
+              if (props.userData.isOwner && data?.getProperties) {
                 return data.getProperties.map((prop, index) => {
                   return (
                     <View style={styles.sideMenuItem} key={index}>

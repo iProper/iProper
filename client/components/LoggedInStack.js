@@ -40,7 +40,7 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
 
   console.log(data);
 
-  return loading && !data ? (
+  return loading || data === null ? (
     <View>
       <Text>Loading...</Text>
     </View>
@@ -51,7 +51,11 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
           {...props}
           userData={data.currentUser}
           jwtToken={jwtToken}
-          setJwtToken={setJwtToken}
+          setJwtToken={(jwtToken) => {
+            setJwtToken(jwtToken);
+            data = null;
+            console.log(data);
+          }}
         />
       )}
       screenOptions={{ headerShown: false, headerTitle: "" }}

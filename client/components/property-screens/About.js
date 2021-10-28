@@ -74,6 +74,8 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
     }
   }, [edit]);
 
+  console.log(property.residents);
+
   return (
     <View style={[styles.container, propertyStyles.propertyAboutScreen]}>
       <NavigationHeader
@@ -183,7 +185,7 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
             <Text style={styles.textH4}>Rooms:</Text>
             {!edit ? (
               <Text style={styles.textH4}>
-                {property.residents.length}/{numOfRooms}
+                {property.residentIds.length}/{numOfRooms}
               </Text>
             ) : (
               <Pressable

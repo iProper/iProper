@@ -37,7 +37,7 @@ export function PropertyTabs({
 
   useEffect(() => {
     refetch();
-  }, [jwtToken]);
+  }, [jwtToken, propertyId]);
 
   let property = data?.getProperty || null;
 

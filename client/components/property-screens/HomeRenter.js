@@ -5,6 +5,14 @@ import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 
 export const Home = ({ userData, jwtToken, property }) => {
+  if (property == null) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, propertyStyles.homeScreen]}>
       <View style={propertyStyles.renterHomeHeader}>
@@ -56,18 +64,24 @@ export const Home = ({ userData, jwtToken, property }) => {
         </View>
       </ScrollView>
 
-      <View style={propertyStyles.renterHomeNote}>
-        <Image
-          style={[styles.iconS, { marginHorizontal: 5 }]}
-          source={require("../../assets/pin.png")}
-        />
-        <View
-          style={[styles.separator, styles.separatorBlue, styles.separatorVertical]}
-        />
-        <Text style={[styles.textH3, { marginHorizontal: 15 }]}>
-          {property.note}
-        </Text>
-      </View>
+      {property.note.length !== 0 && (
+        <View style={propertyStyles.renterHomeNote}>
+          <Image
+            style={[styles.iconS, { marginHorizontal: 5 }]}
+            source={require("../../assets/pin.png")}
+          />
+          <View
+            style={[
+              styles.separator,
+              styles.separatorBlue,
+              styles.separatorVertical,
+            ]}
+          />
+          <Text style={[styles.textH3, { marginHorizontal: 15 }]}>
+            {property.note}
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
