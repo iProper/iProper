@@ -74,13 +74,12 @@ const PropertyType = new GraphQLObjectType({
           let tenants = [];
           for (const tenant of parent.residentIds) {
             const event = await Event.findById(tenant);
-            console.log(event.toBeCompleted);
 
-            // const date = event.toBeCompleted;
-            // const today = date.getDate();
-            // const dayOfTheWeek = date.getDay();
-            // const newDate = date.setDate(today - (dayOfTheWeek || 7));
-            // return new Date(newDate);
+            const date = event.toBeCompleted;
+            const today = date.getDate();
+            const dayOfTheWeek = date.getDay();
+            const newDate = date.setDate(today - (dayOfTheWeek || 7));
+            return new Date(newDate);
 
             tenants.push(await User.findById(tenant));
           }
