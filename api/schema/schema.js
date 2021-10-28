@@ -73,15 +73,7 @@ const PropertyType = new GraphQLObjectType({
         if (req) {
           let tenants = [];
           for (const tenant of parent.residentIds) {
-            const event = await Event.findById(tenant);
-
-            const date = event.toBeCompleted;
-            const today = date.getDate();
-            const dayOfTheWeek = date.getDay();
-            const newDate = date.setDate(today - (dayOfTheWeek || 7));
-            tenants.push(new Date(newDate));
-
-            // tenants.push(await User.findById(tenant));
+            tenants.push(await User.findById(tenant));
           }
           return tenants;
         }
@@ -95,7 +87,14 @@ const PropertyType = new GraphQLObjectType({
         if (req) {
           let events = [];
           for (const event of parent.eventIds) {
-            events.push(await Event.findById(event));
+            const event_obj = await Event.findById(event);
+
+            const date = event_obj.toBeCompleted;
+            const today = date.getDate();
+            const dayOfTheWeek = date.getDay();
+            const newDate = date.setDate(today - (dayOfTheWeek || 7));
+            events.push(new Date(newDate));
+            // events.push(await Event.findById(event));
           }
           return events;
         }
