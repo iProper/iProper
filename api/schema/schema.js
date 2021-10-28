@@ -4,6 +4,7 @@ const Property = require("../models/Property");
 const Event = require("../models/Event");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
+const toDate = require("date-fns/toDate");
 
 require("dotenv").config();
 
@@ -90,10 +91,11 @@ const PropertyType = new GraphQLObjectType({
             const event_obj = await Event.findById(event);
 
             const date = event_obj.toBeCompleted;
+            throw new Error(`The new date is: ${date}`);
             const today = date.getDate();
             const dayOfTheWeek = date.getDay();
             const newDate = date.setDate(today - (dayOfTheWeek || 7));
-            throw new Error(`The new date is: ${newDate.toString()}`);
+            // throw new Error(`The new date is: ${newDate.toString()}`);
             // events.push(await Event.findById(event));
           }
           return events;
