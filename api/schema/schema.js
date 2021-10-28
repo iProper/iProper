@@ -4,7 +4,6 @@ const Property = require("../models/Property");
 const Event = require("../models/Event");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
-const toDate = require("date-fns/toDate");
 
 require("dotenv").config();
 
@@ -73,8 +72,8 @@ const PropertyType = new GraphQLObjectType({
       async resolve(parent, _args, req) {
         if (req) {
           let tenants = [];
-          for (const tenant of parent.residentIds) {
-            tenants.push(await User.findById(tenant));
+          for (const tenantId of parent.residentIds) {
+            tenants.push(await User.findById(tenantId));
           }
           return tenants;
         }
@@ -87,13 +86,14 @@ const PropertyType = new GraphQLObjectType({
       async resolve(parent, _args, req) {
         if (req) {
           let events = [];
-          for (const event of parent.eventIds) {
-            const event_obj = await Event.findById(event);
+          for (const eventId of parent.eventIds) {
+            const event = await Event.findById(eventId);
 
-            const d = event_obj.toBeCompleted;
-            const day = d.getDay(),
-              diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-            throw new Error(`First monday is: ${new Date(d.setDate(diff))}`);
+            const d = event.toBeCompleted;
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+            const firstDay = new Date(d.setDate(diff));
+
             // events.push(await Event.findById(event));
           }
           return events;
