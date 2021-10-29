@@ -108,21 +108,26 @@ const PropertyType = new GraphQLObjectType({
           for (const eventId of parent.eventIds) {
             const event = await Event.findById(eventId);
 
-            const d1 = event.toBeCompleted;
+            //These values are mutated by setDate so we need 2 for each calculated date
+            const temp1 = event.toBeCompleted;
+            const temp2 = event.toBeCompleted;
+
+            //First monday of the week
+            const d1 = temp1;
             const day1 = d1.getDay();
             const diff1 = d1.getDate() - day1 + (day1 == 0 ? -6 : 1); // adjust when day is sunday
             const firstDay = new Date(d1.setDate(diff1));
 
-            const d2 = event.toBeCompleted;
+            //Next monday after date
+            const d2 = temp2;
             const day2 = d2.getDay();
             const diff2 = d2.getDate() + ((1 + 7 - day2) % 7 || 7);
             const lastDay = new Date(d1.setDate(diff2));
 
             const test =
-              /* event.toBeCompleted >= firstDay && */ event.toBeCompleted <
-              lastDay;
+              event.toBeCompleted >= firstDay && event.toBeCompleted < lastDay;
 
-            throw new Error(`The original is: ${event.toBeCompleted}`);
+            throw new Error(`The test is: ${test}`);
 
             if (
               event.toBeCompleted >= firstDay &&
