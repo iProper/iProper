@@ -37,7 +37,7 @@ const dateScalar = new GraphQLScalarType({
     if (ast.kind === Kind.STRING) {
       return ast.value; // Convert hard-coded AST string to integer and then to Date
     }
-    return null; // Invalid hard-coded value (not an integer)
+    return; // Invalid hard-coded value (not an integer)
   },
 });
 
