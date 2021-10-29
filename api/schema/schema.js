@@ -122,7 +122,7 @@ const PropertyType = new GraphQLObjectType({
               event.toBeCompleted >=
               firstDay; /*  && event.toBeCompleted < lastDay */
 
-            throw new Error(`The test is: ${test}`);
+            throw new Error(`The last day is: ${lastDay}`);
 
             if (
               event.toBeCompleted >= firstDay &&
