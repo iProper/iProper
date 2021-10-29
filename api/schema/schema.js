@@ -37,7 +37,7 @@ const dateScalar = new GraphQLScalarType({
     if (ast.kind === Kind.STRING) {
       return ast.value; // Convert hard-coded AST string to integer and then to Date
     }
-    return; // Invalid hard-coded value (not an integer)
+    return null; // Invalid hard-coded value (not an integer)
   },
 });
 
@@ -106,14 +106,24 @@ const PropertyType = new GraphQLObjectType({
         if (req) {
           let events = [];
           for (const eventId of parent.eventIds) {
-            // const event = await Event.findById(eventId);
+            const event = await Event.findById(eventId);
 
-            // const d = event.toBeCompleted;
-            // const day = d.getDay();
-            // const diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-            // const firstDay = new Date(d.setDate(diff));
+            const d1 = event.toBeCompleted;
+            const day1 = d1.getDay();
+            const diff1 = d1.getDate() - day1 + (day1 == 0 ? -6 : 1); // adjust when day is sunday
+            const firstDay = new Date(d1.setDate(diff1));
 
-            events.push(await Event.findById(eventId));
+            const d2 = event.toBeCompleted;
+            const day2 = d2.getDay();
+            const diff2 = d2.getDate() + ((1 + 7 - day2) % 7 || 7); // adjust when day is sunday
+            const lastDay = new Date(d1.setDate(diff2));
+
+            if (
+              event.toBeCompleted >= firstDay &&
+              event.toBeCompleted < lastDay
+            ) {
+              events.push(await Event.findById(eventId));
+            }
           }
           return events;
         }
