@@ -115,14 +115,14 @@ const PropertyType = new GraphQLObjectType({
 
             const d2 = event.toBeCompleted;
             const day2 = d2.getDay();
-            const diff2 = d2.getDate() + ((1 + 7 - day2) % 7 || 7); // adjust when day is sunday
+            const diff2 = d2.getDate() + ((1 + 7 - day2) % 7 || 7);
             const lastDay = new Date(d1.setDate(diff2));
 
             const test =
               /* event.toBeCompleted >= firstDay && */ event.toBeCompleted <
               lastDay;
 
-            throw new Error(`The test is: ${test}`);
+            throw new Error(`The original is: ${event.toBeCompleted}`);
 
             if (
               event.toBeCompleted >= firstDay &&
