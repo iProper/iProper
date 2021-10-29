@@ -4,6 +4,7 @@ const Property = require("../models/Property");
 const Event = require("../models/Event");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
+const { startOfWeek, nextMonday, startOfToday } = require("date-fns");
 
 require("dotenv").config();
 
@@ -28,16 +29,16 @@ const dateScalar = new GraphQLScalarType({
   name: "Date",
   description: "Date custom scalar type",
   serialize(value) {
-    return value; // Convert outgoing Date to integer for JSON
+    return new Date(value);
   },
   parseValue(value) {
-    return new Date(value); // Convert incoming integer to Date
+    return new Date(value);
   },
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) {
-      return ast.value; // Convert hard-coded AST string to integer and then to Date
+      return new Date(ast.value);
     }
-    return null; // Invalid hard-coded value (not an integer)
+    return null;
   },
 });
 
@@ -108,30 +109,25 @@ const PropertyType = new GraphQLObjectType({
           for (const eventId of parent.eventIds) {
             const event = await Event.findById(eventId);
 
-            //These values are mutated by setDate so we need 2 for each calculated date
-            //since date objects are copied by reference so we 'clone'
-            const temp1 = new Date(event.toBeCompleted.getTime());
-            const temp2 = new Date(event.toBeCompleted.getTime());
+            // //These values are mutated by setDate so we need 2 for each calculated date
+            // //since date objects are copied by reference so we 'clone'
+            // const temp1 = new Date();
+            // const temp2 = new Date();
 
-            //First monday of the week
-            const d1 = temp1;
-            const day1 = d1.getDay();
-            const diff1 = d1.getDate() - day1 + (day1 == 0 ? -6 : 1); // adjust when day is sunday
-            const firstDay = new Date(d1.setDate(diff1));
+            // //First monday of the week
+            // const d1 = temp1;
+            // const day1 = d1.getDay();
+            // const diff1 = d1.getDate() - day1 + (day1 == 0 ? -6 : 1); // adjust when day is sunday
+            // const firstDay = new Date(d1.setDate(diff1));
 
-            //Next monday after date
-            const d2 = temp2;
-            const day2 = d2.getDay();
-            const diff2 = d2.getDate() + ((1 + 7 - day2) % 7 || 7);
-            const lastDay = new Date(d1.setDate(diff2));
+            // //Next monday after date
+            // const d2 = temp2;
+            // const day2 = d2.getDay();
+            // const diff2 = d2.getDate() + ((1 + 7 - day2) % 7 || 7);
+            // const lastDay = new Date(d1.setDate(diff2));
 
-            if (eventId == "617b3d45e7cb7938cf046694") {
-              const test =
-                event.toBeCompleted >= firstDay &&
-                event.toBeCompleted < lastDay;
-
-              throw new Error(`The test is: ${test}`);
-            }
+            const firstDay = startOfWeek(startOfToday(), { weekStartsOn: 1 });
+            const lastDay = nextMonday(startOfToday());
 
             if (
               event.toBeCompleted >= firstDay &&
