@@ -109,8 +109,9 @@ const PropertyType = new GraphQLObjectType({
             const event = await Event.findById(eventId);
 
             //These values are mutated by setDate so we need 2 for each calculated date
-            const temp1 = event.toBeCompleted;
-            const temp2 = event.toBeCompleted;
+            //since date objects are copied by reference so we 'clone'
+            const temp1 = new Date(event.toBeCompleted.getTime());
+            const temp2 = new Date(event.toBeCompleted.getTime());
 
             //First monday of the week
             const d1 = temp1;
