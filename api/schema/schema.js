@@ -122,7 +122,7 @@ const PropertyType = new GraphQLObjectType({
               event.toBeCompleted >= firstDay &&
               event.toBeCompleted < lastDay
             ) {
-              events.push(await Event.findById(eventId));
+              events.push(event);
             }
           }
           return events;
