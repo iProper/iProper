@@ -7,8 +7,8 @@ const eventSchema = new Schema({
   toBeCompleted: Date,
   assignedTo: String,
   ownerId: String,
-  isExpired: Boolean,
   isRepeatable: Boolean,
+  preMade: Boolean,
 });
 
 module.exports = mongoose.model("Event", eventSchema);

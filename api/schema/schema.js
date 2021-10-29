@@ -4,7 +4,7 @@ const Property = require("../models/Property");
 const Event = require("../models/Event");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
-const { startOfWeek, nextMonday, startOfToday } = require("date-fns");
+const { startOfWeek, nextMonday, startOfToday, add } = require("date-fns");
 
 require("dotenv").config();
 
@@ -65,8 +65,8 @@ const EventType = new GraphQLObjectType({
     toBeCompleted: { type: dateScalar },
     assignedTo: { type: GraphQLString },
     ownerId: { type: GraphQLID },
-    isExpired: { type: GraphQLBoolean },
     isRepeatable: { type: GraphQLBoolean },
+    preMade: { type: GraphQLBoolean },
   }),
 });
 
@@ -112,11 +112,31 @@ const PropertyType = new GraphQLObjectType({
             const firstDay = startOfWeek(startOfToday(), { weekStartsOn: 1 });
             const lastDay = nextMonday(startOfToday());
 
-            //Check if today is after event day and move event 1 week forward if it is repeatable
             if (
               event.toBeCompleted >= firstDay &&
               event.toBeCompleted < lastDay
             ) {
+              if (event.isRepeatable && !event.preMade) {
+                const property = await Property.findById(parent.id);
+                if (req.user.id == property.ownerId) {
+                  const nextEvent = new Event({
+                    name: event.name,
+                    description: event.description,
+                    toBeCompleted: add(event.toBeCompleted, { days: 7 }),
+                    isRepeatable: event.isRepeatable,
+                    preMade: false,
+                    assignedTo: event.assignedTo,
+                    ownerId: req.user.id,
+                  });
+
+                  const saved_event = await nextEvent.save();
+                  property.eventIds.push(saved_event.id);
+
+                  await property.save();
+                  event.preMade = true;
+                  await event.save();
+                }
+              }
               events.push(event);
             }
           }
@@ -498,7 +518,7 @@ const Mutation = new GraphQLObjectType({
                 description: args.description,
                 toBeCompleted: args.toBeCompleted,
                 isRepeatable: args.isRepeatable,
-                isExpired: false,
+                preMade: false,
                 assignedTo: args.assignedTo,
                 ownerId: req.user.id,
               });
