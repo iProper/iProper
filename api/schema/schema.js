@@ -109,26 +109,10 @@ const PropertyType = new GraphQLObjectType({
           for (const eventId of parent.eventIds) {
             const event = await Event.findById(eventId);
 
-            // //These values are mutated by setDate so we need 2 for each calculated date
-            // //since date objects are copied by reference so we 'clone'
-            // const temp1 = new Date();
-            // const temp2 = new Date();
-
-            // //First monday of the week
-            // const d1 = temp1;
-            // const day1 = d1.getDay();
-            // const diff1 = d1.getDate() - day1 + (day1 == 0 ? -6 : 1); // adjust when day is sunday
-            // const firstDay = new Date(d1.setDate(diff1));
-
-            // //Next monday after date
-            // const d2 = temp2;
-            // const day2 = d2.getDay();
-            // const diff2 = d2.getDate() + ((1 + 7 - day2) % 7 || 7);
-            // const lastDay = new Date(d1.setDate(diff2));
-
             const firstDay = startOfWeek(startOfToday(), { weekStartsOn: 1 });
             const lastDay = nextMonday(startOfToday());
 
+            //Check if today is after event day and move event 1 week forward if it is repeatable
             if (
               event.toBeCompleted >= firstDay &&
               event.toBeCompleted < lastDay
@@ -524,6 +508,45 @@ const Mutation = new GraphQLObjectType({
 
               await property.save();
               return saved_event;
+            }
+            throw new Error("Not the owner of this property");
+          }
+
+          throw new Error("Not an owner");
+        }
+
+        throw new Error("Non Authenticated User");
+      },
+    },
+    updateEvent: {
+      type: EventType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+        description: { type: GraphQLString },
+        toBeCompleted: { type: dateScalar },
+        assignedTo: { type: GraphQLID },
+        isRepeatable: { type: GraphQLBoolean },
+        propertyId: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          if (req.user.isOwner) {
+            const property = await Property.findById(args.propertyId);
+            if (req.user.id == property.ownerId) {
+              return Event.findByIdAndUpdate(
+                args.id,
+                {
+                  name: args.name,
+                  description: args.description,
+                  toBeCompleted: args.toBeCompleted,
+                  isRepeatable: args.isRepeatable,
+                  isExpired: false,
+                  assignedTo: args.assignedTo,
+                  ownerId: req.user.id,
+                },
+                { new: true }
+              );
             }
             throw new Error("Not the owner of this property");
           }
