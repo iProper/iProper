@@ -119,7 +119,8 @@ const PropertyType = new GraphQLObjectType({
             const lastDay = new Date(d1.setDate(diff2));
 
             const test =
-              event.toBeCompleted >= firstDay && event.toBeCompleted < lastDay;
+              event.toBeCompleted >=
+              firstDay; /*  && event.toBeCompleted < lastDay */
 
             throw new Error(`The test is: ${test}`);
 
