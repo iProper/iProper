@@ -27,7 +27,11 @@ const firebaseConfig = {
       : "1:973379366430:android:69db4fa11c5da2eee6880f",
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app();
+}
 
 // Styles
 import styles from "./styles/App.styles";

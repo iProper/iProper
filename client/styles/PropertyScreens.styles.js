@@ -323,7 +323,7 @@ export default StyleSheet.create({
     borderWidth: 3,
     borderRadius: 7,
     height: 25,
-    backgroundColor: "#0000"
+    backgroundColor: "#0000",
   },
   scheduleEventText: {
     paddingLeft: 2,
