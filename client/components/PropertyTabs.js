@@ -16,11 +16,16 @@ export function PropertyTabs({
   route,
   userData,
   jwtToken,
-  propertyId,
   refetchUser,
+  navigation
 }) {
+  let propertyId = null;
+  
   if (userData.isOwner) {
-    propertyId = route.params.id;
+    if (route.params?.id)
+      propertyId = route.params.id;
+    else
+      navigation.navigate("Main Stack");
   } else {
     propertyId = userData.propertyCode;
   }
@@ -42,7 +47,7 @@ export function PropertyTabs({
 
   let property = data?.getProperty || null;
 
-  return loading ? (
+  return loading || propertyId === null ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Tabs.Screen
         name='loading'
