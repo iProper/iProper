@@ -159,8 +159,21 @@ export default StyleSheet.create({
     alignItems: "center",
     position: "relative",
   },
-  formPickerValue: {
-    fontSize: 20,
+  picker: {
+    backgroundColor: "#eee",
+    margin: 5,
+    borderRadius: 5,
+    padding: 5,
+    height: 30,
+    justifyContent: "center",
+    flexDirection: "row",
+    width: "100%",
+  },
+  pickerValue: {
+    color: "#000",
+    fontSize: 15,
+    flex: 1,
+    height: "100%",
   },
 
   flexSize1: {
@@ -324,6 +337,21 @@ export default StyleSheet.create({
     alignItems: "center",
     width: "80%",
     padding: 10,
-    height: "50%",
-  }
+  },
+
+  textInputArea: {
+    backgroundColor: "#eee",
+    width: "100%",
+    height: 50,
+    
+    alignContent: "flex-start",
+
+    borderRadius: 10,
+    padding: 0,
+    paddingHorizontal: 8,
+    marginRight: 1,
+    textAlign: "left",
+  },
+  textInputBig: {
+  },
 });

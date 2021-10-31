@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Pressable, EventEmitter } from "react-native";
+import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 import NavigationHeader from "../small/NavigationHeader";
 import styles from "../../styles/App.styles";
+import { FormPicker } from "../small/Picker";
 
 function generateResponsibilityList(residents) {
   let responsibilityOrder = [];
@@ -32,7 +33,6 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
         {events
           .filter((event) => event.toBeCompleted.getDay() === dayOfWeek)
           .map((event, index) => {
-            console.log((event.toBeCompleted.getHours() / 24) * 100 + "%");
             return (
               <View
                 key={index}
@@ -75,7 +75,67 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
   return scheduleColumns;
 }
 
+function PopupRequestChange({ property, userData, jwtToken, setOpen }) {
+  const [toWho, setToWho] = useState(
+    property.residents[0].id === userData.id
+      ? {
+          label:
+            property.residents[1].firstName + " " + property.residents[0].lastName,
+          value: property.residents[1],
+        }
+      : {
+          label:
+            property.residents[0].firstName + " " + property.residents[0].lastName,
+          value: property.residents[0],
+        }
+  );
+  const [comment, changeComment] = useState("");
+
+  const pickerValues = property.residents.map((resident) => ({
+    label: resident.firstName + " " + resident.lastName,
+    value: resident,
+  }));
+
+  return (
+    <Pressable onPress={() => setOpen(false)} style={styles.popUp}>
+      <View style={styles.popUpCard}>
+        <Text style={[styles.textH3]}>Request Change</Text>
+        <View style={[styles.separator, styles.separatorBlue]} />
+        <View style={[{ paddingHorizontal: 10 }]}>
+          <Text style={[styles.textH4, {paddingVertical: 10}]}>
+            Your responsibility going to be transferred this week to:
+          </Text>
+          <FormPicker
+            selected={toWho}
+            setSelected={setToWho}
+            pickerValues={pickerValues}
+          />
+        </View>
+        <View style={[styles.textInputArea, { marginVertical: 15 }]}>
+          <TextInput
+            onChangeText={changeComment}
+            style={styles.textInputBig}
+            placeholder='Leave a small comment...'
+            value={comment}
+            multiline={true}
+          />
+        </View>
+        <View style={[styles.flexRow, { padding: 5 }]}>
+          <Pressable style={[styles.button, styles.buttonBlue, { width: "45%" }]}>
+            <Text style={[styles.buttonText]}>Cancel</Text>
+          </Pressable>
+          <Pressable style={[styles.button, { width: "45%" }]}>
+            <Text style={[styles.buttonText]}>Request</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
 export function ScheduleScreen({ navigation, property, userData, jwtToken }) {
+  const [openRequestChange, setOpenRequestChange] = useState();
+
   const dates = [new Date(), new Date(), new Date()];
   dates[1].setHours(dates[1].getHours() + 1);
   dates[2].setDate(dates[2].getDate() + 2);
@@ -96,8 +156,6 @@ export function ScheduleScreen({ navigation, property, userData, jwtToken }) {
       toBeCompleted: dates[2],
     },
   ];
-
-  console.log(events);
 
   let responsibilityOrder = generateResponsibilityList(property.residents);
 
@@ -235,7 +293,37 @@ export function ScheduleScreen({ navigation, property, userData, jwtToken }) {
           </Pressable>
         </View>
       ) : (
-        <View style={[styles.flexRow, propertyStyles.scheduleButtons]}></View>
+        <View style={[styles.flexRow, propertyStyles.scheduleButtons]}>
+          {property.residents.length > 1 && (
+            <Pressable
+              style={[
+                styles.button,
+                styles.buttonBig,
+                styles.buttonOff,
+                { flex: 1, borderRadius: 5 },
+              ]}
+              onPress={() => setOpenRequestChange(true)}
+            >
+              <Text style={[styles.buttonText, styles.buttonOffText]}>
+                Request Change
+              </Text>
+            </Pressable>
+          )}
+          <View style={{ width: 5 }} />
+          <Pressable
+            style={[styles.button, styles.buttonBig, { flex: 1, borderRadius: 5 }]}
+          >
+            <Text style={[styles.buttonText]}>Report Completion</Text>
+          </Pressable>
+        </View>
+      )}
+      {openRequestChange && (
+        <PopupRequestChange
+          property={property}
+          userData={userData}
+          jwtToken={jwtToken}
+          setOpen={setOpenRequestChange}
+        />
       )}
     </View>
   );

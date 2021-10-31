@@ -368,7 +368,7 @@ export default StyleSheet.create({
     bottom: 0,
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     padding: 5,
     paddingHorizontal: 20,
   },
