@@ -100,6 +100,12 @@ const getPropertyById = gql`
         firstName
         lastName
       }
+      events {
+        name
+        description
+        toBeCompleted
+        isRepeatable
+      }
     }
   }
 `;
@@ -168,6 +174,28 @@ const updateUser = gql`
   }
 `;
 
+const addEvent = gql`
+  mutation (
+    $name: String!
+    $description: String!
+    $toBeCompleted: Date!
+    $isRepeatable: Boolean!
+    $propertyId: ID!
+    $assignedTo: ID
+  ) {
+    addEvent(
+      name: $name
+      description: $description
+      toBeCompleted: $toBeCompleted
+      isRepeatable: $isRepeatable
+      propertyId: $propertyId
+      assignedTo: $assignedTo
+    ) {
+      id
+    }
+  }
+`
+
 export {
   login,
   checkEmail,
@@ -179,4 +207,5 @@ export {
   getPropertyById,
   updateProperty,
   updateUser,
+  addEvent
 };

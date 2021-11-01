@@ -1,9 +1,12 @@
 import { Pressable, Text, View, TextInput } from "react-native";
 import React, { useState } from "react";
 import NavigationHeader from "../small/NavigationHeader";
+import { useMutation } from "@apollo/client";
 
 import { FormPicker } from "../small/Picker";
 import Checkbox from "../small/Checkbox";
+
+import { addEvent } from "../../queries/queries";
 
 import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
@@ -18,12 +21,14 @@ const weekdays = [
   "Sunday",
 ];
 
-function AddEventPopUp({ jwtToken, setOpen, dayNum }) {
+function AddEventPopUp({ property, jwtToken, setOpen, dayNum }) {
   const [day, setDay] = useState({ label: weekdays[dayNum], value: dayNum });
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [isRepeatable, setIsRepeatable] = useState(true);
   const [time, setTime] = useState({ value: 12, label: "12 pm" });
+
+  const [postEvent] = useMutation(addEvent);
 
   const daysPickerValues = weekdays.map((weekday, index) => ({
     value: index,
@@ -41,6 +46,32 @@ function AddEventPopUp({ jwtToken, setOpen, dayNum }) {
       label: label,
     });
   }
+
+  const addTask = () => {
+    let toBeCompleted = new Date();
+    toBeCompleted.setHours(Number.parseInt(time.value));
+    toBeCompleted.setMinutes(0);
+    toBeCompleted.setSeconds(0);
+    let offset = (day.value + 1 - toBeCompleted.getDayMondayFirst() + 7) % 7;
+    toBeCompleted.setDate(toBeCompleted.getDate() + offset);
+
+    postEvent({
+      context: {
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      },
+      variables: {
+        name,
+        description: desc,
+        isRepeatable,
+        toBeCompleted,
+        propertyId: property.id,
+      },
+    })
+      .then((result) => {setOpen(false)})
+      .catch((err) => console.log(err));
+  };
 
   return (
     <Pressable onPress={() => setOpen(false)} style={styles.popUp}>
@@ -131,7 +162,10 @@ function AddEventPopUp({ jwtToken, setOpen, dayNum }) {
               </Text>
             </Pressable>
           </View>
-          <Pressable style={[styles.button, { width: "100%", marginTop: 15 }]}>
+          <Pressable
+            onPress={addTask}
+            style={[styles.button, { width: "100%", marginTop: 15 }]}
+          >
             <Text style={[styles.buttonText]}>Add Task</Text>
           </Pressable>
         </View>
@@ -140,7 +174,7 @@ function AddEventPopUp({ jwtToken, setOpen, dayNum }) {
   );
 }
 
-export default function EditSchedule({ navigation, events, jwtToken }) {
+export default function EditSchedule({ navigation, property, jwtToken }) {
   const [openAddEvent, setOpenAddEvent] = useState(false);
   const [day, setDay] = useState(1);
 
@@ -183,6 +217,7 @@ export default function EditSchedule({ navigation, events, jwtToken }) {
           setOpen={setOpenAddEvent}
           jwtToken={jwtToken}
           dayNum={day - 1}
+          property={property}
         />
       )}
     </View>
