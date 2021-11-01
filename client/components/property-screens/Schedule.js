@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
-import propertyStyles from "../../styles/PropertyScreens.styles";
+
 import NavigationHeader from "../small/NavigationHeader";
-import styles from "../../styles/App.styles";
 import { FormPicker } from "../small/Picker";
+import EditSchedule from "./EditSchedule";
+
+import propertyStyles from "../../styles/PropertyScreens.styles";
+import styles from "../../styles/App.styles";
+
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const Stack = createNativeStackNavigator();
 
 function generateResponsibilityList(residents) {
   let responsibilityOrder = [];
@@ -21,7 +28,6 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
     residents.findIndex((resident) => resident.id === responsibilityOrder[0].id) + 1;
 
   for (let i = 1; i < 8; i++) {
-    let dayOfWeek = i === 7 ? 0 : i;
     scheduleColumns.push(
       <View
         key={i}
@@ -31,7 +37,7 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
         ]}
       >
         {events
-          .filter((event) => event.toBeCompleted.getDay() === dayOfWeek)
+          .filter((event) => event.toBeCompleted.getDayMondayFirst() === i)
           .map((event, index) => {
             return (
               <View
@@ -40,7 +46,7 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
                   propertyStyles["residentColor" + currentResponsibleIndex],
                   propertyStyles.scheduleEvent,
                   {
-                    top: (event.toBeCompleted.getHours() / 24) * 100 + "%",
+                    top: ((event.toBeCompleted.getHours() + 0.6) / 24) * 100 + "%",
                     zIndex: index * 10,
                   },
                 ]}
@@ -133,11 +139,11 @@ function PopupRequestChange({ property, userData, jwtToken, setOpen }) {
   );
 }
 
-export function ScheduleScreen({ navigation, property, userData, jwtToken }) {
+export function Schedule({ navigation, property, userData, jwtToken }) {
   const [openRequestChange, setOpenRequestChange] = useState();
 
   const dates = [new Date(), new Date(), new Date()];
-  dates[1].setHours(dates[1].getHours() + 1);
+  dates[1].setHours(12);
   dates[2].setDate(dates[2].getDate() + 2);
   const events = [
     {
@@ -286,7 +292,7 @@ export function ScheduleScreen({ navigation, property, userData, jwtToken }) {
       </ScrollView>
       {userData.isOwner ? (
         <View style={[styles.flexRow, propertyStyles.scheduleButtons]}>
-          <Pressable style={[styles.button, styles.buttonBig, { width: "100%" }]}>
+          <Pressable onPress={() => navigation.navigate("Edit Schedule")} style={[styles.button, styles.buttonBig, { width: "100%" }]}>
             <Text style={[styles.buttonText, styles.buttonTextBig]}>
               Edit Schedule
             </Text>
@@ -326,5 +332,18 @@ export function ScheduleScreen({ navigation, property, userData, jwtToken }) {
         />
       )}
     </View>
+  );
+}
+
+export default function ScheduleScreen({ property, userData, jwtToken }) {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+      <Stack.Screen name='View Schedule'>
+        {(props) => <Schedule {...props} property={property} userData={userData} jwtToken={jwtToken}/>}
+      </Stack.Screen>
+      <Stack.Screen name='Edit Schedule'>
+        {(props) => <EditSchedule {...props} property={property} userData={userData} jwtToken={jwtToken}/>}
+      </Stack.Screen>
+    </Stack.Navigator>
   );
 }

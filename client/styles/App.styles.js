@@ -161,11 +161,12 @@ export default StyleSheet.create({
   },
   picker: {
     backgroundColor: "#eee",
-    margin: 5,
     borderRadius: 5,
-    padding: 5,
-    height: 30,
+    marginVertical: 5,
+    paddingVertical: 5,
+    paddingLeft: 12,
     justifyContent: "center",
+    alignItems: "center",
     flexDirection: "row",
     width: "100%",
   },
@@ -174,6 +175,20 @@ export default StyleSheet.create({
     fontSize: 15,
     flex: 1,
     height: "100%",
+  },
+
+  checkbox: {
+    width: 25,
+    height: 25,
+    borderColor: "#97CAEF",
+    borderWidth: 2,
+    borderRadius: 5,
+    margin: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#97CAEF",
   },
 
   flexSize1: {
@@ -352,6 +367,8 @@ export default StyleSheet.create({
     marginRight: 1,
     textAlign: "left",
   },
+
   textInputBig: {
-  },
+    width: "100%"
+  }
 });

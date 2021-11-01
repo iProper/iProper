@@ -3,7 +3,7 @@ import { Pressable, Text } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import styles from "../../styles/App.styles";
 
-export function FormPicker({ pickerValues, selected, setSelected, pickerStyles = {} }) {
+export function FormPicker({ pickerValues, selected, setSelected, pickerStyles = {}}) {
   const pickerRef = useRef(null);
 
   return (

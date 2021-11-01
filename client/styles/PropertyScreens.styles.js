@@ -311,8 +311,9 @@ export default StyleSheet.create({
   },
   scheduleDayColumn: {
     width: 150,
-    height: 371,
+    height: 369,
     borderRightWidth: 2,
+    overflow: "hidden",
     borderColor: "#97CAEF",
   },
 
@@ -370,6 +371,23 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 5,
+    paddingHorizontal: 20,
+  },
+
+  editScheduleScreen: {
+    padding: 30,
+  },
+  chooseDay: {
+    borderColor: "#97CAEF",
+    borderWidth: 3,
+    borderRadius: 50,
+  },
+  addEventButton: {
+    position: "absolute",
+    bottom: 5,
+    width: "100%",
+    alignItems: "center", 
+    alignSelf: "center",
     paddingHorizontal: 20,
   },
 });

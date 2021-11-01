@@ -27,6 +27,11 @@ const firebaseConfig = {
       : "1:973379366430:android:69db4fa11c5da2eee6880f",
 };
 
+Date.prototype.getDayMondayFirst = function() {
+  let day = this.getDay();
+  return day === 0 ? 7 : day; 
+}
+
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 } else {

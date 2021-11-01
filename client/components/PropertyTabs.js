@@ -8,7 +8,7 @@ import HomeRenter from "./property-screens/HomeRenter";
 import HomeOwner from "./property-screens/HomeOwner";
 import AboutScreen from "./property-screens/About";
 import NoPropertyHome from "./property-screens/NoPropertyHomeRenter";
-import { ScheduleScreen } from "./property-screens/Schedule";
+import ScheduleScreen from "./property-screens/Schedule";
 
 const Tabs = createBottomTabNavigator();
 
