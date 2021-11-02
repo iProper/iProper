@@ -16,16 +16,13 @@ export function PropertyTabs({
   route,
   userData,
   jwtToken,
-  refetchUser,
-  navigation
+  refetchUser
 }) {
   let propertyId = null;
   
   if (userData.isOwner) {
     if (route.params?.id)
       propertyId = route.params.id;
-    else
-      navigation.navigate("Main Stack");
   } else {
     propertyId = userData.propertyCode;
   }

@@ -16,13 +16,14 @@ import { currentUser } from "../queries/queries";
 
 const Drawer = createDrawerNavigator();
 
-const LoggedInStack = ({ jwtToken, setJwtToken }) => {
+const LoggedInStack = ({ jwtToken, setJwtToken, navigation }) => {
   let { loading, error, data, refetch } = useQuery(currentUser, {
     context: {
       headers: {
         Authorization: "Bearer " + jwtToken,
       },
     },
+    notifyOnNetworkStatusChange: true
   });
 
   useEffect(() => {
@@ -30,7 +31,6 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
   }, [jwtToken]);
 
   if (error) {
-    console.log(error);
     return (
       <View style={styles.container}>
         <Text>Something went wrong...</Text>
@@ -38,9 +38,9 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
     );
   }
 
-  console.log(data);
+  console.log(loading);
 
-  return loading || data === null ? (
+  return loading || data == null ? (
     <View>
       <Text>Loading...</Text>
     </View>
@@ -53,8 +53,6 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
           jwtToken={jwtToken}
           setJwtToken={(jwtToken) => {
             setJwtToken(jwtToken);
-            data = null;
-            console.log(data);
           }}
         />
       )}

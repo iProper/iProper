@@ -6,6 +6,8 @@ import { useQuery } from "@apollo/client";
 import { getOwnerProperties } from "../queries/queries";
 import { ScrollView } from "react-native-gesture-handler";
 
+import { CommonActions } from "@react-navigation/native";
+
 function SideMenu(props) {
   let { loading, error, data, refetch } = useQuery(getOwnerProperties, {
     context: {
@@ -14,6 +16,12 @@ function SideMenu(props) {
       },
     },
   });
+
+  useEffect(() => {
+    props.navigation.dispatch(CommonActions.navigate({
+      name: props.userData.isOwner ? 'Main Stack' : 'Home',
+    }));
+  }, [props.userData]);
 
   useEffect(() => {
     refetch();
@@ -94,7 +102,9 @@ function SideMenu(props) {
       </View>
       <View style={styles.sideMenuBottomArea}>
         <Pressable
-          onPress={() => props.setJwtToken(null)}
+          onPress={() => {
+            props.setJwtToken(null);
+          }}
           style={styles.sideMenuBottomItem}
         >
           <Text style={[styles.textH2, { color: "#97CAEF" }]}>Logout</Text>

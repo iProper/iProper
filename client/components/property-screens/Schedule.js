@@ -27,6 +27,8 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
   const currentResponsibleIndex =
     residents.findIndex((resident) => resident.id === responsibilityOrder[0].id) + 1;
 
+  console.log(events);
+
   for (let i = 1; i < 8; i++) {
     scheduleColumns.push(
       <View
@@ -37,7 +39,7 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
         ]}
       >
         {events
-          .filter((event) => event.toBeCompleted.getDayMondayFirst() === i)
+          .filter((event) => new Date(event.toBeCompleted).getDayMondayFirst() === i)
           .map((event, index) => {
             return (
               <View
@@ -46,7 +48,9 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
                   propertyStyles["residentColor" + currentResponsibleIndex],
                   propertyStyles.scheduleEvent,
                   {
-                    top: ((event.toBeCompleted.getHours() + 0.6) / 24) * 100 + "%",
+                    top:
+                      ((new Date(event.toBeCompleted).getHours() + 0.6) / 24) * 100 +
+                      "%",
                     zIndex: index * 10,
                   },
                 ]}
@@ -108,7 +112,7 @@ function PopupRequestChange({ property, userData, jwtToken, setOpen }) {
         <Text style={[styles.textH3]}>Request Change</Text>
         <View style={[styles.separator, styles.separatorBlue]} />
         <View style={[{ paddingHorizontal: 10 }]}>
-          <Text style={[styles.textH4, {paddingVertical: 10}]}>
+          <Text style={[styles.textH4, { paddingVertical: 10 }]}>
             Your responsibility going to be transferred this week to:
           </Text>
           <FormPicker
@@ -141,27 +145,9 @@ function PopupRequestChange({ property, userData, jwtToken, setOpen }) {
 
 export function Schedule({ navigation, property, userData, jwtToken }) {
   const [openRequestChange, setOpenRequestChange] = useState();
-
   const dates = [new Date(), new Date(), new Date()];
   dates[1].setHours(12);
   dates[2].setDate(dates[2].getDate() + 2);
-  const events = [
-    {
-      name: "Garbage",
-      description: "Throw Garbage Away",
-      toBeCompleted: dates[0],
-    },
-    {
-      name: "Garbage",
-      description: "Throw Garbage Away",
-      toBeCompleted: dates[1],
-    },
-    {
-      name: "Garbage",
-      description: "Throw Garbage Away",
-      toBeCompleted: dates[2],
-    },
-  ];
 
   let responsibilityOrder = generateResponsibilityList(property.residents);
 
@@ -246,7 +232,7 @@ export function Schedule({ navigation, property, userData, jwtToken }) {
                 </View>
               </View>
               {generateScheduleColumns(
-                events,
+                property.events,
                 responsibilityOrder,
                 property.residents
               )}
@@ -259,40 +245,55 @@ export function Schedule({ navigation, property, userData, jwtToken }) {
           <Text style={[styles.textH3, { textAlign: "left", padding: 10 }]}>
             Due Today:
           </Text>
-          {events
-            .filter((event) => event.toBeCompleted.getDay() === new Date().getDay())
-            .map((event, index) => {
-              return (
-                <View key={index} style={[styles.card]}>
-                  <View>
-                    <Text style={styles.textH4}>{event.description}</Text>
-                  </View>
-                  <View style={[styles.separator, styles.separatorBlue]} />
-                  <View style={[styles.flexRow]}>
-                    <Text style={{ padding: 3 }}>
-                      By: {responsibilityOrder[0].firstName}{" "}
-                      {responsibilityOrder[0].lastName}
-                    </Text>
-                    <View
-                      style={[
-                        styles.separator,
-                        styles.separatorBlue,
-                        styles.separatorVertical,
-                      ]}
-                    />
-                    <View style={[styles.button, styles.buttonBlue, { height: 27 }]}>
-                      <Text style={[styles.buttonText]}>Pending</Text>
+          {(() => {
+            const todayDues = property.events.filter(
+              (event) =>
+                new Date(event.toBeCompleted).getDay() === new Date().getDay()
+            );
+            return todayDues.length ? (
+              todayDues.map((event, index) => {
+                return (
+                  <View key={index} style={[styles.card]}>
+                    <View>
+                      <Text style={styles.textH4}>{event.description}</Text>
+                    </View>
+                    <View style={[styles.separator, styles.separatorBlue]} />
+                    <View style={[styles.flexRow]}>
+                      <Text style={{ padding: 3 }}>
+                        By: {responsibilityOrder[0].firstName}{" "}
+                        {responsibilityOrder[0].lastName}
+                      </Text>
+                      <View
+                        style={[
+                          styles.separator,
+                          styles.separatorBlue,
+                          styles.separatorVertical,
+                        ]}
+                      />
+                      <View
+                        style={[styles.button, styles.buttonBlue, { height: 27 }]}
+                      >
+                        <Text style={[styles.buttonText]}>Pending</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              );
-            })}
+                );
+              })
+            ) : (
+              <Text style={{ alignSelf: "center" }}>
+                Nothing is due today, you can relax.
+              </Text>
+            );
+          })()}
           <View style={{ height: 100 }} />
         </ScrollView>
       </ScrollView>
       {userData.isOwner ? (
         <View style={[styles.flexRow, propertyStyles.scheduleButtons]}>
-          <Pressable onPress={() => navigation.navigate("Edit Schedule")} style={[styles.button, styles.buttonBig, { width: "100%" }]}>
+          <Pressable
+            onPress={() => navigation.navigate("Edit Schedule")}
+            style={[styles.button, styles.buttonBig, { width: "100%" }]}
+          >
             <Text style={[styles.buttonText, styles.buttonTextBig]}>
               Edit Schedule
             </Text>
@@ -339,10 +340,24 @@ export default function ScheduleScreen({ property, userData, jwtToken }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen name='View Schedule'>
-        {(props) => <Schedule {...props} property={property} userData={userData} jwtToken={jwtToken}/>}
+        {(props) => (
+          <Schedule
+            {...props}
+            property={property}
+            userData={userData}
+            jwtToken={jwtToken}
+          />
+        )}
       </Stack.Screen>
       <Stack.Screen name='Edit Schedule'>
-        {(props) => <EditSchedule {...props} property={property} userData={userData} jwtToken={jwtToken}/>}
+        {(props) => (
+          <EditSchedule
+            {...props}
+            property={property}
+            userData={userData}
+            jwtToken={jwtToken}
+          />
+        )}
       </Stack.Screen>
     </Stack.Navigator>
   );

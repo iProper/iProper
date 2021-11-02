@@ -27,10 +27,10 @@ const firebaseConfig = {
       : "1:973379366430:android:69db4fa11c5da2eee6880f",
 };
 
-Date.prototype.getDayMondayFirst = function() {
+Date.prototype.getDayMondayFirst = function () {
   let day = this.getDay();
-  return day === 0 ? 7 : day; 
-}
+  return day === 0 ? 7 : day;
+};
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -41,9 +41,11 @@ if (!firebase.apps.length) {
 // Styles
 import styles from "./styles/App.styles";
 
+const cache = new InMemoryCache();
+
 const client = new ApolloClient({
   uri: "https://iproper.herokuapp.com/graphql",
-  cache: new InMemoryCache(),
+  cache: cache,
 });
 
 export default function App() {
@@ -62,7 +64,9 @@ export default function App() {
   useEffect(() => {
     if (Platform.OS === "web") return;
 
-    SecureStore.setItemAsync("jwt_token", jwtToken || "").then(() => {});
+    SecureStore.setItemAsync("jwt_token", jwtToken || "").then(() => {
+      cache.reset();
+    });
   }, [jwtToken]);
   //-------------------------------------------------------------------------
 
