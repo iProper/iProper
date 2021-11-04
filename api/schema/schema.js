@@ -302,7 +302,7 @@ const Mutation = new GraphQLObjectType({
             from: `${process.env.TWILIO_NUMBER}`,
             to: args.phoneNumber,
           })
-          .then((_) => {})
+          .then((_) => { })
           .catch((_) => {
             throw new Error("Error in sending verification message");
           });
@@ -577,6 +577,30 @@ const Mutation = new GraphQLObjectType({
         throw new Error("Non Authenticated User");
       },
     },
+    deleteEvent: {
+      type: EventType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) }
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          if (req.user.isOwner) {
+            const property = await Property.findById(args.propertyId);
+
+            if (req.user.id == property.ownerId) {
+              return Event.findByIdAndDelete(args.id);
+            }
+
+            throw new Error("Not the owner of this property");
+
+          }
+
+          throw new Error("Not an owner");
+        }
+
+        throw new Error("Non Authenticated User");
+      }
+    }
     // deleteUser: {
     //   type: UserType,
     //   args: {
