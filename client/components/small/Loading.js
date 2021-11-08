@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 
 import styles from "../../styles/App.styles";
 
-const Loading = ({ text }) => {
+const Loading = ({ text, style={} }) => {
   const rotation = useRef(new Animated.Value(0)).current;
 
   const rotate = () => {
@@ -28,7 +28,7 @@ const Loading = ({ text }) => {
   }, []);
 
   return (
-    <View style={styles.loadingView}>
+    <View style={[styles.loadingView, style]}>
       <Animated.View
         style={[
           styles.loadingIcon,

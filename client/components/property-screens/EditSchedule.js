@@ -21,7 +21,7 @@ const weekdays = [
   "Sunday",
 ];
 
-function AddEventPopUp({ property, jwtToken, setOpen, dayNum }) {
+function AddEventPopUp({ property, jwtToken, setOpen, dayNum, refetchProperty }) {
   const [day, setDay] = useState({ label: weekdays[dayNum], value: dayNum });
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
@@ -69,7 +69,10 @@ function AddEventPopUp({ property, jwtToken, setOpen, dayNum }) {
         propertyId: property.id,
       },
     })
-      .then((result) => {setOpen(false)})
+      .then((result) => {
+        refetchProperty();
+        setOpen(false);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -174,7 +177,12 @@ function AddEventPopUp({ property, jwtToken, setOpen, dayNum }) {
   );
 }
 
-export default function EditSchedule({ navigation, property, jwtToken }) {
+export default function EditSchedule({
+  navigation,
+  property,
+  jwtToken,
+  refetchProperty,
+}) {
   const [openAddEvent, setOpenAddEvent] = useState(false);
   const [day, setDay] = useState(1);
 
@@ -218,6 +226,7 @@ export default function EditSchedule({ navigation, property, jwtToken }) {
           jwtToken={jwtToken}
           dayNum={day - 1}
           property={property}
+          refetchProperty={refetchProperty}
         />
       )}
     </View>

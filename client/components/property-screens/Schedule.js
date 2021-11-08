@@ -27,8 +27,6 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
   const currentResponsibleIndex =
     residents.findIndex((resident) => resident.id === responsibilityOrder[0].id) + 1;
 
-  console.log(events);
-
   for (let i = 1; i < 8; i++) {
     scheduleColumns.push(
       <View
@@ -250,7 +248,7 @@ export function Schedule({ navigation, property, userData, jwtToken }) {
               (event) =>
                 new Date(event.toBeCompleted).getDay() === new Date().getDay()
             );
-            return todayDues.length ? (
+            return todayDues.length && (userData.id === responsibilityOrder[0].id || userData.isOwner) ? (
               todayDues.map((event, index) => {
                 return (
                   <View key={index} style={[styles.card]}>
@@ -336,7 +334,7 @@ export function Schedule({ navigation, property, userData, jwtToken }) {
   );
 }
 
-export default function ScheduleScreen({ property, userData, jwtToken }) {
+export default function ScheduleScreen({ property, userData, jwtToken, refetchProperty }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen name='View Schedule'>
@@ -356,6 +354,7 @@ export default function ScheduleScreen({ property, userData, jwtToken }) {
             property={property}
             userData={userData}
             jwtToken={jwtToken}
+            refetchProperty={refetchProperty}
           />
         )}
       </Stack.Screen>

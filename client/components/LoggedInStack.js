@@ -7,6 +7,7 @@ import { useQuery } from "@apollo/client";
 import OwnerStack from "./OwnerStack";
 import { PropertyTabs } from "./PropertyTabs";
 import SideMenu from "./SideMenu";
+import Loading from "./small/Loading";
 
 // Styles
 import styles from "../styles/App.styles";
@@ -16,7 +17,7 @@ import { currentUser } from "../queries/queries";
 
 const Drawer = createDrawerNavigator();
 
-const LoggedInStack = ({ jwtToken, setJwtToken, navigation }) => {
+const LoggedInStack = ({ jwtToken, setJwtToken }) => {
   let { loading, error, data, refetch } = useQuery(currentUser, {
     context: {
       headers: {
@@ -38,12 +39,8 @@ const LoggedInStack = ({ jwtToken, setJwtToken, navigation }) => {
     );
   }
 
-  console.log(loading);
-
   return loading || data == null ? (
-    <View>
-      <Text>Loading...</Text>
-    </View>
+    <Loading text={"Loading..."} style={{flex: 1}}/>
   ) : (
     <Drawer.Navigator
       drawerContent={(props) => (

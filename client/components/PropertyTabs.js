@@ -9,6 +9,7 @@ import HomeOwner from "./property-screens/HomeOwner";
 import AboutScreen from "./property-screens/About";
 import NoPropertyHome from "./property-screens/NoPropertyHomeRenter";
 import ScheduleScreen from "./property-screens/Schedule";
+import Loading from "./small/Loading";
 
 const Tabs = createBottomTabNavigator();
 
@@ -51,9 +52,7 @@ export function PropertyTabs({
         options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
       >
         {(props) => (
-          <View {...props}>
-            <Text>Loading...</Text>
-          </View>
+          <Loading text={"Loading..."} style={{flex: 1}}/>
         )}
       </Tabs.Screen>
     </Tabs.Navigator>
@@ -160,6 +159,7 @@ export function PropertyTabs({
             property={property}
             jwtToken={jwtToken}
             userData={userData}
+            refetchProperty={refetch}
           />
         )}
       </Tabs.Screen>
