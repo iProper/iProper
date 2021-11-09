@@ -125,7 +125,10 @@ const PropertyType = new GraphQLObjectType({
               ) {
                 if (event.isRepeatable && !event.preMade) {
                   const property = await Property.findById(parent.id);
-                  if (req.user.id == property.ownerId) {
+                  if (
+                    req.user.id == property.ownerId ||
+                    parent.residentIds.includes(req.user.id)
+                  ) {
                     const nextEvent = new Event({
                       name: event.name,
                       description: event.description,
