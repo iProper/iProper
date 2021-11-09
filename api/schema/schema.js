@@ -589,6 +589,27 @@ const Mutation = new GraphQLObjectType({
               );
             }
             throw new Error("Not the owner of this property");
+          } else {
+            const property = await Property.findById(args.propertyId);
+            if (property) {
+              if (property.residentIds.includes(req.user.id)) {
+                return Event.findByIdAndUpdate(
+                  args.id,
+                  {
+                    name: args.name,
+                    description: args.description,
+                    toBeCompleted: args.toBeCompleted,
+                    isRepeatable: args.isRepeatable,
+                    isCompleted: args.isCompleted,
+                    assignedTo: args.assignedTo,
+                    ownerId: req.user.id,
+                    report: args.report,
+                  },
+                  { new: true }
+                );
+              }
+              throw new Error("Not a tenant of this property");
+            }
           }
 
           throw new Error("Not an owner");
