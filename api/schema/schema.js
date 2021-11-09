@@ -68,6 +68,7 @@ const EventType = new GraphQLObjectType({
     isRepeatable: { type: GraphQLBoolean },
     isCompleted: { type: GraphQLBoolean },
     preMade: { type: GraphQLBoolean },
+    report: { type: GraphQLString },
   }),
 });
 
@@ -562,6 +563,7 @@ const Mutation = new GraphQLObjectType({
         isRepeatable: { type: GraphQLBoolean },
         isCompleted: { type: GraphQLBoolean },
         propertyId: { type: new GraphQLNonNull(GraphQLID) },
+        report: { type: GraphQLString },
       },
       async resolve(_parent, args, req) {
         if (req) {
@@ -578,6 +580,7 @@ const Mutation = new GraphQLObjectType({
                   isCompleted: args.isCompleted,
                   assignedTo: args.assignedTo,
                   ownerId: req.user.id,
+                  report: args.report,
                 },
                 { new: true }
               );
