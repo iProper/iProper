@@ -582,6 +582,7 @@ const Mutation = new GraphQLObjectType({
           if (req.user.isOwner) {
             const property = await Property.findById(args.propertyId);
             if (req.user.id == property.ownerId) {
+              // TODO: When editing a repeatable event it should edit the preMade one as well if it exists
               return Event.findByIdAndUpdate(
                 args.id,
                 {
