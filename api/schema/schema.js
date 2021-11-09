@@ -136,7 +136,7 @@ const PropertyType = new GraphQLObjectType({
                       isRepeatable: event.isRepeatable,
                       preMade: false,
                       isCompleted: false,
-                      assignedTo: pr.residentIds[0],
+                      assignedTo: property.residentIds[0],
                       ownerId: req.user.id,
                     });
                     property.residentIds.push(property.residentIds.shift());
@@ -530,7 +530,7 @@ const Mutation = new GraphQLObjectType({
             const property = await Property.findById(args.propertyId);
             if (req.user.id == property.ownerId) {
               let assignedTenant;
-              if (args.assignedTo == null) {
+              if (args.isRepeatable && args.assignedTo == null) {
                 assignedTenant = property.residentIds[0];
                 property.residentIds.push(property.residentIds.shift());
               } else {
