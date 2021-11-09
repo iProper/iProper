@@ -103,46 +103,55 @@ const PropertyType = new GraphQLObjectType({
       },
     },
     events: {
+      args: {
+        viewAll: { type: GraphQLBoolean },
+      },
       type: new GraphQLList(EventType),
-      async resolve(parent, _args, req) {
+      async resolve(parent, args, req) {
         if (req) {
           let events = [];
+          let allEvents = [];
           for (const eventId of parent.eventIds) {
             const event = await Event.findById(eventId);
 
             const firstDay = startOfWeek(startOfToday(), { weekStartsOn: 1 });
             const lastDay = nextMonday(startOfToday());
 
-            if (
-              event.toBeCompleted >= firstDay &&
-              event.toBeCompleted < lastDay
-            ) {
-              if (event.isRepeatable && !event.preMade) {
-                const property = await Property.findById(parent.id);
-                if (req.user.id == property.ownerId) {
-                  const nextEvent = new Event({
-                    name: event.name,
-                    description: event.description,
-                    toBeCompleted: add(event.toBeCompleted, { days: 7 }),
-                    isRepeatable: event.isRepeatable,
-                    preMade: false,
-                    isCompleted: false,
-                    assignedTo: event.assignedTo,
-                    ownerId: req.user.id,
-                  });
+            if (args.viewAll == null) {
+              if (
+                event.toBeCompleted >= firstDay &&
+                event.toBeCompleted < lastDay
+              ) {
+                if (event.isRepeatable && !event.preMade) {
+                  const property = await Property.findById(parent.id);
+                  if (req.user.id == property.ownerId) {
+                    const nextEvent = new Event({
+                      name: event.name,
+                      description: event.description,
+                      toBeCompleted: add(event.toBeCompleted, { days: 7 }),
+                      isRepeatable: event.isRepeatable,
+                      preMade: false,
+                      isCompleted: false,
+                      assignedTo: event.assignedTo,
+                      ownerId: req.user.id,
+                    });
 
-                  const saved_event = await nextEvent.save();
-                  property.eventIds.push(saved_event.id);
+                    const saved_event = await nextEvent.save();
+                    property.eventIds.push(saved_event.id);
 
-                  await property.save();
-                  event.preMade = true;
-                  await event.save();
+                    await property.save();
+                    event.preMade = true;
+                    await event.save();
+                  }
                 }
+                events.push(event);
+              } else {
+                allEvents.push(event);
               }
-              events.push(event);
             }
           }
-          return events;
+          if (args.viewAll == null) return events;
+          return allEvents;
         }
 
         throw new Error("Non authenticated user");
