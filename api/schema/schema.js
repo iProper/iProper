@@ -528,6 +528,14 @@ const Mutation = new GraphQLObjectType({
           if (req.user.isOwner) {
             const property = await Property.findById(args.propertyId);
             if (req.user.id == property.ownerId) {
+              let assignedTenant;
+              if (args.assignedTo == null) {
+                assignedTenant = property.residentIds[0];
+                property.residentIds.push(property.residentIds.shift());
+              } else {
+                assignedTenant = args.assignedTo;
+              }
+
               const event = new Event({
                 name: args.name,
                 description: args.description,
@@ -536,7 +544,7 @@ const Mutation = new GraphQLObjectType({
                 preMade: false,
                 isCompleted: false,
                 report: "",
-                assignedTo: args.assignedTo,
+                assignedTo: assignedTenant,
                 ownerId: req.user.id,
               });
 
