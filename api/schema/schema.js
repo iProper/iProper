@@ -127,7 +127,7 @@ const PropertyType = new GraphQLObjectType({
                   const property = await Property.findById(parent.id);
                   if (
                     req.user.id == property.ownerId ||
-                    parent.residentIds.includes(req.user.id)
+                    property.residentIds.includes(req.user.id)
                   ) {
                     const nextEvent = new Event({
                       name: event.name,
@@ -136,9 +136,10 @@ const PropertyType = new GraphQLObjectType({
                       isRepeatable: event.isRepeatable,
                       preMade: false,
                       isCompleted: false,
-                      assignedTo: event.assignedTo,
+                      assignedTo: pr.residentIds[0],
                       ownerId: req.user.id,
                     });
+                    property.residentIds.push(property.residentIds.shift());
 
                     const saved_event = await nextEvent.save();
                     property.eventIds.push(saved_event.id);
