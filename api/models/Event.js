@@ -9,6 +9,8 @@ const eventSchema = new Schema({
   ownerId: String,
   isRepeatable: Boolean,
   preMade: Boolean,
+  isCompleted: Boolean,
+  report: String,
 });
 
 module.exports = mongoose.model("Event", eventSchema);

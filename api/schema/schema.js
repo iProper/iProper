@@ -66,6 +66,7 @@ const EventType = new GraphQLObjectType({
     assignedTo: { type: GraphQLString },
     ownerId: { type: GraphQLID },
     isRepeatable: { type: GraphQLBoolean },
+    isCompleted: { type: GraphQLBoolean },
     preMade: { type: GraphQLBoolean },
   }),
 });
@@ -125,6 +126,7 @@ const PropertyType = new GraphQLObjectType({
                     toBeCompleted: add(event.toBeCompleted, { days: 7 }),
                     isRepeatable: event.isRepeatable,
                     preMade: false,
+                    isCompleted: false,
                     assignedTo: event.assignedTo,
                     ownerId: req.user.id,
                   });
@@ -519,6 +521,8 @@ const Mutation = new GraphQLObjectType({
                 toBeCompleted: args.toBeCompleted,
                 isRepeatable: args.isRepeatable,
                 preMade: false,
+                isCompleted: false,
+                report: "",
                 assignedTo: args.assignedTo,
                 ownerId: req.user.id,
               });
@@ -547,6 +551,7 @@ const Mutation = new GraphQLObjectType({
         toBeCompleted: { type: dateScalar },
         assignedTo: { type: GraphQLID },
         isRepeatable: { type: GraphQLBoolean },
+        isCompleted: { type: GraphQLBoolean },
         propertyId: { type: new GraphQLNonNull(GraphQLID) },
       },
       async resolve(_parent, args, req) {
@@ -561,7 +566,7 @@ const Mutation = new GraphQLObjectType({
                   description: args.description,
                   toBeCompleted: args.toBeCompleted,
                   isRepeatable: args.isRepeatable,
-                  isExpired: false,
+                  isCompleted: args.isCompleted,
                   assignedTo: args.assignedTo,
                   ownerId: req.user.id,
                 },
