@@ -31,6 +31,14 @@ Date.prototype.getDayMondayFirst = function () {
   let day = this.getDay();
   return day === 0 ? 7 : day;
 };
+Date.prototype.getHours12 = function () {
+  const time = this.getHours();
+  let time12 = time % 12 === 0 ? 12 : time % 12;
+  if (time > 0 && time < 12) time12 += " am";
+  else time12 += " pm";
+
+  return time12;
+}
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);

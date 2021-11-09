@@ -1,12 +1,12 @@
-import { Pressable, Text, View, TextInput } from "react-native";
-import React, { useState } from "react";
+import { Pressable, Text, View, TextInput, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
 import NavigationHeader from "../small/NavigationHeader";
 import { useMutation } from "@apollo/client";
 
 import { FormPicker } from "../small/Picker";
 import Checkbox from "../small/Checkbox";
 
-import { addEvent } from "../../queries/queries";
+import { addEvent, editEvent } from "../../queries/queries";
 
 import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
@@ -21,14 +21,27 @@ const weekdays = [
   "Sunday",
 ];
 
-function AddEventPopUp({ property, jwtToken, setOpen, dayNum, refetchProperty }) {
+function AddEventPopUp({
+  property,
+  jwtToken,
+  setOpen,
+  dayNum,
+  refetchProperty,
+  event = {},
+}) {
   const [day, setDay] = useState({ label: weekdays[dayNum], value: dayNum });
-  const [name, setName] = useState("");
-  const [desc, setDesc] = useState("");
-  const [isRepeatable, setIsRepeatable] = useState(true);
-  const [time, setTime] = useState({ value: 12, label: "12 pm" });
+  const [name, setName] = useState(event.name || "");
+  const [desc, setDesc] = useState(event.description || "");
+  const [isRepeatable, setIsRepeatable] = useState(event.isRepeatable || true);
+  const [time, setTime] = useState({
+    value: event.toBeCompleted ? new Date(event.toBeCompleted)?.getHours() : 12,
+    label: event.toBeCompleted
+      ? new Date(event.toBeCompleted)?.getHours12()
+      : "12 pm",
+  });
 
   const [postEvent] = useMutation(addEvent);
+  const [updateEvent] = useMutation(editEvent);
 
   const daysPickerValues = weekdays.map((weekday, index) => ({
     value: index,
@@ -47,7 +60,7 @@ function AddEventPopUp({ property, jwtToken, setOpen, dayNum, refetchProperty })
     });
   }
 
-  const addTask = () => {
+  const addevent = () => {
     let toBeCompleted = new Date();
     toBeCompleted.setHours(Number.parseInt(time.value));
     toBeCompleted.setMinutes(0);
@@ -55,25 +68,48 @@ function AddEventPopUp({ property, jwtToken, setOpen, dayNum, refetchProperty })
     let offset = (day.value + 1 - toBeCompleted.getDayMondayFirst() + 7) % 7;
     toBeCompleted.setDate(toBeCompleted.getDate() + offset);
 
-    postEvent({
-      context: {
-        headers: {
-          Authorization: "Bearer " + jwtToken,
+    if (event) {
+      updateEvent({
+        context: {
+          headers: {
+            Authorization: "Bearer " + jwtToken,
+          },
         },
-      },
-      variables: {
-        name,
-        description: desc,
-        isRepeatable,
-        toBeCompleted,
-        propertyId: property.id,
-      },
-    })
-      .then((result) => {
-        refetchProperty();
-        setOpen(false);
+        variables: {
+          id: event.id,
+          name,
+          description: desc,
+          isRepeatable,
+          toBeCompleted,
+          propertyId: property.id,
+        },
       })
-      .catch((err) => console.log(err));
+        .then((result) => {
+          refetchProperty();
+          setOpen(false);
+        })
+        .catch((err) => console.log(JSON.stringify(err)));
+    } else {
+      postEvent({
+        context: {
+          headers: {
+            Authorization: "Bearer " + jwtToken,
+          },
+        },
+        variables: {
+          name,
+          description: desc,
+          isRepeatable,
+          toBeCompleted,
+          propertyId: property.id,
+        },
+      })
+        .then((result) => {
+          refetchProperty();
+          setOpen(false);
+        })
+        .catch((err) => console.log(JSON.stringify(err)));
+    }
   };
 
   return (
@@ -149,7 +185,7 @@ function AddEventPopUp({ property, jwtToken, setOpen, dayNum, refetchProperty })
             <TextInput
               onChangeText={setDesc}
               style={styles.textInputBig}
-              placeholder='Enter task description...'
+              placeholder='Enter event description...'
               value={desc}
               multiline={true}
               maxLength={250}
@@ -166,10 +202,12 @@ function AddEventPopUp({ property, jwtToken, setOpen, dayNum, refetchProperty })
             </Pressable>
           </View>
           <Pressable
-            onPress={addTask}
+            onPress={addevent}
             style={[styles.button, { width: "100%", marginTop: 15 }]}
           >
-            <Text style={[styles.buttonText]}>Add Task</Text>
+            <Text style={[styles.buttonText]}>
+              {!event ? "Add event" : "Save changes"}
+            </Text>
           </Pressable>
         </View>
       </Pressable>
@@ -183,6 +221,7 @@ export default function EditSchedule({
   jwtToken,
   refetchProperty,
 }) {
+  const [eventToEdit, setEventToEdit] = useState({});
   const [openAddEvent, setOpenAddEvent] = useState(false);
   const [day, setDay] = useState(1);
 
@@ -193,6 +232,12 @@ export default function EditSchedule({
   const dayAfter = () => {
     if (day < 7) setDay(day + 1);
   };
+
+  useEffect(() => {
+    if (!openAddEvent) {
+      setEventToEdit({});
+    }
+  }, [openAddEvent]);
 
   return (
     <View style={[styles.container]}>
@@ -210,14 +255,61 @@ export default function EditSchedule({
             {day < 7 && <Text style={styles.navigationHeaderArrow}>{">"}</Text>}
           </Pressable>
         </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            alignItems: "center",
+            padding: 10,
+          }}
+          style={{ height: "100%" }}
+        >
+          {property.events
+            .filter(
+              (event) => new Date(event.toBeCompleted).getDayMondayFirst() === day
+            )
+            .map((event, index) => {
+              return (
+                <View key={index} style={[styles.card, { alignItems: "center" }]}>
+                  <Text style={styles.textH3}>{event.name}</Text>
+                  <View style={[styles.separator, styles.separatorBlue]} />
+                  <View>
+                    <Text style={styles.highlightText}>Description:</Text>
+                    <Text style={styles.textH4}>{event.description}</Text>
+                    <Text style={styles.highlightText}>Time:</Text>
+                    <Text style={styles.textH4}>
+                      {new Date(event.toBeCompleted).getHours12()}
+                    </Text>
+                    <Text style={styles.highlightText}>Repeatable:</Text>
+                    <Text style={styles.textH4}>
+                      {event.isRepeatable ? "Yes" : "No"}
+                    </Text>
+                  </View>
+                  <View style={[styles.separator, styles.separatorBlue]} />
+                  <Pressable
+                    style={[
+                      styles.button,
+                      styles.buttonRound,
+                      { width: "100%", padding: 5 },
+                    ]}
+                    onPress={() => {
+                      setEventToEdit(event);
+                      setOpenAddEvent(true);
+                    }}
+                  >
+                    <Text style={[styles.buttonText, { fontSize: 18 }]}>Edit</Text>
+                  </Pressable>
+                </View>
+              );
+            })}
+          <View style={{ height: 100 }} />
+        </ScrollView>
       </View>
-
       <View style={[propertyStyles.addEventButton]}>
         <Pressable
           onPress={() => setOpenAddEvent(true)}
           style={[styles.button, styles.buttonBig, { width: "100%" }]}
         >
-          <Text style={[styles.buttonText, styles.buttonTextBig]}>Add Task</Text>
+          <Text style={[styles.buttonText, styles.buttonTextBig]}>Add event</Text>
         </Pressable>
       </View>
       {openAddEvent && (
@@ -227,6 +319,7 @@ export default function EditSchedule({
           dayNum={day - 1}
           property={property}
           refetchProperty={refetchProperty}
+          event={eventToEdit}
         />
       )}
     </View>

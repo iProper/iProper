@@ -3,10 +3,10 @@ import React, { useEffect, useRef } from "react";
 
 import styles from "../../styles/App.styles";
 
-const Loading = ({ text, style={} }) => {
+const Loading = ({ text, style = {} }) => {
   const rotation = useRef(new Animated.Value(0)).current;
 
-  const rotate = () => {
+  const animation = useRef(
     Animated.loop(
       Animated.sequence([
         Animated.timing(rotation, {
@@ -20,11 +20,11 @@ const Loading = ({ text, style={} }) => {
           useNativeDriver: true,
         }),
       ])
-    ).start();
-  };
-
+    )
+  );
   useEffect(() => {
-    rotate();
+    animation.current.start();
+    return () => animation.current.stop();
   }, []);
 
   return (
@@ -43,10 +43,13 @@ const Loading = ({ text, style={} }) => {
             ],
           },
         ]}
-      ><Image
-          style={{width: 50, height: 50}}
+      >
+        <Image
+          style={{ width: 50, height: 50 }}
           source={require("../../assets/loading.png")}
-          resizeMode={"center"}/></Animated.View>
+          resizeMode={"center"}
+        />
+      </Animated.View>
       <Text style={styles.loadingText}>{text}</Text>
     </View>
   );

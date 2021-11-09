@@ -31,6 +31,12 @@ export default StyleSheet.create({
     fontSize: 14,
     marginVertical: 5,
   },
+  highlightText: {
+    color: "#548eb8",
+    fontWeight: "bold",
+    fontSize: 14,
+    marginVertical: 5,
+  },
   alarmText: {
     color: "#FC4445",
     fontSize: 12,

@@ -1,15 +1,15 @@
 import { Text, View, Pressable, ScrollView, Image } from "react-native";
 import React from "react";
 
+import Loading from "../small/Loading";
+
 import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 
 export const Home = ({ userData, jwtToken, property }) => {
   if (property == null) {
     return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
+      <Loading text={"Loading..."} style={{flex: 1}}/>
     );
   }
 

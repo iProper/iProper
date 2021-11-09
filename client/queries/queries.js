@@ -101,6 +101,7 @@ const getPropertyById = gql`
         lastName
       }
       events {
+        id
         name
         description
         toBeCompleted
@@ -196,6 +197,30 @@ const addEvent = gql`
   }
 `
 
+const editEvent = gql`
+  mutation (
+    $id: ID!
+    $name: String
+    $description: String
+    $toBeCompleted: Date
+    $isRepeatable: Boolean
+    $propertyId: ID!
+    $assignedTo: ID
+  ) {
+    updateEvent(
+      id: $id
+      name: $name
+      description: $description
+      toBeCompleted: $toBeCompleted
+      isRepeatable: $isRepeatable
+      propertyId: $propertyId
+      assignedTo: $assignedTo
+    ) {
+      id
+    }
+  }
+`
+
 export {
   login,
   checkEmail,
@@ -207,5 +232,6 @@ export {
   getPropertyById,
   updateProperty,
   updateUser,
-  addEvent
+  addEvent,
+  editEvent
 };

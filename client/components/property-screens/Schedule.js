@@ -14,7 +14,7 @@ const Stack = createNativeStackNavigator();
 
 function generateResponsibilityList(residents) {
   let responsibilityOrder = [];
-  while (responsibilityOrder.length < 5) {
+  while (responsibilityOrder.length < 5 && residents.length > 0) {
     responsibilityOrder = responsibilityOrder.concat(residents);
   }
 
@@ -141,13 +141,11 @@ function PopupRequestChange({ property, userData, jwtToken, setOpen }) {
   );
 }
 
-export function Schedule({ navigation, property, userData, jwtToken }) {
+function Schedule({ navigation, property, userData, jwtToken }) {
   const [openRequestChange, setOpenRequestChange] = useState();
-  const dates = [new Date(), new Date(), new Date()];
-  dates[1].setHours(12);
-  dates[2].setDate(dates[2].getDate() + 2);
 
   let responsibilityOrder = generateResponsibilityList(property.residents);
+
 
   return (
     <View style={[styles.container]}>
@@ -159,7 +157,7 @@ export function Schedule({ navigation, property, userData, jwtToken }) {
       </View>
       <ScrollView>
         <View style={[propertyStyles.responsibilityOrder]}>
-          {responsibilityOrder.map((resident, index) => {
+          {responsibilityOrder.length > 0 ? responsibilityOrder.map((resident, index) => {
             const residentIndex =
               property.residents.findIndex((r) => resident.id == r.id) + 1;
             return (
@@ -173,7 +171,7 @@ export function Schedule({ navigation, property, userData, jwtToken }) {
                 {resident.firstName} {resident.lastName}
               </Text>
             );
-          })}
+          }) : <Text>No residents found...</Text>}
         </View>
         <ScrollView
           showsHorizontalScrollIndicator={false}
