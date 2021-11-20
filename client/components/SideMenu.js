@@ -34,10 +34,14 @@ function SideMenu(props) {
             <Image
               source={require("../assets/logo.png")}
               style={styles.sideMenuLogo}
-              resizeMode='center'
+              resizeMode="center"
             />
             <View
-              style={[styles.separator, styles.separatorRed, styles.separator60]}
+              style={[
+                styles.separator,
+                styles.separatorRed,
+                styles.separator60,
+              ]}
             />
             <Text style={styles.sideMenuWelcomeMessage}>
               Welcome, {props.userData.firstName}
@@ -56,6 +60,15 @@ function SideMenu(props) {
               }}
             />
           </View>
+          <Pressable
+            onPress={() => {
+              props.navigation.navigate("Chat", {
+                title: "Chat",
+              });
+            }}
+          >
+            <Text>Chat</Text>
+          </Pressable>
           {props.userData.isOwner && (
             <Text
               style={[

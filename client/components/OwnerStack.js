@@ -2,7 +2,6 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OwnerDashboard from "./owner-screens/OwnerDashboard";
 import AddProperty from "./owner-screens/AddProperty";
-
 const Stack = createNativeStackNavigator();
 
 const OwnerStack = ({ currentUser, jwtToken }) => {

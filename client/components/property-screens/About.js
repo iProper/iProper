@@ -1,4 +1,11 @@
-import { Text, View, Pressable, TextInput, Image, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  Pressable,
+  TextInput,
+  Image,
+  ScrollView,
+} from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
@@ -80,29 +87,31 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
     <View style={[styles.container, propertyStyles.propertyAboutScreen]}>
       <NavigationHeader
         goBack={() => navigation.navigate("Home")}
-        title='About'
-        Child={() => userData.isOwner && (
-          <Pressable
-            style={propertyStyles.aboutEditBtn}
-            onPress={() => {
-              setEdit(!edit);
-            }}
-          >
-            {edit ? (
-              <Image
-                style={propertyStyles.aboutEditIcon}
-                source={require("../../assets/tick-red.png")}
-                resizeMode={"center"}
-              />
-            ) : (
-              <Image
-                style={propertyStyles.aboutEditIcon}
-                source={require("../../assets/pen-red.png")}
-                resizeMode={"center"}
-              />
-            )}
-          </Pressable>
-        )}
+        title="About"
+        Child={() =>
+          userData.isOwner && (
+            <Pressable
+              style={propertyStyles.aboutEditBtn}
+              onPress={() => {
+                setEdit(!edit);
+              }}
+            >
+              {edit ? (
+                <Image
+                  style={propertyStyles.aboutEditIcon}
+                  source={require("../../assets/tick-red.png")}
+                  resizeMode={"center"}
+                />
+              ) : (
+                <Image
+                  style={propertyStyles.aboutEditIcon}
+                  source={require("../../assets/pen-red.png")}
+                  resizeMode={"center"}
+                />
+              )}
+            </Pressable>
+          )
+        }
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -206,7 +215,9 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
                   {(() => {
                     let items = [];
                     for (let i = 1; i < 13; i++)
-                      items.push(<Picker.Item value={i} label={`${i}`} key={i} />);
+                      items.push(
+                        <Picker.Item value={i} label={`${i}`} key={i} />
+                      );
                     return items;
                   })()}
                 </Picker>
@@ -234,7 +245,9 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
         <View style={[styles.separator, styles.separatorBlue]} />
 
         <View style={ownerStyles.rulesList}>
-          <Text style={[styles.textH3, ownerStyles.rulesListHeader]}>Rules</Text>
+          <Text style={[styles.textH3, ownerStyles.rulesListHeader]}>
+            Rules
+          </Text>
           {rules.map((rule, index) => {
             return (
               <Rule
@@ -247,25 +260,31 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
               />
             );
           })}
-          {userData.isOwner && <Pressable
-            onPress={() => {
-              addNewRule();
-            }}
-            style={[styles.button, styles.buttonRound, ownerStyles.addNewRuleBtn]}
-          >
-            <Text style={styles.buttonText}>Add new rule</Text>
-          </Pressable>}
+          {userData.isOwner && (
+            <Pressable
+              onPress={() => {
+                addNewRule();
+              }}
+              style={[
+                styles.button,
+                styles.buttonRound,
+                ownerStyles.addNewRuleBtn,
+              ]}
+            >
+              <Text style={styles.buttonText}>Add new rule</Text>
+            </Pressable>
+          )}
         </View>
 
         <View style={[styles.separator, styles.separatorBlue]} />
 
         <View style={ownerStyles.editPropertyDesc}>
           <Text style={styles.textH3}>Description</Text>
-          
+
           <TextInput
             onChangeText={changeDescription}
             style={edit ? ownerStyles.descTextInput : propertyStyles.descText}
-            placeholder='Enter description...'
+            placeholder="Enter description..."
             value={description}
             multiline={true}
             editable={edit}

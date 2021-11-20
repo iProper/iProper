@@ -8,7 +8,10 @@ import HomeRenter from "./property-screens/HomeRenter";
 import HomeOwner from "./property-screens/HomeOwner";
 import AboutScreen from "./property-screens/About";
 import NoPropertyHome from "./property-screens/NoPropertyHomeRenter";
-
+import Chat from "./property-screens/Chat";
+import ChatRoom from "./property-screens/ChatRoom";
+import GroupChat from "./property-screens/GroupChat";
+import JoinGroupChat from "./property-screens/joinGroupChat";
 const Tabs = createBottomTabNavigator();
 
 export function PropertyTabs({
@@ -44,7 +47,7 @@ export function PropertyTabs({
   return loading ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Tabs.Screen
-        name='loading'
+        name="loading"
         options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
       >
         {(props) => (
@@ -63,40 +66,41 @@ export function PropertyTabs({
           <View style={{ flex: 1, backgroundColor: "#FC4445" }} />
         ),
         tabBarLabel: () => {},
-        tabBarIcon: userData.propertyCode || userData.isOwner
-          ? ({ focused }) => {
-              let iconImg;
-              if (route.name === "Home") {
-                iconImg = (
-                  <Image
-                    source={
-                      !focused
-                        ? require("../assets/home-white.png")
-                        : require("../assets/home-blue.png")
-                    }
-                    style={{ width: 30, height: 30 }}
-                  />
-                );
-              } else if (route.name === "About") {
-                iconImg = (
-                  <Image
-                    source={
-                      !focused
-                        ? require("../assets/about-white.png")
-                        : require("../assets/about-blue.png")
-                    }
-                    style={{ width: 30, height: 30 }}
-                  />
-                );
-              }
+        tabBarIcon:
+          userData.propertyCode || userData.isOwner
+            ? ({ focused }) => {
+                let iconImg;
+                if (route.name === "Home") {
+                  iconImg = (
+                    <Image
+                      source={
+                        !focused
+                          ? require("../assets/home-white.png")
+                          : require("../assets/home-blue.png")
+                      }
+                      style={{ width: 30, height: 30 }}
+                    />
+                  );
+                } else if (route.name === "About") {
+                  iconImg = (
+                    <Image
+                      source={
+                        !focused
+                          ? require("../assets/about-white.png")
+                          : require("../assets/about-blue.png")
+                      }
+                      style={{ width: 30, height: 30 }}
+                    />
+                  );
+                }
 
-              return iconImg;
-            }
-          : () => {},
+                return iconImg;
+              }
+            : () => {},
       })}
     >
       {userData.isOwner ? (
-        <Tabs.Screen name='Home'>
+        <Tabs.Screen name="Home">
           {(props) => (
             <HomeOwner
               {...props}
@@ -107,7 +111,7 @@ export function PropertyTabs({
           )}
         </Tabs.Screen>
       ) : userData.propertyCode ? (
-        <Tabs.Screen name='Home'>
+        <Tabs.Screen name="Home">
           {(props) => (
             <HomeRenter
               {...props}
@@ -120,7 +124,7 @@ export function PropertyTabs({
         </Tabs.Screen>
       ) : (
         <Tabs.Screen
-          name='Home'
+          name="Home"
           options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
         >
           {(props) => (
@@ -134,9 +138,52 @@ export function PropertyTabs({
           )}
         </Tabs.Screen>
       )}
-      <Tabs.Screen name='About'>
+      <Tabs.Screen name="About">
         {(props) => (
           <AboutScreen
+            {...props}
+            property={property}
+            jwtToken={jwtToken}
+            userData={userData}
+          />
+        )}
+      </Tabs.Screen>
+      <Tabs.Screen name="Chat">
+        {(props) => (
+          <Chat
+            {...props}
+            property={property}
+            jwtToken={jwtToken}
+            userData={userData}
+          />
+        )}
+      </Tabs.Screen>
+
+      <Tabs.Screen name="ChatRoom">
+        {(props) => (
+          <ChatRoom
+            {...props}
+            property={property}
+            jwtToken={jwtToken}
+            userData={userData}
+          />
+        )}
+      </Tabs.Screen>
+
+      <Tabs.Screen name="GroupChat">
+        {(props) => (
+          <GroupChat
+            {...props}
+            property={property}
+            jwtToken={jwtToken}
+            userData={userData}
+          />
+        )}
+      </Tabs.Screen>
+
+      <Tabs.Screen name="JoinGroupChat">
+        {(props) => (
+          <JoinGroupChat
             {...props}
             property={property}
             jwtToken={jwtToken}

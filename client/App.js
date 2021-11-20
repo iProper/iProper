@@ -69,7 +69,7 @@ export default function App() {
             <LoggedInStack jwtToken={jwtToken} setJwtToken={setJwtToken} />
           )}
         </NavigationContainer>
-        <StatusBar style='auto' />
+        <StatusBar style="auto" />
       </SafeAreaView>
     </ApolloProvider>
   );
