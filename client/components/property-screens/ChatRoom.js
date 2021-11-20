@@ -57,7 +57,7 @@ const ChatRoom = () => {
   function handleChange(e) {
     setMessage(e.value);
   }
-
+  // Comment code in the bottom when socket connection establish
   /*useEffect(() => {
     const socket = io("http://localhost:4000");
     //console.log("chat room");

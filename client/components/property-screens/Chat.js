@@ -26,46 +26,23 @@ export function Chat(props) {
   ]);
 
   const [Messages, setMessage] = useState([
-    //const Messages = [
-
     {
       id: 0,
       text: "Check Schedule for task",
-      // userImg: require("../../assets/headshot1.jpg"),
       name: "Nekeisha Pope",
       chatMessage: "",
-      //   dateCreated:
-      //     new Date().getDate() +
-      //     "/" +
-      //     parseInt(today.getMonth() + 1) +
-      //     "/" +
-      //     today.getFullYear(),
       system: true,
     },
     {
       id: 1,
       text: "New rules is posted",
-      //userImg: require("../../assets/headshot2.jpg"),
       name: "Andrie Fedchenko",
-      //   dateCreated:
-      //     new Date().getDate() +
-      //     "/" +
-      //     parseInt(today.getMonth() + 1) +
-      //     "/" +
-      //     today.getFullYear(),
       system: true,
     },
     {
       id: 2,
       text: "I will pass the Message on",
-      //userImg: require("../../assets/headshot3.jpg"),
       name: "Antonio Morris",
-      //   dateCreated:
-      //     new Date().getDate() +
-      //     "/" +
-      //     parseInt(today.getMonth() + 1) +
-      //     "/" +
-      //     today.getFullYear(),
       system: true,
     },
     {
@@ -73,41 +50,10 @@ export function Chat(props) {
       text: "Hello",
       //userImg: require("../../assets/headshot4.png"),
       name: "Syed Muhammad Saad Bukhari",
-      //   dateCreated:
-      //     new Date().getDate() +
-      //     "/" +
-      //     parseInt(today.getMonth() + 1) +
-      //     "/" +
-      //     today.getFullYear(),
       system: true,
     },
-    //];
   ]);
 
-  //   const ChatScreen = ({navigation}) =>{
-  //       return(
-  //           <View style={style.container}>
-  //               <Text>Start Chat</Text>
-  //               <Pressable
-  //               onPress={() => navigation.navigate('chat')}
-  //               >Click Here</Pressable>
-  //           </View>
-  //       )
-  //   }
-  //   function handleMessage(newMessage = []) {
-  //     setMessage(GiftedChart.append(message, newMessage));
-  //   }
-  //   return (
-  //     <GiftedChart
-  //       message={message}
-  //       onSend={(newMessage) => handleMessage(newMessage)}
-  //       user={{ id: 1 }}
-  //     />
-  //   );
-
-  //const user = chatMessage.name[1];
-  const { chatRoom } = props;
-  const user = Messages.id;
   const navigation = useNavigation();
   const onClick = () => {
     setMessage({ Messages: Messages.name });

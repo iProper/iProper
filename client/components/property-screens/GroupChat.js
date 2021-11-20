@@ -11,21 +11,19 @@ import {
   Pressable,
 } from "react-native";
 
-//import styles from "../../styles/App.styles";
 import ChatScreenStyles, { styles } from "../../styles/ChatScreen.styles";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import io from "socket.io-client";
 import NavigationHeader from "../small/NavigationHeader";
 import { useNavigation } from "@react-navigation/native";
 //const socket = io.connect("http://localhost:4000");
-//export default class ChatRoom extends Component {
+
 const GroupChat = () => {
   const navigation = useNavigation();
   const route = useRoute();
   //const { id, name } = route.params;
 
-  // console.log(name);
-  // const socketRef = useRef();
+  const socketRef = useRef();
   const today = new Date();
   const [You, setYou] = useState([
     {
@@ -152,6 +150,8 @@ const GroupChat = () => {
               </View>
             );
           })} */}
+
+            {/* comment the code at the bottom and uncomment the code above when socket is establish */}
             <View style={ChatScreenStyles.CT_Body}>
               <FlatList
                 data={You}

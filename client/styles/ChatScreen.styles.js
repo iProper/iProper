@@ -77,7 +77,7 @@ export default StyleSheet.create({
   CT_Body: {
     padding: 20,
     paddingTop: 20,
-    paddingBottom: 125,
+    paddingBottom: 500,
     borderWidth: 3,
     borderColor: "#97CAEF",
     borderRadius: 30,
