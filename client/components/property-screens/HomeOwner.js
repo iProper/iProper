@@ -124,7 +124,7 @@ const Note = ({ note, setNote, deleteNote }) => {
 const AddNewTenantPopUp = ({ setPopUpOpen, propertyCode }) => {
   return (
     <Pressable onPress={() => setPopUpOpen(false)} style={styles.popUp}>
-      <View style={styles.popUpCard}>
+      <View style={[styles.popUpCard, {paddingBottom: 30}]}>
         <Text style={styles.textH2}>Add new tenant</Text>
         <View style={[styles.separator, styles.separatorBlue]} />
         <View style={[styles.flexRow, { padding: 10 }]}>
@@ -207,7 +207,7 @@ export function PropertyHome({ navigation, jwtToken, property }) {
                 lastName={renter.lastName}
                 dueDate={renter.dueDate}
                 isPaid={renter.isPaid}
-                isResponsible={renter.isResponsible}
+                isResponsible={renter.id === property.residents[0].id}
                 key={index}
               />
             )) : <Text style={{color: "#555"}}>Oops... No tenants found.</Text>}

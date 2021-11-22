@@ -7,6 +7,7 @@ import { useQuery } from "@apollo/client";
 import OwnerStack from "./OwnerStack";
 import { PropertyTabs } from "./PropertyTabs";
 import SideMenu from "./SideMenu";
+import Loading from "./small/Loading";
 
 // Styles
 import styles from "../styles/App.styles";
@@ -23,6 +24,7 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
         Authorization: "Bearer " + jwtToken,
       },
     },
+    notifyOnNetworkStatusChange: true
   });
 
   useEffect(() => {
@@ -30,7 +32,6 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
   }, [jwtToken]);
 
   if (error) {
-    console.log(error);
     return (
       <View style={styles.container}>
         <Text>Something went wrong...</Text>
@@ -38,12 +39,8 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
     );
   }
 
-  console.log(data);
-
-  return loading || data === null ? (
-    <View>
-      <Text>Loading...</Text>
-    </View>
+  return loading || data == null ? (
+    <Loading text={"Loading..."} style={{flex: 1}}/>
   ) : (
     <Drawer.Navigator
       drawerContent={(props) => (
@@ -53,8 +50,6 @@ const LoggedInStack = ({ jwtToken, setJwtToken }) => {
           jwtToken={jwtToken}
           setJwtToken={(jwtToken) => {
             setJwtToken(jwtToken);
-            data = null;
-            console.log(data);
           }}
         />
       )}

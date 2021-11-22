@@ -31,6 +31,12 @@ export default StyleSheet.create({
     fontSize: 14,
     marginVertical: 5,
   },
+  highlightText: {
+    color: "#548eb8",
+    fontWeight: "bold",
+    fontSize: 14,
+    marginVertical: 5,
+  },
   alarmText: {
     color: "#FC4445",
     fontSize: 12,
@@ -159,8 +165,36 @@ export default StyleSheet.create({
     alignItems: "center",
     position: "relative",
   },
-  formPickerValue: {
-    fontSize: 20,
+  picker: {
+    backgroundColor: "#eee",
+    borderRadius: 5,
+    marginVertical: 5,
+    paddingVertical: 5,
+    paddingLeft: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    width: "100%",
+  },
+  pickerValue: {
+    color: "#000",
+    fontSize: 15,
+    flex: 1,
+    height: "100%",
+  },
+
+  checkbox: {
+    width: 25,
+    height: 25,
+    borderColor: "#97CAEF",
+    borderWidth: 2,
+    borderRadius: 5,
+    margin: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#97CAEF",
   },
 
   flexSize1: {
@@ -324,6 +358,22 @@ export default StyleSheet.create({
     alignItems: "center",
     width: "80%",
     padding: 10,
-    height: "50%",
+  },
+
+  textInputArea: {
+    backgroundColor: "#eee",
+    width: "100%",
+    
+    alignContent: "flex-start",
+
+    borderRadius: 10,
+    padding: 0,
+    paddingHorizontal: 8,
+    marginRight: 1,
+    textAlign: "left",
+  },
+
+  textInputBig: {
+    width: "100%"
   }
 });

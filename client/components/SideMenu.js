@@ -56,6 +56,27 @@ function SideMenu(props) {
               }}
             />
           </View>
+          {!props.userData.isOwner && (
+          <View>
+            <View style={[styles.sideMenuItem]}>
+              <DrawerItem
+                label={"Schedule"}
+                labelStyle={{ fontSize: 20 }}
+                onPress={() => {
+                  props.navigation.navigate("Schedule");
+                }}
+              />
+            </View>
+            <View style={[styles.sideMenuItem]}>
+              <DrawerItem
+                label={"About"}
+                labelStyle={{ fontSize: 20 }}
+                onPress={() => {
+                  props.navigation.navigate("About");
+                }}
+              />
+            </View>
+          </View>)}
           {props.userData.isOwner && (
             <Text
               style={[
@@ -94,7 +115,9 @@ function SideMenu(props) {
       </View>
       <View style={styles.sideMenuBottomArea}>
         <Pressable
-          onPress={() => props.setJwtToken(null)}
+          onPress={() => {
+            props.setJwtToken(null);
+          }}
           style={styles.sideMenuBottomItem}
         >
           <Text style={[styles.textH2, { color: "#97CAEF" }]}>Logout</Text>

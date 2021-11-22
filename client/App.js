@@ -27,14 +27,33 @@ const firebaseConfig = {
       : "1:973379366430:android:69db4fa11c5da2eee6880f",
 };
 
-firebase.initializeApp(firebaseConfig);
+Date.prototype.getDayMondayFirst = function () {
+  let day = this.getDay();
+  return day === 0 ? 7 : day;
+};
+Date.prototype.getHours12 = function () {
+  const time = this.getHours();
+  let time12 = time % 12 === 0 ? 12 : time % 12;
+  if (time > 0 && time < 12) time12 += " am";
+  else time12 += " pm";
+
+  return time12;
+}
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app();
+}
 
 // Styles
 import styles from "./styles/App.styles";
 
+const cache = new InMemoryCache();
+
 const client = new ApolloClient({
   uri: "https://iproper.herokuapp.com/graphql",
-  cache: new InMemoryCache(),
+  cache: cache,
 });
 
 export default function App() {
@@ -53,7 +72,9 @@ export default function App() {
   useEffect(() => {
     if (Platform.OS === "web") return;
 
-    SecureStore.setItemAsync("jwt_token", jwtToken || "").then(() => {});
+    SecureStore.setItemAsync("jwt_token", jwtToken || "").then(() => {
+      cache.reset();
+    });
   }, [jwtToken]);
   //-------------------------------------------------------------------------
 

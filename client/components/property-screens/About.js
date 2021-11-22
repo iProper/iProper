@@ -74,8 +74,6 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
     }
   }, [edit]);
 
-  console.log(property.residents);
-
   return (
     <View style={[styles.container, propertyStyles.propertyAboutScreen]}>
       <NavigationHeader

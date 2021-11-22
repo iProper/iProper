@@ -51,7 +51,7 @@ export default StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
   },
-  
+
   noPropertyCard: {
     width: "75%",
     height: 350,
@@ -60,7 +60,7 @@ export default StyleSheet.create({
   enterPropertyButtons: {
     marginVertical: 5,
     width: "100%",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
 
   renterHomeHeaderButtons: {
@@ -190,5 +190,204 @@ export default StyleSheet.create({
     borderRadius: 10,
     width: 60,
     height: 28,
+  },
+
+  scheduleScreen: {
+    padding: 30,
+  },
+
+  responsibilityOrder: {
+    width: "150%",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 3,
+    borderColor: "#97CAEF",
+    flexDirection: "row",
+    marginHorizontal: 30,
+  },
+
+  responsibilityName: {
+    backgroundColor: "#999",
+    borderRadius: 50,
+    paddingHorizontal: 5,
+    marginRight: 2,
+  },
+
+  residentColor1: {
+    borderColor: "#FC4445",
+    backgroundColor: "#FC4445",
+    color: "#fff",
+  },
+  residentColor2: {
+    borderColor: "#b6dffc",
+    backgroundColor: "#b6dffc",
+    color: "#000",
+  },
+  residentColor3: {
+    borderColor: "#ACF000",
+    backgroundColor: "#ACF000",
+    color: "#000",
+  },
+  residentColor4: {
+    borderColor: "#6aa2fc",
+    backgroundColor: "#6aa2fc",
+    color: "#fff",
+  },
+  residentColor5: {
+    borderColor: "#ff96ee",
+    backgroundColor: "#ff96ee",
+    color: "#fff",
+  },
+  residentColor6: {
+    borderColor: "#ffdc5c",
+    backgroundColor: "#ffdc5c",
+    color: "#000",
+  },
+  residentColor7: {
+    borderColor: "#ff8800",
+    backgroundColor: "#ff8800",
+    color: "#fff",
+  },
+  residentColor8: {
+    borderColor: "#8b59ff",
+    backgroundColor: "#8b59ff",
+    color: "#fff",
+  },
+  residentColor9: {
+    borderColor: "#c90024",
+    backgroundColor: "#c90024",
+    color: "#fff",
+  },
+  residentColor10: {
+    borderColor: "#00ff9d",
+    backgroundColor: "#00ff9d",
+    color: "#000",
+  },
+  residentColor11: {
+    borderColor: "#9afcfb",
+    backgroundColor: "#9afcfb",
+    color: "#000",
+  },
+  residentColor12: {
+    borderColor: "#00694d",
+    backgroundColor: "#00694d",
+    color: "#fff",
+  },
+
+  scheduleWrapper: {
+    width: "100%",
+    marginVertical: 15,
+    paddingHorizontal: 30,
+  },
+  schedule: {
+    borderWidth: 2,
+    borderColor: "#97CAEF",
+    borderRadius: 5,
+    height: 400,
+  },
+
+  scheduleHeader: {
+    flexDirection: "row",
+    borderBottomWidth: 2,
+    borderColor: "#97CAEF",
+  },
+  scheduleDayOfWeek: {
+    overflow: "hidden",
+    borderRightWidth: 2,
+    borderColor: "#97CAEF",
+    height: 25,
+    justifyContent: "center",
+    margin: 0,
+    width: 150,
+  },
+  scheduleDayOfWeekName: {
+    textAlign: "center",
+  },
+
+  scheduleDayColumns: {
+    position: "relative",
+    flexDirection: "row",
+    width: "100%",
+  },
+  scheduleDayColumn: {
+    width: 150,
+    height: 369,
+    borderRightWidth: 2,
+    overflow: "hidden",
+    borderColor: "#97CAEF",
+  },
+
+  scheduleEvent: {
+    position: "absolute",
+    width: "97%",
+    margin: 2,
+    borderWidth: 3,
+    borderRadius: 7,
+    height: 25,
+    backgroundColor: "#0000",
+  },
+  scheduleEventText: {
+    paddingLeft: 2,
+    position: "absolute",
+    backgroundColor: "#0000",
+  },
+  scheduleEventBackground: {
+    height: "100%",
+    opacity: 0.7,
+  },
+
+  scheduleBackground: {
+    position: "absolute",
+    paddingVertical: 10,
+    overflow: "hidden",
+  },
+
+  scheduleBackgroundRow: {
+    borderTopWidth: 1,
+    borderStyle: "dashed",
+    borderRadius: 1,
+    borderColor: "#97CAEF",
+    width: 1050,
+    height: 93,
+  },
+  scheduleBackgroundTime: {
+    backgroundColor: "#fff",
+    color: "#97CAEF",
+    top: -10,
+    textAlign: "center",
+    alignSelf: "flex-start",
+    padding: 2,
+    fontSize: 12,
+  },
+
+  duesTodaySchedule: {
+    paddingHorizontal: 30,
+  },
+
+  scheduleButtons: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 5,
+    paddingHorizontal: 20,
+  },
+
+  editScheduleScreen: {
+    padding: 30,
+  },
+  chooseDay: {
+    borderColor: "#97CAEF",
+    borderWidth: 3,
+    borderRadius: 50,
+  },
+  addEventButton: {
+    position: "absolute",
+    bottom: 5,
+    width: "100%",
+    alignItems: "center", 
+    alignSelf: "center",
+    paddingHorizontal: 20,
   },
 });

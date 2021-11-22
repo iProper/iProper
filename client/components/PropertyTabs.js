@@ -1,4 +1,4 @@
-import { Text, View, Image } from "react-native";
+import { View, Image } from "react-native";
 import React, { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { getPropertyById } from "../queries/queries";
@@ -8,6 +8,8 @@ import HomeRenter from "./property-screens/HomeRenter";
 import HomeOwner from "./property-screens/HomeOwner";
 import AboutScreen from "./property-screens/About";
 import NoPropertyHome from "./property-screens/NoPropertyHomeRenter";
+import ScheduleScreen from "./property-screens/Schedule";
+import Loading from "./small/Loading";
 
 const Tabs = createBottomTabNavigator();
 
@@ -15,11 +17,13 @@ export function PropertyTabs({
   route,
   userData,
   jwtToken,
-  propertyId,
-  refetchUser,
+  refetchUser
 }) {
+  let propertyId = null;
+  
   if (userData.isOwner) {
-    propertyId = route.params.id;
+    if (route.params?.id)
+      propertyId = route.params.id;
   } else {
     propertyId = userData.propertyCode;
   }
@@ -39,18 +43,19 @@ export function PropertyTabs({
     refetch();
   }, [jwtToken, propertyId]);
 
-  let property = data?.getProperty || null;
+  let property = JSON.parse(JSON.stringify(data?.getProperty || null));
+  if (property) {
+    property.residents.sort((a, b) => a.id.localeCompare(b.id));
+  }
 
-  return loading ? (
+  return loading || propertyId === null ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Tabs.Screen
         name='loading'
         options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
       >
         {(props) => (
-          <View {...props}>
-            <Text>Loading...</Text>
-          </View>
+          <Loading text={"Loading..."} style={{flex: 1}}/>
         )}
       </Tabs.Screen>
     </Tabs.Navigator>
@@ -63,36 +68,52 @@ export function PropertyTabs({
           <View style={{ flex: 1, backgroundColor: "#FC4445" }} />
         ),
         tabBarLabel: () => {},
-        tabBarIcon: userData.propertyCode || userData.isOwner
-          ? ({ focused }) => {
-              let iconImg;
-              if (route.name === "Home") {
-                iconImg = (
-                  <Image
-                    source={
-                      !focused
-                        ? require("../assets/home-white.png")
-                        : require("../assets/home-blue.png")
-                    }
-                    style={{ width: 30, height: 30 }}
-                  />
-                );
-              } else if (route.name === "About") {
-                iconImg = (
-                  <Image
-                    source={
-                      !focused
-                        ? require("../assets/about-white.png")
-                        : require("../assets/about-blue.png")
-                    }
-                    style={{ width: 30, height: 30 }}
-                  />
-                );
-              }
+        tabBarIcon:
+          userData.propertyCode || userData.isOwner
+            ? ({ focused }) => {
+                let iconImg;
+                switch (route.name) {
+                  case "Home":
+                    iconImg = (
+                      <Image
+                        source={
+                          !focused
+                            ? require("../assets/home-white.png")
+                            : require("../assets/home-blue.png")
+                        }
+                        style={{ width: 30, height: 30 }}
+                      />
+                    );
+                    break;
+                  case "Schedule":
+                    iconImg = (
+                      <Image
+                        source={
+                          !focused
+                            ? require("../assets/schedule-white.png")
+                            : require("../assets/schedule-blue.png")
+                        }
+                        style={{ width: 30, height: 30 }}
+                      />
+                    );
+                    break;
+                  case "About":
+                    iconImg = (
+                      <Image
+                        source={
+                          !focused
+                            ? require("../assets/about-white.png")
+                            : require("../assets/about-blue.png")
+                        }
+                        style={{ width: 30, height: 30 }}
+                      />
+                    );
+                    break;
+                }
 
-              return iconImg;
-            }
-          : () => {},
+                return iconImg;
+              }
+            : () => {},
       })}
     >
       {userData.isOwner ? (
@@ -134,6 +155,17 @@ export function PropertyTabs({
           )}
         </Tabs.Screen>
       )}
+      <Tabs.Screen name='Schedule'>
+        {(props) => (
+          <ScheduleScreen
+            {...props}
+            property={property}
+            jwtToken={jwtToken}
+            userData={userData}
+            refetchProperty={refetch}
+          />
+        )}
+      </Tabs.Screen>
       <Tabs.Screen name='About'>
         {(props) => (
           <AboutScreen

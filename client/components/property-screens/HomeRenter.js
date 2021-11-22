@@ -1,16 +1,14 @@
 import { Text, View, Pressable, ScrollView, Image } from "react-native";
 import React from "react";
 
+import Loading from "../small/Loading";
+
 import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 
-export const Home = ({ userData, jwtToken, property }) => {
+export const Home = ({ userData, jwtToken, property, navigation }) => {
   if (property == null) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Loading text={"Loading..."} style={{ flex: 1 }} />;
   }
 
   return (
@@ -37,30 +35,53 @@ export const Home = ({ userData, jwtToken, property }) => {
         <View style={propertyStyles.dueTodayHeader}>
           <Text style={styles.textH2}>Due Today</Text>
         </View>
-
         <View style={propertyStyles.duesToday}>
-          <View style={styles.card}>
-            <Text style={[styles.textH4, { padding: 5 }]}>
-              Do This and also that and those stuff
-            </Text>
+          {(() => {
+            const todayDues = property.events.filter(
+              (event) =>
+                new Date(event.toBeCompleted).getDay() === new Date().getDay() &&
+                event.assignedTo === userData.id
+            );
+            return todayDues.length &&
+              (userData.id === property.residents[0].id || userData.isOwner) ? (
+              todayDues.map((event, index) => {
+                return (
+                  <View key={index} style={[styles.card]}>
+                    <View>
+                      <Text style={styles.textH4}>{event.description}</Text>
+                    </View>
+                    <View style={[styles.separator, styles.separatorBlue]} />
 
-            <View style={[styles.separator, styles.separatorBlue]}></View>
-
-            <Pressable
-              style={[
-                styles.button,
-                styles.buttonRound,
-                {
-                  width: "70%",
-                  alignSelf: "flex-end",
-                  marginHorizontal: 5,
-                  marginTop: 5,
-                },
-              ]}
-            >
-              <Text style={[styles.buttonText]}>Report Completion</Text>
-            </Pressable>
-          </View>
+                    <Pressable
+                      onPress={() => {
+                        if (!event.isCompleted)
+                          navigation.navigate("Schedule", { eventId: event.id });
+                      }}
+                      style={[
+                        styles.button,
+                        styles.buttonRound,
+                        event.isCompleted ? styles.buttonBlue : {},
+                        {
+                          width: "70%",
+                          alignSelf: "flex-end",
+                          marginHorizontal: 5,
+                          marginTop: 5,
+                        },
+                      ]}
+                    >
+                      <Text style={[styles.buttonText]}>
+                        {event.isCompleted ? "Completed" : "Report Completion"}
+                      </Text>
+                    </Pressable>
+                  </View>
+                );
+              })
+            ) : (
+              <Text style={{ alignSelf: "center" }}>
+                Nothing is due today, you can relax.
+              </Text>
+            );
+          })()}
         </View>
       </ScrollView>
 

@@ -4,6 +4,7 @@ import styles from "../../styles/App.styles";
 import { useQuery } from "@apollo/client";
 import { getOwnerProperties } from "../../queries/queries";
 import PropertyCard from "./PropertyCard";
+import Loading from "../small/Loading";
 
 import ownerStyles from "../../styles/OwnerScreens.styles";
 
@@ -35,9 +36,7 @@ function OwnerDashboard({ navigation, jwtToken }) {
   else properties = data?.getProperties;
 
   return loading ? (
-    <View>
-      <Text>Loading...</Text>
-    </View>
+    <Loading text={"Loading..."} style={{flex: 1}}/>
   ) : (
     <View style={[styles.container, ownerStyles.ownerDashboard]}>
       <View style={ownerStyles.ownerDashboardHeader}>
