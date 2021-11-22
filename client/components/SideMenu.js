@@ -56,6 +56,27 @@ function SideMenu(props) {
               }}
             />
           </View>
+          {!props.userData.isOwner && (
+          <View>
+            <View style={[styles.sideMenuItem]}>
+              <DrawerItem
+                label={"Schedule"}
+                labelStyle={{ fontSize: 20 }}
+                onPress={() => {
+                  props.navigation.navigate("Schedule");
+                }}
+              />
+            </View>
+            <View style={[styles.sideMenuItem]}>
+              <DrawerItem
+                label={"About"}
+                labelStyle={{ fontSize: 20 }}
+                onPress={() => {
+                  props.navigation.navigate("About");
+                }}
+              />
+            </View>
+          </View>)}
           {props.userData.isOwner && (
             <Text
               style={[

@@ -27,18 +27,12 @@ function AddEventPopUp({
   setOpen,
   dayNum,
   refetchProperty,
-  event = {},
+  event = null,
 }) {
   const [day, setDay] = useState({ label: weekdays[dayNum], value: dayNum });
-  const [name, setName] = useState(event.name || "");
-  const [desc, setDesc] = useState(event.description || "");
-  const [isRepeatable, setIsRepeatable] = useState(event.isRepeatable || true);
-  const [time, setTime] = useState({
-    value: event.toBeCompleted ? new Date(event.toBeCompleted)?.getHours() : 12,
-    label: event.toBeCompleted
-      ? new Date(event.toBeCompleted)?.getHours12()
-      : "12 pm",
-  });
+  const [name, setName] = useState(event?.name || "");
+  const [desc, setDesc] = useState(event?.description || "");
+  const [isRepeatable, setIsRepeatable] = useState(event?.isRepeatable || true);
 
   const [postEvent] = useMutation(addEvent);
   const [updateEvent] = useMutation(editEvent);
@@ -60,7 +54,39 @@ function AddEventPopUp({
     });
   }
 
-  const addevent = () => {
+  const [time, setTime] = useState(
+    event
+      ? timePickerValues.find(
+          (time) => time.value == new Date(event.toBeCompleted).getHours()
+        )
+      : timePickerValues[12]
+  );
+
+  let assignedPickerValues = !event
+    ? [
+        {
+          value: null,
+          label: "Automatically",
+        },
+      ]
+    : [];
+  assignedPickerValues = assignedPickerValues.concat(
+    property.residents.map((resident) => ({
+      value: resident.id,
+      label: `${resident.firstName} ${resident.lastName}`,
+    }))
+  );
+
+  const assignedToResident = property.residents.find(
+    (resident) => resident.id == event?.assignedTo
+  );
+  const [assignedTo, setAssignedTo] = useState(
+    assignedToResident
+      ? assignedPickerValues.find((option) => option.value === assignedToResident.id)
+      : assignedPickerValues[0]
+  );
+
+  const onPressAddEvent = () => {
     let toBeCompleted = new Date();
     toBeCompleted.setHours(Number.parseInt(time.value));
     toBeCompleted.setMinutes(0);
@@ -68,7 +94,7 @@ function AddEventPopUp({
     let offset = (day.value + 1 - toBeCompleted.getDayMondayFirst() + 7) % 7;
     toBeCompleted.setDate(toBeCompleted.getDate() + offset);
 
-    if (event) {
+    if (event?.id) {
       updateEvent({
         context: {
           headers: {
@@ -82,6 +108,7 @@ function AddEventPopUp({
           isRepeatable,
           toBeCompleted,
           propertyId: property.id,
+          assignedTo: assignedTo.value,
         },
       })
         .then((result) => {
@@ -102,6 +129,7 @@ function AddEventPopUp({
           isRepeatable,
           toBeCompleted,
           propertyId: property.id,
+          assignedTo: assignedTo.value,
         },
       })
         .then((result) => {
@@ -118,7 +146,7 @@ function AddEventPopUp({
         onPress={() => setOpen(true)}
         style={[styles.popUpCard, { padding: 15 }]}
       >
-        <Text style={[styles.textH3]}>Add event</Text>
+        <Text style={[styles.textH3]}>{event ? "Edit event" : "Add event"}</Text>
         <View style={[styles.separator, styles.separatorBlue]} />
         <View style={{ padding: 10, width: "100%" }}>
           <FormPicker
@@ -191,6 +219,21 @@ function AddEventPopUp({
               maxLength={250}
             />
           </View>
+
+          <Text style={[styles.textH4, styles.formLabel, { marginTop: 5 }]}>
+            Assigned To
+          </Text>
+          <FormPicker
+            pickerValues={assignedPickerValues}
+            selected={assignedTo}
+            setSelected={setAssignedTo}
+            pickerStyles={{
+              backgroundColor: "#fff",
+              borderColor: "#97CAEF",
+              borderWidth: 2,
+            }}
+          />
+
           <View
             style={{ flexDirection: "row", alignItems: "center", marginVertical: 5 }}
           >
@@ -202,7 +245,7 @@ function AddEventPopUp({
             </Pressable>
           </View>
           <Pressable
-            onPress={addevent}
+            onPress={onPressAddEvent}
             style={[styles.button, { width: "100%", marginTop: 15 }]}
           >
             <Text style={[styles.buttonText]}>
@@ -216,14 +259,15 @@ function AddEventPopUp({
 }
 
 export default function EditSchedule({
+  route,
   navigation,
   property,
   jwtToken,
   refetchProperty,
 }) {
-  const [eventToEdit, setEventToEdit] = useState({});
+  const [eventToEdit, setEventToEdit] = useState(null);
   const [openAddEvent, setOpenAddEvent] = useState(false);
-  const [day, setDay] = useState(1);
+  const [day, setDay] = useState(route.params?.day || 1);
 
   const dayBefore = () => {
     if (day > 1) setDay(day - 1);
@@ -235,7 +279,7 @@ export default function EditSchedule({
 
   useEffect(() => {
     if (!openAddEvent) {
-      setEventToEdit({});
+      setEventToEdit(null);
     }
   }, [openAddEvent]);
 
@@ -272,7 +316,7 @@ export default function EditSchedule({
                 <View key={index} style={[styles.card, { alignItems: "center" }]}>
                   <Text style={styles.textH3}>{event.name}</Text>
                   <View style={[styles.separator, styles.separatorBlue]} />
-                  <View>
+                  <View style={{ width: "100%" }}>
                     <Text style={styles.highlightText}>Description:</Text>
                     <Text style={styles.textH4}>{event.description}</Text>
                     <Text style={styles.highlightText}>Time:</Text>

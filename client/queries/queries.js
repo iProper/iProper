@@ -75,6 +75,8 @@ const getOwnerProperties = gql`
       propertyCode
       residents {
         id
+        firstName
+        lastName
       }
     }
   }
@@ -106,6 +108,8 @@ const getPropertyById = gql`
         description
         toBeCompleted
         isRepeatable
+        isCompleted
+        assignedTo
       }
     }
   }
@@ -206,6 +210,8 @@ const editEvent = gql`
     $isRepeatable: Boolean
     $propertyId: ID!
     $assignedTo: ID
+    $isCompleted: Boolean
+    $report: String
   ) {
     updateEvent(
       id: $id
@@ -215,6 +221,8 @@ const editEvent = gql`
       isRepeatable: $isRepeatable
       propertyId: $propertyId
       assignedTo: $assignedTo
+      isCompleted: $isCompleted
+      report: $report
     ) {
       id
     }

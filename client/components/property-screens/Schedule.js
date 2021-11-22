@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, ScrollView, Pressable } from "react-native";
 
 import NavigationHeader from "../small/NavigationHeader";
-import { FormPicker } from "../small/Picker";
 import EditSchedule from "./EditSchedule";
+import ReportCompletion from "./ReportCompletion";
 
 import propertyStyles from "../../styles/PropertyScreens.styles";
 import styles from "../../styles/App.styles";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import RequestChange from "./RequestChange";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,11 +22,8 @@ function generateResponsibilityList(residents) {
   return responsibilityOrder;
 }
 
-function generateScheduleColumns(events, responsibilityOrder, residents) {
+function generateScheduleColumns(events, residents) {
   let scheduleColumns = [];
-
-  const currentResponsibleIndex =
-    residents.findIndex((resident) => resident.id === responsibilityOrder[0].id) + 1;
 
   for (let i = 1; i < 8; i++) {
     scheduleColumns.push(
@@ -43,7 +41,13 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
               <View
                 key={index}
                 style={[
-                  propertyStyles["residentColor" + currentResponsibleIndex],
+                  propertyStyles[
+                    "residentColor" +
+                      (residents.findIndex(
+                        (resident) => resident.id == event.assignedTo
+                      ) +
+                        1)
+                  ],
                   propertyStyles.scheduleEvent,
                   {
                     top:
@@ -61,13 +65,25 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
                 >
                   <View
                     style={[
-                      propertyStyles["residentColor" + currentResponsibleIndex],
+                      propertyStyles[
+                        "residentColor" +
+                          (residents.findIndex(
+                            (resident) => resident.id == event.assignedTo
+                          ) +
+                            1)
+                      ],
                       propertyStyles.scheduleEventBackground,
                     ]}
                   ></View>
                   <Text
                     style={[
-                      propertyStyles["residentColor" + currentResponsibleIndex],
+                      propertyStyles[
+                        "residentColor" +
+                          (residents.findIndex(
+                            (resident) => resident.id == event.assignedTo
+                          ) +
+                            1)
+                      ],
                       propertyStyles.scheduleEventText,
                     ]}
                   >
@@ -83,69 +99,12 @@ function generateScheduleColumns(events, responsibilityOrder, residents) {
   return scheduleColumns;
 }
 
-function PopupRequestChange({ property, userData, jwtToken, setOpen }) {
-  const [toWho, setToWho] = useState(
-    property.residents[0].id === userData.id
-      ? {
-          label:
-            property.residents[1].firstName + " " + property.residents[0].lastName,
-          value: property.residents[1],
-        }
-      : {
-          label:
-            property.residents[0].firstName + " " + property.residents[0].lastName,
-          value: property.residents[0],
-        }
-  );
-  const [comment, changeComment] = useState("");
-
-  const pickerValues = property.residents.map((resident) => ({
-    label: resident.firstName + " " + resident.lastName,
-    value: resident,
-  }));
-
-  return (
-    <Pressable onPress={() => setOpen(false)} style={styles.popUp}>
-      <View style={styles.popUpCard}>
-        <Text style={[styles.textH3]}>Request Change</Text>
-        <View style={[styles.separator, styles.separatorBlue]} />
-        <View style={[{ paddingHorizontal: 10 }]}>
-          <Text style={[styles.textH4, { paddingVertical: 10 }]}>
-            Your responsibility going to be transferred this week to:
-          </Text>
-          <FormPicker
-            selected={toWho}
-            setSelected={setToWho}
-            pickerValues={pickerValues}
-          />
-        </View>
-        <View style={[styles.textInputArea, { marginVertical: 15 }]}>
-          <TextInput
-            onChangeText={changeComment}
-            style={styles.textInputBig}
-            placeholder='Leave a small comment...'
-            value={comment}
-            multiline={true}
-          />
-        </View>
-        <View style={[styles.flexRow, { padding: 5 }]}>
-          <Pressable style={[styles.button, styles.buttonBlue, { width: "45%" }]}>
-            <Text style={[styles.buttonText]}>Cancel</Text>
-          </Pressable>
-          <Pressable style={[styles.button, { width: "45%" }]}>
-            <Text style={[styles.buttonText]}>Request</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Pressable>
-  );
-}
-
-function Schedule({ navigation, property, userData, jwtToken }) {
-  const [openRequestChange, setOpenRequestChange] = useState();
-
+function Schedule({ navigation, property, userData, jwtToken, eventId = null }) {
   let responsibilityOrder = generateResponsibilityList(property.residents);
 
+  useEffect(() => {
+    if (eventId) navigation.navigate("Report Completion", { eventId: eventId });
+  }, [eventId]);
 
   return (
     <View style={[styles.container]}>
@@ -157,21 +116,25 @@ function Schedule({ navigation, property, userData, jwtToken }) {
       </View>
       <ScrollView>
         <View style={[propertyStyles.responsibilityOrder]}>
-          {responsibilityOrder.length > 0 ? responsibilityOrder.map((resident, index) => {
-            const residentIndex =
-              property.residents.findIndex((r) => resident.id == r.id) + 1;
-            return (
-              <Text
-                key={index}
-                style={[
-                  propertyStyles.responsibilityName,
-                  propertyStyles["residentColor" + residentIndex],
-                ]}
-              >
-                {resident.firstName} {resident.lastName}
-              </Text>
-            );
-          }) : <Text>No residents found...</Text>}
+          {responsibilityOrder.length > 0 ? (
+            responsibilityOrder.map((resident, index) => {
+              const residentIndex =
+                property.residents.findIndex((r) => resident.id == r.id) + 1;
+              return (
+                <Text
+                  key={index}
+                  style={[
+                    propertyStyles.responsibilityName,
+                    propertyStyles["residentColor" + residentIndex],
+                  ]}
+                >
+                  {resident.firstName} {resident.lastName}
+                </Text>
+              );
+            })
+          ) : (
+            <Text>No residents found...</Text>
+          )}
         </View>
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -244,9 +207,10 @@ function Schedule({ navigation, property, userData, jwtToken }) {
           {(() => {
             const todayDues = property.events.filter(
               (event) =>
-                new Date(event.toBeCompleted).getDay() === new Date().getDay()
+                new Date(event.toBeCompleted).getDay() === new Date().getDay() &&
+                (userData.id === event.assignedTo || userData.isOwner)
             );
-            return todayDues.length && (userData.id === responsibilityOrder[0].id || userData.isOwner) ? (
+            return todayDues.length ? (
               todayDues.map((event, index) => {
                 return (
                   <View key={index} style={[styles.card]}>
@@ -255,22 +219,35 @@ function Schedule({ navigation, property, userData, jwtToken }) {
                     </View>
                     <View style={[styles.separator, styles.separatorBlue]} />
                     <View style={[styles.flexRow]}>
-                      <Text style={{ padding: 3 }}>
+                      <Text style={{ padding: 3, flex: 1 }}>
                         By: {responsibilityOrder[0].firstName}{" "}
                         {responsibilityOrder[0].lastName}
                       </Text>
-                      <View
+                      <Pressable
+                        onPress={() => {
+                          if (!userData.isOwner)
+                            navigation.navigate("Report Completion", {
+                              eventId: event.id,
+                            });
+                        }}
                         style={[
-                          styles.separator,
-                          styles.separatorBlue,
-                          styles.separatorVertical,
+                          styles.button,
+                          event.isCompleted || userData.isOwner
+                            ? styles.buttonBlue
+                            : {},
+                          { flex: 1, height: 27 },
                         ]}
-                      />
-                      <View
-                        style={[styles.button, styles.buttonBlue, { height: 27 }]}
                       >
-                        <Text style={[styles.buttonText]}>Pending</Text>
-                      </View>
+                        {userData.isOwner ? (
+                          <Text style={[styles.buttonText]}>
+                            {event.isCompleted ? "Completed" : "Pending"}
+                          </Text>
+                        ) : (
+                          <Text style={[styles.buttonText]}>
+                            {event.isCompleted ? "Completed" : "Report Completion"}
+                          </Text>
+                        )}
+                      </Pressable>
                     </View>
                   </View>
                 );
@@ -287,7 +264,11 @@ function Schedule({ navigation, property, userData, jwtToken }) {
       {userData.isOwner ? (
         <View style={[styles.flexRow, propertyStyles.scheduleButtons]}>
           <Pressable
-            onPress={() => navigation.navigate("Edit Schedule")}
+            onPress={() =>
+              navigation.navigate("Edit Schedule", {
+                day: new Date().getDayMondayFirst(),
+              })
+            }
             style={[styles.button, styles.buttonBig, { width: "100%" }]}
           >
             <Text style={[styles.buttonText, styles.buttonTextBig]}>
@@ -299,40 +280,47 @@ function Schedule({ navigation, property, userData, jwtToken }) {
         <View style={[styles.flexRow, propertyStyles.scheduleButtons]}>
           {property.residents.length > 1 && (
             <Pressable
+              onPress={() =>
+                navigation.navigate("Change Responsibility", {
+                  day: new Date().getDayMondayFirst(),
+                })
+              }
               style={[
                 styles.button,
                 styles.buttonBig,
                 styles.buttonOff,
-                { flex: 1, borderRadius: 5 },
+                { flex: 1, borderRadius: 5, marginRight: 5 },
               ]}
-              onPress={() => setOpenRequestChange(true)}
             >
               <Text style={[styles.buttonText, styles.buttonOffText]}>
                 Request Change
               </Text>
             </Pressable>
           )}
-          <View style={{ width: 5 }} />
           <Pressable
+            onPress={() => navigation.navigate("Report Completion")}
             style={[styles.button, styles.buttonBig, { flex: 1, borderRadius: 5 }]}
           >
             <Text style={[styles.buttonText]}>Report Completion</Text>
           </Pressable>
         </View>
       )}
-      {openRequestChange && (
-        <PopupRequestChange
-          property={property}
-          userData={userData}
-          jwtToken={jwtToken}
-          setOpen={setOpenRequestChange}
-        />
-      )}
     </View>
   );
 }
 
-export default function ScheduleScreen({ property, userData, jwtToken, refetchProperty }) {
+export default function ScheduleScreen({
+  route,
+  property,
+  userData,
+  jwtToken,
+  refetchProperty,
+}) {
+  const eventId = route.params?.eventId || null;
+  const setEventIdNull = () => {
+    if (route.params) route.params.eventId = null;
+  };
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen name='View Schedule'>
@@ -342,20 +330,48 @@ export default function ScheduleScreen({ property, userData, jwtToken, refetchPr
             property={property}
             userData={userData}
             jwtToken={jwtToken}
+            eventId={eventId}
           />
         )}
       </Stack.Screen>
-      <Stack.Screen name='Edit Schedule'>
+      <Stack.Screen name='Change Responsibility'>
         {(props) => (
-          <EditSchedule
+          <RequestChange
             {...props}
             property={property}
             userData={userData}
             jwtToken={jwtToken}
+            eventId={eventId}
             refetchProperty={refetchProperty}
           />
         )}
       </Stack.Screen>
+      {userData.isOwner ? (
+        <Stack.Screen name='Edit Schedule'>
+          {(props) => (
+            <EditSchedule
+              {...props}
+              property={property}
+              userData={userData}
+              jwtToken={jwtToken}
+              refetchProperty={refetchProperty}
+            />
+          )}
+        </Stack.Screen>
+      ) : (
+        <Stack.Screen name='Report Completion'>
+          {(props) => (
+            <ReportCompletion
+              {...props}
+              property={property}
+              userData={userData}
+              jwtToken={jwtToken}
+              refetchProperty={refetchProperty}
+              setEventIdNull={setEventIdNull}
+            />
+          )}
+        </Stack.Screen>
+      )}
     </Stack.Navigator>
   );
 }

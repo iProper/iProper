@@ -43,7 +43,10 @@ export function PropertyTabs({
     refetch();
   }, [jwtToken, propertyId]);
 
-  let property = data?.getProperty || null;
+  let property = JSON.parse(JSON.stringify(data?.getProperty || null));
+  if (property) {
+    property.residents.sort((a, b) => a.id.localeCompare(b.id));
+  }
 
   return loading || propertyId === null ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>

@@ -363,7 +363,6 @@ export default StyleSheet.create({
   textInputArea: {
     backgroundColor: "#eee",
     width: "100%",
-    height: 50,
     
     alignContent: "flex-start",
 
