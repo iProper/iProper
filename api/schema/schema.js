@@ -1,16 +1,17 @@
-const graphql = require("graphql");
-const User = require("../models/User");
-const Property = require("../models/Property");
-const Event = require("../models/Event");
-const bcrypt = require("bcryptjs");
-const jsonwebtoken = require("jsonwebtoken");
-const { startOfWeek, nextMonday, startOfToday, add } = require("date-fns");
+const graphql = require('graphql');
+const User = require('../models/User');
+const Property = require('../models/Property');
+const Event = require('../models/Event');
+const bcrypt = require('bcryptjs');
+const jsonwebtoken = require('jsonwebtoken');
+const { startOfWeek, nextMonday, startOfToday, add } = require('date-fns');
 
-require("dotenv").config();
+require('dotenv').config();
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require("twilio")(accountSid, authToken);
+const client = require('twilio')(accountSid, authToken);
 
 const {
   GraphQLObjectType,
@@ -26,8 +27,8 @@ const {
 } = graphql;
 
 const dateScalar = new GraphQLScalarType({
-  name: "Date",
-  description: "Date custom scalar type",
+  name: 'Date',
+  description: 'Date custom scalar type',
   serialize(value) {
     return new Date(value);
   },
@@ -43,7 +44,7 @@ const dateScalar = new GraphQLScalarType({
 });
 
 const UserType = new GraphQLObjectType({
-  name: "User",
+  name: 'User',
   fields: () => ({
     id: { type: GraphQLID },
     firstName: { type: GraphQLString },
@@ -57,7 +58,7 @@ const UserType = new GraphQLObjectType({
 });
 
 const EventType = new GraphQLObjectType({
-  name: "Event",
+  name: 'Event',
   fields: () => ({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
@@ -73,7 +74,7 @@ const EventType = new GraphQLObjectType({
 });
 
 const PropertyType = new GraphQLObjectType({
-  name: "Property",
+  name: 'Property',
   fields: () => ({
     id: { type: GraphQLID },
     propertyCode: { type: GraphQLString },
@@ -83,6 +84,7 @@ const PropertyType = new GraphQLObjectType({
     province: { type: GraphQLString },
     postalCode: { type: GraphQLString },
     numOfRooms: { type: GraphQLInt },
+    rentalAmount: { type: GraphQLInt },
     description: { type: GraphQLString },
     note: { type: GraphQLString },
     rules: { type: new GraphQLList(GraphQLString) },
@@ -100,7 +102,7 @@ const PropertyType = new GraphQLObjectType({
           return tenants;
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
     events: {
@@ -115,7 +117,9 @@ const PropertyType = new GraphQLObjectType({
           for (const eventId of parent.eventIds) {
             const event = await Event.findById(eventId);
 
-            const firstDay = startOfWeek(startOfToday(), { weekStartsOn: 1 });
+            const firstDay = startOfWeek(startOfToday(), {
+              weekStartsOn: 1,
+            });
             const lastDay = nextMonday(startOfToday());
 
             if (args.viewAll == null) {
@@ -159,14 +163,14 @@ const PropertyType = new GraphQLObjectType({
           return allEvents;
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
   }),
 });
 
 const RootQuery = new GraphQLObjectType({
-  name: "RootQueryType",
+  name: 'RootQueryType',
   fields: {
     currentUser: {
       type: UserType,
@@ -175,7 +179,7 @@ const RootQuery = new GraphQLObjectType({
           return User.findById(req.user.id);
         }
 
-        throw new Error("Non authenticated User");
+        throw new Error('Non authenticated User');
       },
     },
     getProperty: {
@@ -183,20 +187,22 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: new GraphQLNonNull(GraphQLString) } },
       async resolve(_parent, args, req) {
         if (req) {
-          let property = await Property.findOne({ propertyCode: args.id });
+          let property = await Property.findOne({
+            propertyCode: args.id,
+          });
           if (!property) property = await Property.findOne({ id: args.id });
 
           if (req.user.isOwner) {
             if (property.ownerId == req.user.id) return property;
-            throw new Error("Not the owner of this property");
+            throw new Error('Not the owner of this property');
           }
 
           if (property.residentIds.includes(req.user.id)) return property;
 
-          throw new Error("Not a resident of this property");
+          throw new Error('Not a resident of this property');
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
     getProperties: {
@@ -207,23 +213,25 @@ const RootQuery = new GraphQLObjectType({
             return Property.find({ ownerId: req.user.id });
           }
 
-          throw new Error("Not an owner of a registered property");
+          throw new Error('Not an owner of a registered property');
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
   },
 });
 
 const Mutation = new GraphQLObjectType({
-  name: "Mutation",
+  name: 'Mutation',
   fields: {
     checkEmail: {
       type: GraphQLBoolean,
       args: { email: { type: new GraphQLNonNull(GraphQLString) } },
       async resolve(_parent, args) {
-        const alreadyRegistered = await User.findOne({ email: args.email });
+        const alreadyRegistered = await User.findOne({
+          email: args.email,
+        });
 
         if (alreadyRegistered) {
           return true;
@@ -259,10 +267,12 @@ const Mutation = new GraphQLObjectType({
         isOwner: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
       async resolve(_parent, args) {
-        const alreadyRegisted = await User.findOne({ email: args.email });
+        const alreadyRegisted = await User.findOne({
+          email: args.email,
+        });
 
         if (alreadyRegisted) {
-          throw new Error("User already registered with this email");
+          throw new Error('User already registered with this email');
         }
 
         const user = new User({
@@ -279,7 +289,7 @@ const Mutation = new GraphQLObjectType({
 
         if (saved) return true;
 
-        throw new Error("Error signing up");
+        throw new Error('Error signing up');
       },
     },
     login: {
@@ -292,13 +302,13 @@ const Mutation = new GraphQLObjectType({
         const user = await User.findOne({ email: args.email });
 
         if (!user) {
-          throw new Error("There is no account associated with this email");
+          throw new Error('There is no account associated with this email');
         }
 
         const valid = await bcrypt.compare(args.password, user.password);
 
         if (!valid) {
-          throw new Error("Password is incorrect");
+          throw new Error('Password is incorrect');
         }
 
         return jsonwebtoken.sign(
@@ -320,7 +330,7 @@ const Mutation = new GraphQLObjectType({
           })
           .then((_) => {})
           .catch((_) => {
-            throw new Error("Error in sending verification message");
+            throw new Error('Error in sending verification message');
           });
         return pin;
       },
@@ -334,6 +344,7 @@ const Mutation = new GraphQLObjectType({
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
         numOfRooms: { type: new GraphQLNonNull(GraphQLInt) },
+        rentalAmount: { type: new GraphQLNonNull(GraphQLInt) },
         description: { type: GraphQLString },
         note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
@@ -382,10 +393,10 @@ const Mutation = new GraphQLObjectType({
             return property.save();
           }
 
-          throw new Error("Not an owner");
+          throw new Error('Not an owner');
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
     updateProperty: {
@@ -398,6 +409,7 @@ const Mutation = new GraphQLObjectType({
         province: { type: GraphQLString },
         postalCode: { type: GraphQLString },
         numOfRooms: { type: GraphQLInt },
+        rentalAmount: { type: GraphQLInt },
         description: { type: GraphQLString },
         note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
@@ -423,6 +435,7 @@ const Mutation = new GraphQLObjectType({
                   province: args.province,
                   postalCode: args.postalCode,
                   numOfRooms: args.numOfRooms,
+                  rentalAmount: args.rentalAmount,
                   description: args.description,
                   note: args.note,
                   rules: args.rules,
@@ -433,9 +446,11 @@ const Mutation = new GraphQLObjectType({
               );
             }
 
-            throw new Error("Not the owner of this property");
+            throw new Error('Not the owner of this property');
           } else {
-            const property = await Property.findOne({ propertyCode: args.id });
+            const property = await Property.findOne({
+              propertyCode: args.id,
+            });
             if (property) {
               if (!property.residentIds.includes(req.user.id))
                 property.residentIds.push(req.user.id);
@@ -443,11 +458,11 @@ const Mutation = new GraphQLObjectType({
               return property.save();
             }
 
-            throw new Error("Incorrect Error Code");
+            throw new Error('Incorrect Error Code');
           }
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
     deleteProperty: {
@@ -461,18 +476,20 @@ const Mutation = new GraphQLObjectType({
             const property = await Property.findById(args.id);
             if (req.user.id == property.ownerId) {
               for (const tenantId of property.residentIds) {
-                await User.findByIdAndUpdate(tenantId, { propertyCode: null });
+                await User.findByIdAndUpdate(tenantId, {
+                  propertyCode: null,
+                });
               }
               return Property.findByIdAndDelete(args.id);
             }
 
-            throw new Error("Not the owner of this property");
+            throw new Error('Not the owner of this property');
           }
 
-          throw new Error("Not an owner");
+          throw new Error('Not an owner');
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
     updateUser: {
@@ -511,7 +528,7 @@ const Mutation = new GraphQLObjectType({
           );
         }
 
-        throw new Error("Non authenticated user");
+        throw new Error('Non authenticated user');
       },
     },
     addEvent: {
@@ -544,7 +561,7 @@ const Mutation = new GraphQLObjectType({
                 isRepeatable: args.isRepeatable,
                 preMade: false,
                 isCompleted: false,
-                report: "",
+                report: '',
                 assignedTo: assignedTenant,
                 ownerId: req.user.id,
               });
@@ -555,13 +572,13 @@ const Mutation = new GraphQLObjectType({
               await property.save();
               return saved_event;
             }
-            throw new Error("Not the owner of this property");
+            throw new Error('Not the owner of this property');
           }
 
-          throw new Error("Not an owner");
+          throw new Error('Not an owner');
         }
 
-        throw new Error("Non Authenticated User");
+        throw new Error('Non Authenticated User');
       },
     },
     updateEvent: {
@@ -598,7 +615,7 @@ const Mutation = new GraphQLObjectType({
                 { new: true }
               );
             }
-            throw new Error("Not the owner of this property");
+            throw new Error('Not the owner of this property');
           } else {
             const property = await Property.findById(args.propertyId);
             if (property) {
@@ -618,14 +635,52 @@ const Mutation = new GraphQLObjectType({
                   { new: true }
                 );
               }
-              throw new Error("Not a tenant of this property");
+              throw new Error('Not a tenant of this property');
             }
           }
 
-          throw new Error("Not an owner");
+          throw new Error('Not an owner');
         }
 
-        throw new Error("Non Authenticated User");
+        throw new Error('Non Authenticated User');
+      },
+    },
+    proccessPayment: {
+      type: GraphQLString,
+      args: {
+        propertyId: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          const property = await Property.findById(args.propertyId);
+          if (property.residentIds.includes(req.user.id)) {
+            const customer = await stripe.customers.create();
+            const ephemeralKey = await stripe.ephemeralKeys.create(
+              { customer: customer.id },
+              { apiVersion: '2020-08-27' }
+            );
+            const paymentIntent = await stripe.paymentIntents.create({
+              amount: property.rentalAmount,
+              currency: 'cad',
+              customer: customer.id,
+              automatic_payment_methods: {
+                enabled: true,
+              },
+            });
+
+            let response = {
+              paymentIntent: paymentIntent.client_secret,
+              ephemeralKey: ephemeralKey.secret,
+              customer: customer.id,
+              publishableKey:
+                'pk_test_51Jz02YBBGZIXxNTYgM2yMzFA7NQXIlamEw3CFR1QyUqoNQvOhN8ZnoPsvuMYG9zaGu3dxbATq293z9sMixx6MsH400qpYrH56L',
+            };
+
+            return JSON.stringify(response);
+          }
+          throw new Error('Not a resident of this property');
+        }
+        throw new Error('Non Authenticated User');
       },
     },
     // deleteUser: {

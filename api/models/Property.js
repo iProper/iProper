@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const propertySchema = new Schema({
@@ -9,6 +9,7 @@ const propertySchema = new Schema({
   province: String,
   postalCode: String,
   numOfRooms: Number,
+  rentalAmount: Number,
   description: String,
   note: String,
   rules: [String],
@@ -17,4 +18,4 @@ const propertySchema = new Schema({
   ownerId: String,
 });
 
-module.exports = mongoose.model("Property", propertySchema);
+module.exports = mongoose.model('Property', propertySchema);
