@@ -4,12 +4,12 @@ import { View, Text, ScrollView, Pressable } from "react-native";
 import NavigationHeader from "../small/NavigationHeader";
 import EditSchedule from "./EditSchedule";
 import ReportCompletion from "./ReportCompletion";
+import RequestChange from "./RequestChange";
 
 import propertyStyles from "../../styles/PropertyScreens.styles";
 import styles from "../../styles/App.styles";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import RequestChange from "./RequestChange";
 
 const Stack = createNativeStackNavigator();
 

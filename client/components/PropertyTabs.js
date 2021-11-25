@@ -10,6 +10,7 @@ import AboutScreen from "./property-screens/About";
 import NoPropertyHome from "./property-screens/NoPropertyHomeRenter";
 import ScheduleScreen from "./property-screens/Schedule";
 import Loading from "./small/Loading";
+import ChatScreens from "./property-screens/Chat";
 
 const Tabs = createBottomTabNavigator();
 
@@ -97,6 +98,18 @@ export function PropertyTabs({
                       />
                     );
                     break;
+                  case "Chat":
+                    iconImg = (
+                      <Image
+                        source={
+                          !focused
+                            ? require("../assets/chat-white.png")
+                            : require("../assets/chat-blue.png")
+                        }
+                        style={{ width: 30, height: 30 }}
+                      />
+                    );
+                    break;
                   case "About":
                     iconImg = (
                       <Image
@@ -163,6 +176,16 @@ export function PropertyTabs({
             jwtToken={jwtToken}
             userData={userData}
             refetchProperty={refetch}
+          />
+        )}
+      </Tabs.Screen>
+      <Tabs.Screen name='Chat'>
+        {(props) => (
+          <ChatScreens
+            {...props}
+            property={property}
+            jwtToken={jwtToken}
+            userData={userData}
           />
         )}
       </Tabs.Screen>
