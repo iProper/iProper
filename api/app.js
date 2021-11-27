@@ -53,15 +53,13 @@ app.use(
   })
 );
 
-app.use('/', (_req, res) => {
-  res.send('<h1>Hello Welcome</h1>');
-});
-
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-io.on('connection', (_socket) => {
-  console.log('user connected');
+io.on('connection', (socket) => {
+  socket.on('message', (msg) => {
+    socket.broadcast.emit('message', msg);
+  });
 });
 
 httpServer.listen(PORT, () => console.log(`Listening on port ${PORT}`));
