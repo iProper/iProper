@@ -275,7 +275,7 @@ const RootQuery = new GraphQLObjectType({
       args: {
         propertyId: { type: new GraphQLNonNull(GraphQLID) },
       },
-      resolve(_parent, args, req) {
+      async resolve(_parent, args, req) {
         if (req) {
           const property = await Property.findById(args.propertyId);
           if (property.residentIds.includes(req.user.id)) {
