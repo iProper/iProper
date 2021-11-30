@@ -782,6 +782,7 @@ const Mutation = new GraphQLObjectType({
             const saved_room = await chatRoom.save();
 
             property.chatRoomIds.push(saved_room.id);
+            await property.save();
 
             return saved_room;
           }
