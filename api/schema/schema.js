@@ -75,12 +75,32 @@ const EventType = new GraphQLObjectType({
   }),
 });
 
+const ChatType = new GraphQLObjectType({
+  name: 'Chat',
+  fields: () => ({
+    id: { type: GraphQLID },
+    user: { type: GraphQLID },
+    message: { type: GraphQLString },
+    createdAt: { type: dateScalar },
+    chatRoomId: { type: GraphQLID },
+  }),
+});
+
 const ChatRoomType = new GraphQLObjectType({
   name: 'ChatRoom',
   fields: () => ({
     id: { type: GraphQLID },
     users: { type: new GraphQLList(GraphQLID) },
     createdAt: { type: dateScalar },
+    Chat: {
+      type: new GraphQLList(ChatType),
+      async resolve(parent, _args, req) {
+        if (req) {
+          return Chat.find({ chatRoomId: parent.id });
+        }
+        throw new Error('Non Authenticated User');
+      },
+    },
   }),
 });
 
@@ -98,6 +118,7 @@ const PropertyType = new GraphQLObjectType({
     description: { type: GraphQLString },
     note: { type: GraphQLString },
     rules: { type: new GraphQLList(GraphQLString) },
+    issues: { type: new GraphQLList(GraphQLString) },
     residentIds: { type: new GraphQLList(GraphQLString) },
     eventIds: { type: new GraphQLList(GraphQLString) },
     chatRoomIds: { type: new GraphQLList(GraphQLString) },
@@ -374,6 +395,7 @@ const Mutation = new GraphQLObjectType({
         description: { type: GraphQLString },
         note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
+        issues: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
         eventIds: { type: new GraphQLList(GraphQLString) },
       },
@@ -411,6 +433,7 @@ const Mutation = new GraphQLObjectType({
               description: args.description,
               note: args.note,
               rules: args.rules,
+              issues: args.issues,
               residentIds: args.residentIds,
               eventIds: args.eventIds,
               ownerId: req.user.id,
@@ -438,6 +461,7 @@ const Mutation = new GraphQLObjectType({
         description: { type: GraphQLString },
         note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
+        issues: { type: new GraphQLList(GraphQLString) },
         residentIds: { type: new GraphQLList(GraphQLString) },
       },
       async resolve(_parent, args, req) {
@@ -463,6 +487,7 @@ const Mutation = new GraphQLObjectType({
                   description: args.description,
                   note: args.note,
                   rules: args.rules,
+                  issues: args.issues,
                   residentIds: args.residentIds,
                   ownerId: req.user.id,
                 },

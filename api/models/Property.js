@@ -12,6 +12,7 @@ const propertySchema = new Schema({
   description: String,
   note: String,
   rules: [String],
+  issues: [String],
   residentIds: [String],
   eventIds: [String],
   chatRoomIds: [String],
