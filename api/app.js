@@ -73,9 +73,10 @@ io.on('connection', async (socket) => {
 
   if (user) {
     socket.on('message', async ({ chatId, text }) => {
+      console.log(chatId, text);
       const room = await ChatRoom.findById(chatId);
 
-      if (room.users.includes(req.user.id)) {
+      if (room.users.includes(user.id)) {
         const time = new Date();
         const chat = new Chat({
           message: text,
@@ -85,9 +86,9 @@ io.on('connection', async (socket) => {
         });
 
         await chat.save();
-        const user = await User.findById(req.user.id);
+        const res = await User.findById(user.id);
 
-        socket.to(chatId).emit('message', user, chatId, text, time);
+        socket.to(chatId).emit('message', res, chatId, text, time);
       } else {
         socket.disconnect();
         throw new Error('Not authorized in this chat room');
