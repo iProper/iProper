@@ -7,6 +7,7 @@ const jwt = require('express-jwt');
 const jwt_jsonwebtoken = require('jsonwebtoken');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const Chat = require('./models/Chat');
 
 require('dotenv').config();
 const PORT = process.env.PORT || 4000;
@@ -57,9 +58,23 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 
 io.on('connection', (socket) => {
-  socket.on('message', ({ userId, chatId, text }) => {
-    socket.emit('message', userId, chatId, text);
-  });
+  const user = getUser(socket.handshake.headers.authorization);
+  if (user) {
+    socket.on('message', async ({ chatId, text }) => {
+      const chat = new Chat({
+        message: text,
+        user: user.id,
+        createdAt: new Date(),
+        chatRoomId: chatId,
+      });
+
+      await chat.save();
+
+      socket.emit('message', chatId, text);
+    });
+  } else {
+    socket.disconnect();
+  }
 });
 
 httpServer.listen(PORT, () => console.log(`Listening on port ${PORT}`));

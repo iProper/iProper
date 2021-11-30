@@ -205,7 +205,10 @@ const PropertyType = new GraphQLObjectType({
           let chatRooms = [];
           for (const roomId of parent.chatRoomIds) {
             const chatRoom = await ChatRoom.findById(roomId);
-            if (!chatRoom.loadUsers.includes(req.user.id))
+            if (
+              !chatRoom.loadUsers.includes(req.user.id) &&
+              chatRoom.users.includes(req.user.id)
+            )
               chatRooms.push(chatRoom);
           }
           return chatRooms;
