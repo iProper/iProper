@@ -1,4 +1,12 @@
-import { Text, View, Pressable, ScrollView, Image, Alert } from "react-native";
+import {
+  Text,
+  View,
+  Pressable,
+  ScrollView,
+  Image,
+  TextInput,
+  Alert,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useMutation } from "@apollo/client";
@@ -10,13 +18,66 @@ import Loading from "../small/Loading";
 import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+const SetAmountPopUp = ({ amount, setAmount, openPaymentSheet, setPopUpOpen }) => {
+  /* const [value, setValue] = useState("" + 0);
 
-const Stack = createNativeStackNavigator();
+  useEffect(() => {
+    let result = value.slice(0, -3) + value.slice(-2);
+    if (result.length < 3) {
+      let offset = result.length == 1 ? 0 : 1;
+      result = ("00" + result).slice(offset);
+    }
+    result = result.slice(0, -2) + "." + result.slice(-2);
+    setValue(result);
+  }, [amount]);
+
+  const changeAmount = () => {
+    let number = value.slice(0, -3) + value.slice(-2);
+    if (/^\d*$/.test(number)) {
+      console.log(number);
+      setAmount(parseInt(number));
+    }
+  }; */
+
+  return (
+    <Pressable onPress={() => setPopUpOpen(false)} style={styles.popUp}>
+      <View style={[styles.popUpCard]}>
+        <View style={{ width: "100%" }}>
+          <View style={[styles.formBox]}>
+            <Text style={[styles.textH4, styles.formLabel]}>
+              Amount
+            </Text>
+            <TextInput
+              onChangeText={setAmount}
+              style={[
+                styles.formInput,
+                {
+                  fontSize: 15,
+                  height: 30,
+                  borderColor: "#97CAEF",
+                  borderWidth: 2,
+                },
+              ]}
+              value={amount}
+            />
+          </View>
+          <Pressable
+            style={[styles.button, styles.buttonRound, { margin: 5 }]}
+            onPress={() => openPaymentSheet()}
+          >
+            <Text style={[styles.buttonText]}>Pay</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Pressable>
+  );
+};
 
 export const Home = ({ userData, jwtToken, property, navigation }) => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(true);
+  const [amount, setAmount] = useState(50);
+  const [openPayment, setOpenPayment] = useState(false);
 
   const [sendPayment] = useMutation(processPayment);
 
@@ -78,7 +139,7 @@ export const Home = ({ userData, jwtToken, property, navigation }) => {
         <Text style={[styles.textH2, { margin: 15 }]}>Home</Text>
         <View style={propertyStyles.renterHomeHeaderButtons}>
           <Pressable
-            onPress={loading ? () => {} : () => openPaymentSheet()}
+            onPress={loading ? () => {} : () => setOpenPayment(true)}
             style={[
               styles.button,
               {
@@ -174,6 +235,14 @@ export const Home = ({ userData, jwtToken, property, navigation }) => {
             {property.note}
           </Text>
         </View>
+      )}
+      {openPayment && (
+        <SetAmountPopUp
+          amount={amount}
+          setAmount={setAmount}
+          openPaymentSheet={openPaymentSheet}
+          setPopUpOpen={setOpenPayment}
+        />
       )}
     </View>
   );
