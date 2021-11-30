@@ -92,7 +92,7 @@ const ChatRoomType = new GraphQLObjectType({
     id: { type: GraphQLID },
     users: { type: new GraphQLList(GraphQLID) },
     createdAt: { type: dateScalar },
-    Chat: {
+    chats: {
       type: new GraphQLList(ChatType),
       async resolve(parent, _args, req) {
         if (req) {

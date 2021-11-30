@@ -9,6 +9,7 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 const Chat = require('./models/Chat');
 const ChatRoom = require('./models/ChatRoom');
+const Property = require('./models/Property');
 
 require('dotenv').config();
 const PORT = process.env.PORT || 4000;
@@ -58,23 +59,33 @@ app.use(
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   const user = getUser(socket.handshake.headers.authorization);
+  const propertyId = socket.handshake.headers.propId;
+
+  const property = await Property.findById(propertyId);
+  const rooms = property.chatRoomIds;
+
+  rooms.forEach((room) => {
+    socket.join(room);
+  });
+
   if (user) {
     socket.on('message', async ({ chatId, text }) => {
       const room = await ChatRoom.findById(chatId);
 
       if (room.users.includes(req.user.id)) {
+        const time = new Date();
         const chat = new Chat({
           message: text,
           user: user.id,
-          createdAt: new Date(),
+          createdAt: time,
           chatRoomId: chatId,
         });
 
         await chat.save();
 
-        socket.emit('message', chatId, text);
+        socket.to(chatId).emit('message', req.user.id, chatId, text, time);
       } else {
         socket.disconnect();
         throw new Error('Not authorized in this chat room');
