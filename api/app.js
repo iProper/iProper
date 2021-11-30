@@ -62,7 +62,7 @@ const io = new Server(httpServer);
 
 io.on('connection', async (socket) => {
   const user = getUser(socket.handshake.headers.authorization);
-  const propertyId = socket.handshake.headers.propId;
+  const propertyId = socket.handshake.headers.propid;
 
   const property = await Property.findById(propertyId);
   const rooms = property.chatRoomIds;
