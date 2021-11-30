@@ -177,10 +177,10 @@ const PropertyType = new GraphQLObjectType({
         throw new Error('Non authenticated user');
       },
     },
-    chatRooms: {
-      type: new GraphQLList(ChatRoomType),
-      resolve,
-    },
+    // chatRooms: {
+    // type: new GraphQLList(ChatRoomType),
+    // resolve,
+    // },
   }),
 });
 
