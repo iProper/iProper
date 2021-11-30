@@ -57,6 +57,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 
 io.on('connection', (socket) => {
+  console.log(socket.handshake.auth);
   socket.on('message', (msg) => {
     socket.broadcast.emit('message', msg);
   });
