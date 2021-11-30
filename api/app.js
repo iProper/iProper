@@ -58,8 +58,8 @@ const io = new Server(httpServer);
 
 io.on('connection', (socket) => {
   console.log(socket.handshake.auth);
-  socket.on('message', (msg) => {
-    socket.broadcast.emit('message', msg);
+  socket.on('message', ({ userId, chatId, text }) => {
+    socket.broadcast.emit('message', text);
   });
 });
 
