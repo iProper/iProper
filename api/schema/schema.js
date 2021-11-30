@@ -270,6 +270,22 @@ const RootQuery = new GraphQLObjectType({
         throw new Error('Non authenticated user');
       },
     },
+    getOwner: {
+      type: UserType,
+      args: {
+        propertyId: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(_parent, args, req) {
+        if (req) {
+          const property = await Property.findById(args.propertyId);
+          if (property.residentIds.includes(req.user.id)) {
+            return User.findById(property.ownerId);
+          }
+          throw new Error('Not a resident of this property');
+        }
+        throw new Error('Non Authenticated User');
+      },
+    },
   },
 });
 
