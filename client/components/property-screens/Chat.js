@@ -67,7 +67,7 @@ function Chat({ navigation, property, userData }) {
   );
 }
 
-export default function ChatScreens({ property, userData, jwtToken }) {
+export default function ChatScreens({ property, userData, jwtToken, socket }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen name='Chats'>
@@ -87,6 +87,7 @@ export default function ChatScreens({ property, userData, jwtToken }) {
             property={property}
             userData={userData}
             jwtToken={jwtToken}
+            socket={socket}
           />
         )}
       </Stack.Screen>

@@ -15,12 +15,12 @@ import NavigationHeader from "../small/NavigationHeader";
 import styles from "../../styles/App.styles";
 import chatStyles from "../../styles/ChatScreens.styles";
 
-const ChatRoom = ({ navigation, route, userData }) => {
+const ChatRoom = ({ navigation, route, userData, socket }) => {
   const { roomId, title } = route.params;
 
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-
+/* 
   const sendMessage = () => {
     setMessages((oldMessages) => {
       const copy = oldMessages.map((m) => m);
@@ -36,7 +36,15 @@ const ChatRoom = ({ navigation, route, userData }) => {
       return copy;
     });
     setMessage("");
-  };
+  }; */
+
+  const sendMessage = () => {
+    socket.emit("message", {
+      userId: userData.id,
+      chatId: roomId,
+      text: message,
+    });
+  }
 
   return (
     <View style={[styles.container, { padding: 30, paddingBottom: 5 }]}>

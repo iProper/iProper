@@ -199,7 +199,7 @@ const addEvent = gql`
       id
     }
   }
-`
+`;
 
 const editEvent = gql`
   mutation (
@@ -227,7 +227,13 @@ const editEvent = gql`
       id
     }
   }
-`
+`;
+
+const processPayment = gql`
+  mutation ($propertyId: ID!, $amount: Int!) {
+    processPayment(propertyId: $propertyId, amount: $amount)
+  }
+`;
 
 export {
   login,
@@ -241,5 +247,6 @@ export {
   updateProperty,
   updateUser,
   addEvent,
-  editEvent
+  editEvent,
+  processPayment,
 };

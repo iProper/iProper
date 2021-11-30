@@ -1,12 +1,73 @@
-import { Text, View, Pressable, ScrollView, Image } from "react-native";
-import React from "react";
+import { Text, View, Pressable, ScrollView, Image, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { useStripe } from "@stripe/stripe-react-native";
+import { useMutation } from "@apollo/client";
+
+import { processPayment } from "../../queries/queries";
 
 import Loading from "../small/Loading";
 
 import styles from "../../styles/App.styles";
 import propertyStyles from "../../styles/PropertyScreens.styles";
 
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const Stack = createNativeStackNavigator();
+
 export const Home = ({ userData, jwtToken, property, navigation }) => {
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [loading, setLoading] = useState(true);
+
+  const [sendPayment] = useMutation(processPayment);
+
+  const initializePaymentSheet = async () => {
+    const { data } = await sendPayment({
+      context: {
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      },
+      variables: {
+        propertyId: property.id,
+        amount: 50,
+      },
+    }).catch((err) => {
+      console.log(JSON.stringify(err));
+    });
+
+    const { paymentIntent, ephemeralKey, customer } = JSON.parse(
+      data.processPayment
+    );
+
+    const { error } = await initPaymentSheet({
+      customerId: customer,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: paymentIntent,
+      // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
+      //methods that complete payment after a delay, like SEPA Debit and Sofort.
+      allowsDelayedPaymentMethods: true,
+    });
+    if (!error) {
+      setLoading(false);
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet();
+
+    if (error.code === "Canceled") {
+      Alert.alert(`Cancelled`, "Payment cancelled.");
+    } else if (error.code) {
+      Alert.alert(`Error`, "Error during payment ocurred.");
+    } else {
+      Alert.alert("Success", "Your payment was successful!");
+    }
+  };
+
+  useEffect(() => {
+    initializePaymentSheet();
+  }, []);
+
   if (property == null) {
     return <Loading text={"Loading..."} style={{ flex: 1 }} />;
   }
@@ -16,7 +77,18 @@ export const Home = ({ userData, jwtToken, property, navigation }) => {
       <View style={propertyStyles.renterHomeHeader}>
         <Text style={[styles.textH2, { margin: 15 }]}>Home</Text>
         <View style={propertyStyles.renterHomeHeaderButtons}>
-          <Pressable style={[styles.button, { flex: 1, borderWidth: 3 }]}>
+          <Pressable
+            onPress={loading ? () => {} : () => openPaymentSheet()}
+            style={[
+              styles.button,
+              {
+                flex: 1,
+                borderWidth: 3,
+                backgroundColor: loading ? "#ccc" : "#FC4445",
+                borderColor: loading ? "#ccc" : "#FC4445",
+              },
+            ]}
+          >
             <Text style={[styles.buttonText]}>Pay rent</Text>
           </Pressable>
           <View style={{ width: 10 }} />
