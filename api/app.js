@@ -73,7 +73,6 @@ io.on('connection', async (socket) => {
 
   if (user) {
     socket.on('message', async ({ chatId, text }) => {
-      console.log(chatId, text);
       const room = await ChatRoom.findById(chatId);
 
       if (room.users.includes(user.id)) {
