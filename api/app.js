@@ -10,6 +10,7 @@ const { Server } = require('socket.io');
 const Chat = require('./models/Chat');
 const ChatRoom = require('./models/ChatRoom');
 const Property = require('./models/Property');
+const User = require('./models/User');
 
 require('dotenv').config();
 const PORT = process.env.PORT || 4000;
@@ -84,8 +85,9 @@ io.on('connection', async (socket) => {
         });
 
         await chat.save();
+        const user = await User.findById(req.user.id);
 
-        socket.to(chatId).emit('message', req.user.id, chatId, text, time);
+        socket.to(chatId).emit('message', user, chatId, text, time);
       } else {
         socket.disconnect();
         throw new Error('Not authorized in this chat room');

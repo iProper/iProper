@@ -83,6 +83,15 @@ const ChatType = new GraphQLObjectType({
     message: { type: GraphQLString },
     createdAt: { type: dateScalar },
     chatRoomId: { type: GraphQLID },
+    user: {
+      type: UserType,
+      resolve(parent, _args, req) {
+        if (req) {
+          return User.findById(parent.user);
+        }
+        throw new Error('Non Authenticated User');
+      },
+    },
   }),
 });
 
