@@ -8,4 +8,4 @@ const chatSchema = new Schema({
   chatRoomId: String,
 });
 
-module.exports = mongoose.model('Chat', eventSchema);
+module.exports = mongoose.model('Chat', chatSchema);

@@ -8,4 +8,4 @@ const chatRoomSchema = new Schema({
   createdAt: Date,
 });
 
-module.exports = mongoose.model('ChatRoom', eventSchema);
+module.exports = mongoose.model('ChatRoom', chatRoomSchema);
