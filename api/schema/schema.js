@@ -177,10 +177,22 @@ const PropertyType = new GraphQLObjectType({
         throw new Error('Non authenticated user');
       },
     },
-    // chatRooms: {
-    // type: new GraphQLList(ChatRoomType),
-    // resolve,
-    // },
+    chatRooms: {
+      type: new GraphQLList(ChatRoomType),
+      async resolve(parent, _args, req) {
+        if (req) {
+          let chatRooms = [];
+          for (const roomId of parent.chatRoomIds) {
+            const chatRoom = await ChatRoom.findById(roomId);
+            if (!chatRoom.loadUsers.includes(req.user.id))
+              chatRooms.push(chatRoom);
+          }
+          return chatRooms;
+        }
+
+        throw new Error('Non authenticated user');
+      },
+    },
   }),
 });
 
