@@ -747,10 +747,10 @@ const Mutation = new GraphQLObjectType({
           const property = await Property.findById(args.propertyId);
           if (property.residentIds.includes(req.user.id)) {
             let error = [];
-            for (const resId of property.residentIds) {
+            for (const resId of args.users) {
               if (!property.residentIds.includes(resId)) error.push(resId);
             }
-            if (resId.length == 0)
+            if (error.length != 0)
               throw new Error(
                 'These users are not a part of this property',
                 error
