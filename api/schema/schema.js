@@ -2,6 +2,8 @@ const graphql = require('graphql');
 const User = require('../models/User');
 const Property = require('../models/Property');
 const Event = require('../models/Event');
+const Chat = require('../models/Chat');
+const ChatRoom = require('../models/ChatRoom');
 const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
 const { startOfWeek, nextMonday, startOfToday, add } = require('date-fns');
@@ -73,6 +75,15 @@ const EventType = new GraphQLObjectType({
   }),
 });
 
+const ChatRoomType = new GraphQLObjectType({
+  name: 'ChatRoom',
+  fields: () => ({
+    id: { type: GraphQLID },
+    users: { type: new GraphQLList(GraphQLID) },
+    createdAt: { type: dateScalar },
+  }),
+});
+
 const PropertyType = new GraphQLObjectType({
   name: 'Property',
   fields: () => ({
@@ -84,12 +95,12 @@ const PropertyType = new GraphQLObjectType({
     province: { type: GraphQLString },
     postalCode: { type: GraphQLString },
     numOfRooms: { type: GraphQLInt },
-    rentalAmount: { type: GraphQLInt },
     description: { type: GraphQLString },
     note: { type: GraphQLString },
     rules: { type: new GraphQLList(GraphQLString) },
     residentIds: { type: new GraphQLList(GraphQLString) },
     eventIds: { type: new GraphQLList(GraphQLString) },
+    chatRoomIds: { type: new GraphQLList(GraphQLString) },
     ownerId: { type: GraphQLID },
     residents: {
       type: new GraphQLList(UserType),
@@ -165,6 +176,10 @@ const PropertyType = new GraphQLObjectType({
 
         throw new Error('Non authenticated user');
       },
+    },
+    chatRooms: {
+      type: new GraphQLList(ChatRoomType),
+      resolve,
     },
   }),
 });
@@ -344,7 +359,6 @@ const Mutation = new GraphQLObjectType({
         province: { type: new GraphQLNonNull(GraphQLString) },
         postalCode: { type: new GraphQLNonNull(GraphQLString) },
         numOfRooms: { type: new GraphQLNonNull(GraphQLInt) },
-        rentalAmount: { type: new GraphQLNonNull(GraphQLInt) },
         description: { type: GraphQLString },
         note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
@@ -409,7 +423,6 @@ const Mutation = new GraphQLObjectType({
         province: { type: GraphQLString },
         postalCode: { type: GraphQLString },
         numOfRooms: { type: GraphQLInt },
-        rentalAmount: { type: GraphQLInt },
         description: { type: GraphQLString },
         note: { type: GraphQLString },
         rules: { type: new GraphQLList(GraphQLString) },
@@ -435,7 +448,6 @@ const Mutation = new GraphQLObjectType({
                   province: args.province,
                   postalCode: args.postalCode,
                   numOfRooms: args.numOfRooms,
-                  rentalAmount: args.rentalAmount,
                   description: args.description,
                   note: args.note,
                   rules: args.rules,
@@ -645,10 +657,11 @@ const Mutation = new GraphQLObjectType({
         throw new Error('Non Authenticated User');
       },
     },
-    proccessPayment: {
+    processPayment: {
       type: GraphQLString,
       args: {
         propertyId: { type: new GraphQLNonNull(GraphQLID) },
+        amount: { type: new GraphQLNonNull(GraphQLInt) },
       },
       async resolve(_parent, args, req) {
         if (req) {
@@ -660,7 +673,7 @@ const Mutation = new GraphQLObjectType({
               { apiVersion: '2020-08-27' }
             );
             const paymentIntent = await stripe.paymentIntents.create({
-              amount: property.rentalAmount,
+              amount: args.amount,
               currency: 'cad',
               customer: customer.id,
               automatic_payment_methods: {
@@ -677,6 +690,100 @@ const Mutation = new GraphQLObjectType({
             };
 
             return JSON.stringify(response);
+          }
+          throw new Error('Not a resident of this property');
+        }
+        throw new Error('Non Authenticated User');
+      },
+    },
+    addChatRoom: {
+      type: ChatRoomType,
+      args: {
+        propertyId: { type: new GraphQLNonNull(GraphQLID) },
+        users: { type: new GraphQLList(GraphQLID) },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          const property = await Property.findById(args.propertyId);
+          if (property.residentIds.includes(req.user.id)) {
+            let error = [];
+            for (const resId of property.residentIds) {
+              if (!property.residentIds.includes(resId)) error.push(resId);
+            }
+            if (resId.length == 0)
+              throw new Error(
+                'These users are not a part of this property',
+                error
+              );
+
+            const chatRoom = new ChatRoom({
+              users: args.users,
+              loadUsers: [],
+              createdAt: new Date(),
+              createdBy: req.user.id,
+            });
+
+            const saved_room = await chatRoom.save();
+
+            property.chatRoomIds.push(saved_room.id);
+
+            return saved_room;
+          }
+          throw new Error('Not a resident of this property');
+        }
+        throw new Error('Non Authenticated User');
+      },
+    },
+    updateChatRoom: {
+      type: ChatRoomType,
+      args: {
+        propertyId: { type: new GraphQLNonNull(GraphQLID) },
+        chatRoomId: { type: new GraphQLNonNull(GraphQLID) },
+        users: { type: new GraphQLList(GraphQLID) },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          const property = await Property.findById(args.propertyId);
+          if (property.residentIds.includes(req.user.id)) {
+            const chatRoom = await ChatRoom.findById(args.chatRoomId);
+            if (args.users) {
+              args.users = chatRoom.users.concat(args.users);
+            }
+            return ChatRoom.findByIdAndUpdate(
+              args.chatRoomId,
+              {
+                users: args.users,
+              },
+              { new: true }
+            );
+          }
+          throw new Error('Not a resident of this property');
+        }
+        throw new Error('Non Authenticated User');
+      },
+    },
+    deleteChatRoom: {
+      type: ChatRoomType,
+      args: {
+        propertyId: { type: new GraphQLNonNull(GraphQLID) },
+        chatRoomId: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      async resolve(_parent, args, req) {
+        if (req) {
+          const property = Property.findById(args.propertyId);
+          if (property.residentIds.includes(req.user.id)) {
+            const chatRoom = await ChatRoom.findById(args.chatRoomId);
+            if (req.user.id != chatRoom.createdBy) {
+              chatRoom.loadUsers = chatRoom.loadUsers.concat(req.user.id);
+              return chatRoom.save();
+            }
+
+            property.chatRoomIds = property.chatRoomIds.filter((roomId) => {
+              roomId != args.chatRoomId;
+            });
+            await property.save();
+
+            return ChatRoom.findByIdAndDelete(args.chatRoomId);
           }
           throw new Error('Not a resident of this property');
         }

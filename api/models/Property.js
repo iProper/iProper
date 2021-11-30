@@ -9,12 +9,12 @@ const propertySchema = new Schema({
   province: String,
   postalCode: String,
   numOfRooms: Number,
-  rentalAmount: Number,
   description: String,
   note: String,
   rules: [String],
   residentIds: [String],
   eventIds: [String],
+  chatRoomIds: [String],
   ownerId: String,
 });
 
