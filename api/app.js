@@ -8,6 +8,7 @@ const jwt_jsonwebtoken = require('jsonwebtoken');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const Chat = require('./models/Chat');
+const ChatRoom = require('./models/ChatRoom');
 
 require('dotenv').config();
 const PORT = process.env.PORT || 4000;
@@ -61,19 +62,27 @@ io.on('connection', (socket) => {
   const user = getUser(socket.handshake.headers.authorization);
   if (user) {
     socket.on('message', async ({ chatId, text }) => {
-      const chat = new Chat({
-        message: text,
-        user: user.id,
-        createdAt: new Date(),
-        chatRoomId: chatId,
-      });
+      const room = await ChatRoom.findById(chatId);
 
-      await chat.save();
+      if (room.users.includes(req.user.id)) {
+        const chat = new Chat({
+          message: text,
+          user: user.id,
+          createdAt: new Date(),
+          chatRoomId: chatId,
+        });
 
-      socket.emit('message', chatId, text);
+        await chat.save();
+
+        socket.emit('message', chatId, text);
+      } else {
+        socket.disconnect();
+        throw new Error('Not authorized in this chat room');
+      }
     });
   } else {
     socket.disconnect();
+    throw new Error('Non Authenticated User');
   }
 });
 
