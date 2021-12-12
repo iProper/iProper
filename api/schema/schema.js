@@ -845,13 +845,17 @@ const Mutation = new GraphQLObjectType({
               return chatRoom.save();
             }
 
-            property.chatRoomIds = property.chatRoomIds.filter((roomId) => {
-              roomId != args.chatRoomId;
-            });
+            for (let x = 0; x < property.chatRoomIds.length; x++) {
+              if (property.chatRoomIds[x] == args.chatRoomId)
+                property.chatRoomIds.splice(x, 1);
+            }
+            // property.chatRoomIds = property.chatRoomIds.filter((roomId) => {
+            //   roomId != args.chatRoomId;
+            // });
 
-            await property.save();
+            return property.save();
 
-            return ChatRoom.findByIdAndDelete(args.chatRoomId);
+            // return ChatRoom.findByIdAndDelete(args.chatRoomId);
           }
           throw new Error('Not a resident of this property');
         }
