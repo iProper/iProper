@@ -11,6 +11,7 @@ import { useMutation } from "@apollo/client";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { addChatRoom } from "../../queries/queries";
+import EditChatRoom from "./EditChatRoom";
 
 const Stack = createNativeStackNavigator();
 
@@ -63,8 +64,6 @@ function CreateChatRoomPopUp({
       });
   };
 
-  console.log(renters);
-
   return (
     <Pressable onPress={() => setPopUpOpen(false)} style={styles.popUp}>
       <View style={[styles.popUpCard, {padding: 25}]}>
@@ -92,7 +91,7 @@ function CreateChatRoomPopUp({
                     width: "100%",
                     padding: 5,
                     paddingHorizontal: 10,
-                    borderColor: "#FC4445",
+                    borderColor: "#97CAEF",
                     borderRadius: 10,
                     borderWidth: 1,
                     flexDirection: "row",
@@ -241,6 +240,17 @@ export default function ChatScreens({
             userData={userData}
             jwtToken={jwtToken}
             socket={socket}
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen name='Edit chat room'>
+        {(props) => (
+          <EditChatRoom
+            {...props}
+            property={property}
+            userData={userData}
+            jwtToken={jwtToken}
+            refetchProperty={refetchProperty}
           />
         )}
       </Stack.Screen>

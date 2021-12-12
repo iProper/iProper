@@ -86,8 +86,6 @@ export function PropertyTabs({ route, userData, jwtToken, refetchUser }) {
       });
   }, [socket]);
 
-  console.log(jwtToken);
-
   return loading || propertyId === null ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Tabs.Screen

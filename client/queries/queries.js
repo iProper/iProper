@@ -258,6 +258,22 @@ const addChatRoom = gql`
   }
 `;
 
+const updateChatRoom = gql`
+  mutation ($propertyId: ID!, $chatRoomId: ID!, $users: [ID]) {
+    updateChatRoom(propertyId: $propertyId, chatRoomId: $chatRoomId, users: $users) {
+      id
+    }
+  }
+`
+
+const deleteChatRoom = gql`
+  mutation ($propertyId: ID!, $chatRoomId: ID!) {
+    deleteChatRoom(propertyId: $propertyId, chatRoomId: $chatRoomId) {
+      id
+    }
+  }
+`
+
 export {
   login,
   checkEmail,
@@ -272,5 +288,7 @@ export {
   addEvent,
   editEvent,
   processPayment,
-  addChatRoom
+  addChatRoom,
+  updateChatRoom,
+  deleteChatRoom
 };

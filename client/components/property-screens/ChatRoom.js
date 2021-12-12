@@ -13,7 +13,6 @@ import {
 import NavigationHeader from "../small/NavigationHeader";
 
 import styles from "../../styles/App.styles";
-import propertyStyles from "../../styles/PropertyScreens.styles";
 import chatStyles from "../../styles/ChatScreens.styles";
 
 const ChatRoom = ({
@@ -28,7 +27,6 @@ const ChatRoom = ({
 
   let messages = property.chatRooms.find((room) => room.id === roomId).chats;
   const [message, setMessage] = useState("");
-  const [edit, setEdit] = useState(false);
 
   const scrollViewRef = useRef();
 
@@ -51,20 +49,6 @@ const ChatRoom = ({
     setMessage("");
   };
 
-  let updateChatRoom = () => {
-    if (!edit) {
-      /* updateChatroom({
-        context: {
-          headers: {
-            Authorization: "Bearer " + jwtToken,
-          },
-        },
-      })
-        .then((result) => {})
-        .catch((err) => console.log(err)); */
-    }
-  };
-
   return (
     <View style={[styles.container, { padding: 30, paddingBottom: 5 }]}>
       <NavigationHeader
@@ -75,15 +59,26 @@ const ChatRoom = ({
             style={{
               position: "absolute",
               right: 15,
-              top: "50%",
-              height: 50,
-              backgroundColor: "#fff",
+              top: "90%",
+              transform: [{ scale: 5 }],
+              height: "100%",
+              justifyContent: "flex-end",
             }}
             onPress={() => {
-              setEdit(!edit);
+              navigation.navigate("Edit chat room", {
+                roomId,
+                title,
+              });
             }}
           >
-            <Text style={{ fontSize: 50, lineHeight: 20, color: "#97CAEF" }}>
+            <Text
+              style={{
+                height: "100%",
+                backgroundColor: "#fff",
+                color: "#97CAEF",
+                paddingHorizontal: 2,
+              }}
+            >
               ...
             </Text>
           </Pressable>
