@@ -814,14 +814,15 @@ const Mutation = new GraphQLObjectType({
             const chatRoom = await ChatRoom.findById(args.chatRoomId);
             if (args.users) {
               args.users = chatRoom.users.concat(args.users);
+
+              return ChatRoom.findByIdAndUpdate(
+                args.chatRoomId,
+                {
+                  users: args.users,
+                },
+                { new: true }
+              );
             }
-            return ChatRoom.findByIdAndUpdate(
-              args.chatRoomId,
-              {
-                users: args.users,
-              },
-              { new: true }
-            );
           }
           throw new Error('Not a resident of this property');
         }
@@ -836,17 +837,22 @@ const Mutation = new GraphQLObjectType({
       },
       async resolve(_parent, args, req) {
         if (req) {
-          const property = Property.findById(args.propertyId);
+          const property = await Property.findById(args.propertyId);
           if (property.residentIds.includes(req.user.id)) {
             const chatRoom = await ChatRoom.findById(args.chatRoomId);
             if (req.user.id != chatRoom.createdBy) {
-              chatRoom.loadUsers = chatRoom.loadUsers.concat(req.user.id);
+              for (let x = 0; x < chatRoom.users.length; x++) {
+                if (chatRoom.users[x] == req.user.id)
+                  chatRoom.users.splice(x, 1);
+              }
+
               return chatRoom.save();
             }
 
             property.chatRoomIds = property.chatRoomIds.filter((roomId) => {
               roomId != args.chatRoomId;
             });
+
             await property.save();
 
             return ChatRoom.findByIdAndDelete(args.chatRoomId);
