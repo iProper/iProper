@@ -1,8 +1,10 @@
 import { View, Image } from "react-native";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { getPropertyById } from "../queries/queries";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import { io } from "socket.io-client";
 
 import HomeRenter from "./property-screens/HomeRenter";
 import HomeOwner from "./property-screens/HomeOwner";
@@ -10,20 +12,17 @@ import AboutScreen from "./property-screens/About";
 import NoPropertyHome from "./property-screens/NoPropertyHomeRenter";
 import ScheduleScreen from "./property-screens/Schedule";
 import Loading from "./small/Loading";
+import ChatScreens from "./property-screens/Chat";
 
 const Tabs = createBottomTabNavigator();
 
-export function PropertyTabs({
-  route,
-  userData,
-  jwtToken,
-  refetchUser
-}) {
+export function PropertyTabs({ route, userData, jwtToken, refetchUser }) {
   let propertyId = null;
-  
+
+  const [socket, setSocket] = useState(null);
+
   if (userData.isOwner) {
-    if (route.params?.id)
-      propertyId = route.params.id;
+    if (route.params?.id) propertyId = route.params.id;
   } else {
     propertyId = userData.propertyCode;
   }
@@ -39,14 +38,53 @@ export function PropertyTabs({
     },
   });
 
+  let [property, setProperty] = useState(
+    JSON.parse(JSON.stringify(data?.getProperty || null))
+  );
   useEffect(() => {
     refetch();
   }, [jwtToken, propertyId]);
 
-  let property = JSON.parse(JSON.stringify(data?.getProperty || null));
-  if (property) {
-    property.residents.sort((a, b) => a.id.localeCompare(b.id));
-  }
+  useEffect(() => {
+    setProperty((p) => {
+      let prop = JSON.parse(JSON.stringify(data?.getProperty || null));
+
+      if (prop?.residents) prop.residents.sort((a, b) => a.id.localeCompare(b.id));
+      return prop;
+    });
+    if (data) {
+      const newSocket = io("https://iproper.herokuapp.com/", {
+        extraHeaders: {
+          authorization: `Bearer ${jwtToken}`,
+          propId: data.getProperty.id,
+        },
+      });
+      setSocket(newSocket);
+
+      return () => newSocket.close();
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (socket)
+      socket.on("message", (user, chatId, text, createdAt) => {
+        user.id = user._id;
+        delete user._id;
+        if (user.id !== userData.id) {
+          setProperty((p) => {
+            let prop = JSON.parse(JSON.stringify(p));
+            prop.chatRooms
+              .find((chatRoom) => chatRoom.id === chatId)
+              .chats.push({
+                user: user,
+                message: text,
+                createdAt: createdAt,
+              });
+            return prop;
+          });
+        }
+      });
+  }, [socket]);
 
   return loading || propertyId === null ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
@@ -54,9 +92,7 @@ export function PropertyTabs({
         name='loading'
         options={{ tabBarStyle: { position: "absolute", opacity: 0 } }}
       >
-        {(props) => (
-          <Loading text={"Loading..."} style={{flex: 1}}/>
-        )}
+        {(props) => <Loading text={"Loading..."} style={{ flex: 1 }} />}
       </Tabs.Screen>
     </Tabs.Navigator>
   ) : (
@@ -92,6 +128,18 @@ export function PropertyTabs({
                           !focused
                             ? require("../assets/schedule-white.png")
                             : require("../assets/schedule-blue.png")
+                        }
+                        style={{ width: 30, height: 30 }}
+                      />
+                    );
+                    break;
+                  case "Chat":
+                    iconImg = (
+                      <Image
+                        source={
+                          !focused
+                            ? require("../assets/chat-white.png")
+                            : require("../assets/chat-blue.png")
                         }
                         style={{ width: 30, height: 30 }}
                       />
@@ -162,6 +210,19 @@ export function PropertyTabs({
             property={property}
             jwtToken={jwtToken}
             userData={userData}
+            refetchProperty={refetch}
+          />
+        )}
+      </Tabs.Screen>
+      <Tabs.Screen name='Chat'>
+        {(props) => (
+          <ChatScreens
+            {...props}
+            property={property}
+            setProperty={setProperty}
+            jwtToken={jwtToken}
+            userData={userData}
+            socket={socket}
             refetchProperty={refetch}
           />
         )}

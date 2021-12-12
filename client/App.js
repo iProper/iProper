@@ -5,6 +5,7 @@ import * as SecureStore from "expo-secure-store";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, Platform } from "react-native";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 import firebase from "firebase";
 
@@ -38,7 +39,7 @@ Date.prototype.getHours12 = function () {
   else time12 += " pm";
 
   return time12;
-}
+};
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -80,18 +81,22 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}>
-      <SafeAreaView
-        style={[styles.App, Platform.OS === "android" && { marginTop: 30 }]}
+      <StripeProvider
+        publishableKey='pk_test_51Jz02YBBGZIXxNTYgM2yMzFA7NQXIlamEw3CFR1QyUqoNQvOhN8ZnoPsvuMYG9zaGu3dxbATq293z9sMixx6MsH400qpYrH56L'
       >
-        <NavigationContainer>
-          {!jwtToken ? (
-            <NotLoggedInStack setJwtToken={setJwtToken} />
-          ) : (
-            <LoggedInStack jwtToken={jwtToken} setJwtToken={setJwtToken} />
-          )}
-        </NavigationContainer>
-        <StatusBar style='auto' />
-      </SafeAreaView>
+        <SafeAreaView
+          style={[styles.App, Platform.OS === "android" && { marginTop: 30 }]}
+        >
+          <NavigationContainer>
+            {!jwtToken ? (
+              <NotLoggedInStack setJwtToken={setJwtToken} />
+            ) : (
+              <LoggedInStack jwtToken={jwtToken} setJwtToken={setJwtToken} />
+            )}
+          </NavigationContainer>
+          <StatusBar style='auto' />
+        </SafeAreaView>
+      </StripeProvider>
     </ApolloProvider>
   );
 }

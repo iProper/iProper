@@ -111,6 +111,21 @@ const getPropertyById = gql`
         isCompleted
         assignedTo
       }
+      chatRooms {
+        id
+        users
+        createdAt
+        chats {
+          id
+          message
+          user {
+            id
+            firstName
+            lastName
+          }
+          createdAt
+        }
+      }
     }
   }
 `;
@@ -199,7 +214,7 @@ const addEvent = gql`
       id
     }
   }
-`
+`;
 
 const editEvent = gql`
   mutation (
@@ -227,6 +242,36 @@ const editEvent = gql`
       id
     }
   }
+`;
+
+const processPayment = gql`
+  mutation ($propertyId: ID!, $amount: Int!) {
+    processPayment(propertyId: $propertyId, amount: $amount)
+  }
+`;
+
+const addChatRoom = gql`
+  mutation ($propertyId: ID!, $users: [ID]) {
+    addChatRoom(propertyId: $propertyId, users: $users) {
+      id
+    }
+  }
+`;
+
+const updateChatRoom = gql`
+  mutation ($propertyId: ID!, $chatRoomId: ID!, $users: [ID]) {
+    updateChatRoom(propertyId: $propertyId, chatRoomId: $chatRoomId, users: $users) {
+      id
+    }
+  }
+`
+
+const deleteChatRoom = gql`
+  mutation ($propertyId: ID!, $chatRoomId: ID!) {
+    deleteChatRoom(propertyId: $propertyId, chatRoomId: $chatRoomId) {
+      id
+    }
+  }
 `
 
 export {
@@ -241,5 +286,9 @@ export {
   updateProperty,
   updateUser,
   addEvent,
-  editEvent
+  editEvent,
+  processPayment,
+  addChatRoom,
+  updateChatRoom,
+  deleteChatRoom
 };

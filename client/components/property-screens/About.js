@@ -1,5 +1,5 @@
 import { Text, View, Pressable, TextInput, Image, ScrollView } from "react-native";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useMutation } from "@apollo/client";
 import { Picker } from "@react-native-picker/picker";
 import { updateProperty } from "../../queries/queries";
@@ -49,58 +49,57 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
     });
   };
 
-  useEffect(() => {
-    if (!edit) {
-      submitUpdatedProperty({
-        context: {
-          headers: {
-            Authorization: "Bearer " + jwtToken,
-          },
-        },
-        variables: {
-          id: property.id,
-          address1,
-          address2,
-          city,
-          province,
-          postalCode,
-          rules,
-          description,
-          numOfRooms,
-        },
-      })
-        .then((result) => {})
-        .catch((err) => console.log(err));
-    }
-  }, [edit]);
-
   return (
     <View style={[styles.container, propertyStyles.propertyAboutScreen]}>
       <NavigationHeader
         goBack={() => navigation.navigate("Home")}
         title='About'
-        Child={() => userData.isOwner && (
-          <Pressable
-            style={propertyStyles.aboutEditBtn}
-            onPress={() => {
-              setEdit(!edit);
-            }}
-          >
-            {edit ? (
-              <Image
-                style={propertyStyles.aboutEditIcon}
-                source={require("../../assets/tick-red.png")}
-                resizeMode={"center"}
-              />
-            ) : (
-              <Image
-                style={propertyStyles.aboutEditIcon}
-                source={require("../../assets/pen-red.png")}
-                resizeMode={"center"}
-              />
-            )}
-          </Pressable>
-        )}
+        Child={() =>
+          userData.isOwner && (
+            <Pressable
+              style={propertyStyles.aboutEditBtn}
+              onPress={() => {
+                setEdit(!edit);
+                if (!edit) {
+                  submitUpdatedProperty({
+                    context: {
+                      headers: {
+                        Authorization: "Bearer " + jwtToken,
+                      },
+                    },
+                    variables: {
+                      id: property.id,
+                      address1,
+                      address2,
+                      city,
+                      province,
+                      postalCode,
+                      rules,
+                      description,
+                      numOfRooms,
+                    },
+                  })
+                    .then((result) => {})
+                    .catch((err) => console.log(err));
+                }
+              }}
+            >
+              {edit ? (
+                <Image
+                  style={propertyStyles.aboutEditIcon}
+                  source={require("../../assets/tick-red.png")}
+                  resizeMode={"center"}
+                />
+              ) : (
+                <Image
+                  style={propertyStyles.aboutEditIcon}
+                  source={require("../../assets/pen-red.png")}
+                  resizeMode={"center"}
+                />
+              )}
+            </Pressable>
+          )
+        }
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -245,21 +244,23 @@ export function AboutScreen({ navigation, property, userData, jwtToken }) {
               />
             );
           })}
-          {userData.isOwner && <Pressable
-            onPress={() => {
-              addNewRule();
-            }}
-            style={[styles.button, styles.buttonRound, ownerStyles.addNewRuleBtn]}
-          >
-            <Text style={styles.buttonText}>Add new rule</Text>
-          </Pressable>}
+          {userData.isOwner && (
+            <Pressable
+              onPress={() => {
+                addNewRule();
+              }}
+              style={[styles.button, styles.buttonRound, ownerStyles.addNewRuleBtn]}
+            >
+              <Text style={styles.buttonText}>Add new rule</Text>
+            </Pressable>
+          )}
         </View>
 
         <View style={[styles.separator, styles.separatorBlue]} />
 
         <View style={ownerStyles.editPropertyDesc}>
           <Text style={styles.textH3}>Description</Text>
-          
+
           <TextInput
             onChangeText={changeDescription}
             style={edit ? ownerStyles.descTextInput : propertyStyles.descText}
