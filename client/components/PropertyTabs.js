@@ -16,12 +16,10 @@ import ChatScreens from "./property-screens/Chat";
 
 const Tabs = createBottomTabNavigator();
 
-const socket = io({
-  autoConnect: false,
-});
-
 export function PropertyTabs({ route, userData, jwtToken, refetchUser }) {
   let propertyId = null;
+
+  const [socket, setSocket] = useState(null);
 
   if (userData.isOwner) {
     if (route.params?.id) propertyId = route.params.id;
@@ -40,22 +38,55 @@ export function PropertyTabs({ route, userData, jwtToken, refetchUser }) {
     },
   });
 
-  let property = JSON.parse(JSON.stringify(data?.getProperty || null));
-  if (property) {
-    property.residents.sort((a, b) => a.id.localeCompare(b.id));
-  }
-
+  let [property, setProperty] = useState(
+    JSON.parse(JSON.stringify(data?.getProperty || null))
+  );
   useEffect(() => {
     refetch();
   }, [jwtToken, propertyId]);
 
   useEffect(() => {
-    socket.connect();
+    setProperty((p) => {
+      let prop = JSON.parse(JSON.stringify(data?.getProperty || null));
 
-    socket.on("message", (message) => {
-      property.chats.find((chat) => chat.id === message.id).messages.push(message);
+      if (prop?.residents) prop.residents.sort((a, b) => a.id.localeCompare(b.id));
+      return prop;
     });
+    if (data) {
+      const newSocket = io("https://iproper.herokuapp.com/", {
+        extraHeaders: {
+          authorization: `Bearer ${jwtToken}`,
+          propId: data.getProperty.id,
+        },
+      });
+      setSocket(newSocket);
+
+      return () => newSocket.close();
+    }
   }, [data]);
+
+  useEffect(() => {
+    if (socket)
+      socket.on("message", (user, chatId, text, createdAt) => {
+        user.id = user._id;
+        delete user._id;
+        if (user.id !== userData.id) {
+          setProperty((p) => {
+            let prop = JSON.parse(JSON.stringify(p));
+            prop.chatRooms
+              .find((chatRoom) => chatRoom.id === chatId)
+              .chats.push({
+                user: user,
+                message: text,
+                createdAt: createdAt,
+              });
+            return prop;
+          });
+        }
+      });
+  }, [socket]);
+
+  console.log(jwtToken);
 
   return loading || propertyId === null ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
@@ -190,9 +221,11 @@ export function PropertyTabs({ route, userData, jwtToken, refetchUser }) {
           <ChatScreens
             {...props}
             property={property}
+            setProperty={setProperty}
             jwtToken={jwtToken}
             userData={userData}
             socket={socket}
+            refetchProperty={refetch}
           />
         )}
       </Tabs.Screen>

@@ -58,7 +58,7 @@ const SetAmountPopUp = ({ amount, setAmount, openPaymentSheet, setPopUpOpen }) =
                   borderWidth: 2,
                 },
               ]}
-              value={amount}
+              value={amount || "0"}
             />
           </View>
           <Pressable
@@ -126,7 +126,8 @@ export const Home = ({ userData, jwtToken, property, navigation }) => {
   };
 
   useEffect(() => {
-    initializePaymentSheet();
+    if (property)
+      initializePaymentSheet();
   }, []);
 
   if (property == null) {

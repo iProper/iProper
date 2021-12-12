@@ -111,6 +111,21 @@ const getPropertyById = gql`
         isCompleted
         assignedTo
       }
+      chatRooms {
+        id
+        users
+        createdAt
+        chats {
+          id
+          message
+          user {
+            id
+            firstName
+            lastName
+          }
+          createdAt
+        }
+      }
     }
   }
 `;
@@ -235,6 +250,14 @@ const processPayment = gql`
   }
 `;
 
+const addChatRoom = gql`
+  mutation ($propertyId: ID!, $users: [ID]) {
+    addChatRoom(propertyId: $propertyId, users: $users) {
+      id
+    }
+  }
+`;
+
 export {
   login,
   checkEmail,
@@ -249,4 +272,5 @@ export {
   addEvent,
   editEvent,
   processPayment,
+  addChatRoom
 };

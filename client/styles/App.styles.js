@@ -277,6 +277,7 @@ export default StyleSheet.create({
     height: 40,
     width: "100%",
     marginBottom: 20,
+    overflow: "hidden",
   },
   navigationHeaderBackButton: {
     flexDirection: "row",

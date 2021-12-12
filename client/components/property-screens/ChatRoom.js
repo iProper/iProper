@@ -15,53 +15,46 @@ import NavigationHeader from "../small/NavigationHeader";
 import styles from "../../styles/App.styles";
 import chatStyles from "../../styles/ChatScreens.styles";
 
-const ChatRoom = ({ navigation, route, userData, socket }) => {
+const ChatRoom = ({ navigation, route, userData, property, setProperty, socket }) => {
   const { roomId, title } = route.params;
 
-  const [messages, setMessages] = useState([]);
+  let messages = property.chatRooms.find((room) => room.id === roomId).chats;
   const [message, setMessage] = useState("");
-/* 
-  const sendMessage = () => {
-    setMessages((oldMessages) => {
-      const copy = oldMessages.map((m) => m);
-      copy.push({
-        sender: {
-          id: userData.id,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-        },
-        dateCreated: new Date(),
-        text: message,
-      });
-      return copy;
-    });
-    setMessage("");
-  }; */
 
   const sendMessage = () => {
     socket.emit("message", {
-      userId: userData.id,
       chatId: roomId,
       text: message,
     });
-  }
+    setProperty((p) => {
+      let prop = JSON.parse(JSON.stringify(p));
+      prop.chatRooms
+        .find((chatRoom) => chatRoom.id === roomId)
+        .chats.push({
+          user: userData,
+          message: message,
+          createdAt: new Date(),
+        });
+      return prop;
+    });
+    setMessage("");
+  };
 
   return (
     <View style={[styles.container, { padding: 30, paddingBottom: 5 }]}>
-      <NavigationHeader goBack={() => navigation.navigate("Chat")} title={title} />
+      <NavigationHeader goBack={() => navigation.navigate("Chats")} title={title} />
       <KeyboardAvoidingView style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ height: "100%" }}
         >
           <View style={[chatStyles.CT_Body]}>
             {messages.map((item, index) => {
               let firstMessage = true;
               if (
                 index > 0 &&
-                messages[index - 1].sender.id === item.sender.id &&
-                item.dateCreated.getTime() -
-                  messages[index - 1].dateCreated.getTime() <
+                messages[index - 1].user.id === item.user.id &&
+                new Date(item.createdAt).getTime() -
+                  new Date(messages[index - 1].createdAt).getTime() <
                   2 * 60 * 1000
               ) {
                 firstMessage = false;
@@ -71,11 +64,11 @@ const ChatRoom = ({ navigation, route, userData, socket }) => {
                   {firstMessage ? (
                     <View style={chatStyles.messageHeading}>
                       <Text style={[chatStyles.UserName, { fontSize: 14 }]}>
-                        {item.sender.firstName} {item.sender.lastName}
+                        {item.user.firstName} {item.user.lastName}
                       </Text>
                       <Text>
-                        {("00" + item.dateCreated.getHours()).slice(-2)}:
-                        {("00" + item.dateCreated.getMinutes()).slice(-2)}
+                        {("00" + new Date(item.createdAt).getHours()).slice(-2)}:
+                        {("00" + new Date(item.createdAt).getMinutes()).slice(-2)}
                       </Text>
                     </View>
                   ) : (
@@ -88,7 +81,7 @@ const ChatRoom = ({ navigation, route, userData, socket }) => {
                       firstMessage ? chatStyles.firstMessage : {},
                     ]}
                   >
-                    <Text>{item.text}</Text>
+                    <Text>{item.message}</Text>
                   </View>
                 </View>
               );
