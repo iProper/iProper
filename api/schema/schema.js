@@ -100,6 +100,7 @@ const ChatRoomType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLID },
     users: { type: new GraphQLList(GraphQLID) },
+    createdBy: { type: GraphQLID },
     createdAt: { type: dateScalar },
     chats: {
       type: new GraphQLList(ChatType),
