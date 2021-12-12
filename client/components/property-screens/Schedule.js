@@ -108,7 +108,7 @@ function Schedule({ navigation, property, userData, jwtToken, eventId = null }) 
 
   return (
     <View style={[styles.container]}>
-      <View style={{ paddingHorizontal: 30, paddingTop: 30 }}>
+      <View style={{ paddingHorizontal: 30, paddingTop: 30, paddingBottom: 5 }}>
         <NavigationHeader
           goBack={() => navigation.navigate("Home")}
           title='Schedule'

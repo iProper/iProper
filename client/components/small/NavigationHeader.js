@@ -1,6 +1,7 @@
 import { Text, View, Pressable } from "react-native";
 import styles from "../../styles/App.styles";
 import React from "react";
+import { LinearGradient } from "react-native-svg";
 
 function NavigationHeader({ goBack, title, Child = () => <View /> }) {
   return (
@@ -12,7 +13,8 @@ function NavigationHeader({ goBack, title, Child = () => <View /> }) {
         }}
       >
         <Text style={styles.navigationHeaderArrow}>{"< "}</Text>
-        <Text style={styles.textH2}>{title}</Text>
+        <Text style={[styles.textH2, {height: 30}]}>{title}</Text>
+        <View style={{}}/>
       </Pressable>
       {<Child />}
       <View style={[styles.separator, styles.separatorBlue]} />

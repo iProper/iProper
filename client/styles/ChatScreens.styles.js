@@ -33,9 +33,7 @@ export default StyleSheet.create({
     flex: 1,
 
     padding: 20,
-    borderWidth: 2,
     borderColor: "#97CAEF",
-    borderRadius: 20,
     
     shadowRadius: 5,
   },
@@ -46,7 +44,7 @@ export default StyleSheet.create({
     borderColor: "#97CAEF",
     borderRadius: 50,
     shadowRadius: 5,
-
+    
     borderWidth: 2,
     fontSize: 15,
   },

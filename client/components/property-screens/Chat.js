@@ -67,7 +67,7 @@ function CreateChatRoomPopUp({
 
   return (
     <Pressable onPress={() => setPopUpOpen(false)} style={styles.popUp}>
-      <View style={[styles.popUpCard]}>
+      <View style={[styles.popUpCard, {padding: 25}]}>
         <Text style={styles.textH3}>Create Room</Text>
         <View style={[styles.separator, styles.separatorBlue]} />
         <View style={{ height: 200, width: "100%" }}>
@@ -91,6 +91,7 @@ function CreateChatRoomPopUp({
                   style={{
                     width: "100%",
                     padding: 5,
+                    paddingHorizontal: 10,
                     borderColor: "#FC4445",
                     borderRadius: 10,
                     borderWidth: 1,

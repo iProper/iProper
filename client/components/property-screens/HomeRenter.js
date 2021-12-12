@@ -44,9 +44,7 @@ const SetAmountPopUp = ({ amount, setAmount, openPaymentSheet, setPopUpOpen }) =
       <View style={[styles.popUpCard]}>
         <View style={{ width: "100%" }}>
           <View style={[styles.formBox]}>
-            <Text style={[styles.textH4, styles.formLabel]}>
-              Amount
-            </Text>
+            <Text style={[styles.textH4, styles.formLabel]}>Amount</Text>
             <TextInput
               onChangeText={setAmount}
               style={[
@@ -126,9 +124,10 @@ export const Home = ({ userData, jwtToken, property, navigation }) => {
   };
 
   useEffect(() => {
-    if (property)
+    if (property) {
       initializePaymentSheet();
-  }, []);
+    }
+  }, [property]);
 
   if (property == null) {
     return <Loading text={"Loading..."} style={{ flex: 1 }} />;
