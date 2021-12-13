@@ -673,7 +673,6 @@ const Mutation = new GraphQLObjectType({
           if (req.user.isOwner) {
             const property = await Property.findById(args.propertyId);
             if (req.user.id == property.ownerId) {
-              // TODO: When editing a repeatable event it should edit the preMade one as well if it exists
               return Event.findByIdAndUpdate(
                 args.id,
                 {
@@ -850,28 +849,26 @@ const Mutation = new GraphQLObjectType({
               if (property.chatRoomIds[x] == args.chatRoomId)
                 property.chatRoomIds.splice(x, 1);
             }
-            // property.chatRoomIds = property.chatRoomIds.filter((roomId) => {
-            //   roomId != args.chatRoomId;
-            // });
 
             return property.save();
-
-            // return ChatRoom.findByIdAndDelete(args.chatRoomId);
           }
           throw new Error('Not a resident of this property');
         }
         throw new Error('Non Authenticated User');
       },
     },
-    // deleteUser: {
-    //   type: UserType,
-    //   args: {
-    //     id: { type: new GraphQLNonNull(GraphQLID) },
-    //   },
-    //   resolve(_parent, args) {
-    //     return User.findByIdAndDelete(args.id);
-    //   },
-    // },
+    deleteUser: {
+      type: UserType,
+      async resolve(_parent, args, req) {
+        if (req) {
+          if (req.user.isOwner) {
+            await Property.deleteMany({ ownerId: req.user.id });
+          }
+          return User.findByIdAndDelete(req.user.id);
+        }
+        throw new Error('Non authenticated user');
+      },
+    },
   },
 });
 
