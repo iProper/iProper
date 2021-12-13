@@ -58,6 +58,7 @@ function CreateChatRoomPopUp({
     })
       .then(() => {
         refetchProperty();
+        setPopUpOpen(false);
       })
       .catch((err) => {
         console.log(JSON.stringify(err));

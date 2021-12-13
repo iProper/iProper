@@ -123,9 +123,9 @@ function AddProperty({ route, navigation }) {
       <NavigationHeader goBack={navigation.goBack} title="Add new property"/>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={ownerStyles.addPropertyScreenForm}
+        style={[ownerStyles.addPropertyScreenForm]}
       >
-        <View>
+        <View style={{paddingVertical: 5}}>
           <View style={styles.formBox}>
             <Text style={[styles.textH4, styles.formLabel]}>Address Line 1</Text>
             <TextInput
@@ -288,6 +288,7 @@ function AddProperty({ route, navigation }) {
             Add new property
           </Text>
         </Pressable>
+        <View style={{height: 10}}/>
       </ScrollView>
     </View>
   );

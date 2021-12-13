@@ -76,9 +76,9 @@ export default function ReportCompletion({
       <View style={[styles.container, propertyStyles.editScheduleScreen]}>
         <NavigationHeader
           goBack={() => navigation.navigate("View Schedule")}
-          title={"Edit Schedule"}
+          title={"Schedule Events"}
         />
-        <View style={[styles.flexRow, propertyStyles.chooseDay]}>
+        <View style={[styles.flexRow, propertyStyles.chooseDay, {marginTop: 10}]}>
           <Pressable style={{ width: 50, alignItems: "center" }} onPress={dayBefore}>
             {day > 1 && <Text style={styles.navigationHeaderArrow}>{"<"}</Text>}
           </Pressable>

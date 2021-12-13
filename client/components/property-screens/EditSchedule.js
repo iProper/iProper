@@ -290,7 +290,7 @@ export default function EditSchedule({
           goBack={() => navigation.navigate("View Schedule")}
           title={"Edit Schedule"}
         />
-        <View style={[styles.flexRow, propertyStyles.chooseDay]}>
+        <View style={[styles.flexRow, propertyStyles.chooseDay, { marginTop: 10 }]}>
           <Pressable style={{ width: 50, alignItems: "center" }} onPress={dayBefore}>
             {day > 1 && <Text style={styles.navigationHeaderArrow}>{"<"}</Text>}
           </Pressable>

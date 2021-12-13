@@ -20,7 +20,14 @@ const weekdays = [
   "Sunday",
 ];
 
-function PopupRequestChange({ property, userData, jwtToken, setOpen, requestChangeId, refetchProperty }) {
+function PopupRequestChange({
+  property,
+  userData,
+  jwtToken,
+  setOpen,
+  requestChangeId,
+  refetchProperty,
+}) {
   const pickerValues = property.residents
     .filter((res) => res.id !== userData.id)
     .map((resident) => ({
@@ -82,7 +89,10 @@ function PopupRequestChange({ property, userData, jwtToken, setOpen, requestChan
           <Pressable style={[styles.button, styles.buttonBlue, { width: "45%" }]}>
             <Text style={[styles.buttonText]}>Cancel</Text>
           </Pressable>
-          <Pressable style={[styles.button, { width: "45%" }]} onPress={() => requestEventChange()}>
+          <Pressable
+            style={[styles.button, { width: "45%" }]}
+            onPress={() => requestEventChange()}
+          >
             <Text style={[styles.buttonText]}>Request</Text>
           </Pressable>
         </View>
@@ -125,7 +135,7 @@ export default function RequestChange({
           goBack={() => navigation.navigate("View Schedule")}
           title={"Edit Schedule"}
         />
-        <View style={[styles.flexRow, propertyStyles.chooseDay]}>
+        <View style={[styles.flexRow, propertyStyles.chooseDay, { marginTop: 10 }]}>
           <Pressable style={{ width: 50, alignItems: "center" }} onPress={dayBefore}>
             {day > 1 && <Text style={styles.navigationHeaderArrow}>{"<"}</Text>}
           </Pressable>

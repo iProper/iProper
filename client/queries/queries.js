@@ -115,6 +115,7 @@ const getPropertyById = gql`
         id
         users
         createdAt
+        createdBy
         chats {
           id
           message

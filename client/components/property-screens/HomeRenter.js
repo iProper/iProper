@@ -46,7 +46,7 @@ const SetAmountPopUp = ({ amount, setAmount, openPaymentSheet, setPopUpOpen }) =
           <View style={[styles.formBox]}>
             <Text style={[styles.textH4, styles.formLabel]}>Amount</Text>
             <TextInput
-              onChangeText={setAmount}
+              onChangeText={(value) => setAmount(parseInt(value))}
               style={[
                 styles.formInput,
                 {
@@ -56,7 +56,7 @@ const SetAmountPopUp = ({ amount, setAmount, openPaymentSheet, setPopUpOpen }) =
                   borderWidth: 2,
                 },
               ]}
-              value={amount || "0"}
+              value={amount.toString()}
             />
           </View>
           <Pressable
@@ -88,7 +88,7 @@ export const Home = ({ userData, jwtToken, property, navigation }) => {
       },
       variables: {
         propertyId: property.id,
-        amount: 50,
+        amount: amount * 100,
       },
     }).catch((err) => {
       console.log(JSON.stringify(err));
@@ -231,7 +231,7 @@ export const Home = ({ userData, jwtToken, property, navigation }) => {
               styles.separatorVertical,
             ]}
           />
-          <Text style={[styles.textH3, { marginHorizontal: 15 }]}>
+          <Text style={[styles.textH4, { marginHorizontal: 15 }]}>
             {property.note}
           </Text>
         </View>

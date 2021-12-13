@@ -149,11 +149,11 @@ function DeleteChatPopUp({
   property,
   setPopUpOpen,
   refetchProperty,
+  navigation
 }) {
   const [deleteChat] = useMutation(deleteChatRoom);
 
   const deleteChatOnPress = () => {
-    console.log(property.id);
     deleteChat({
       context: {
         headers: {
@@ -166,6 +166,7 @@ function DeleteChatPopUp({
       },
     })
       .then(() => {
+        navigation.navigate("Chats");
         refetchProperty();
       })
       .catch((err) => {
@@ -211,6 +212,7 @@ function DeleteChatPopUp({
   );
 }
 
+
 export default function EditChatRoom({
   navigation,
   route,
@@ -224,6 +226,8 @@ export default function EditChatRoom({
   const [editMembersChatRoomOpen, setEditMembersChatRoomOpen] = useState(false);
   const [deletePopUpOpen, setDeletePopUpOpen] = useState(false);
 
+  console.log(property);
+  
   return (
     <>
       <View style={[styles.container, { padding: 30 }]}>
@@ -303,9 +307,10 @@ export default function EditChatRoom({
         <DeleteChatPopUp
           jwtToken={jwtToken}
           property={property}
-          setPopUpOpen={setEditMembersChatRoomOpen}
+          setPopUpOpen={setDeletePopUpOpen}
           refetchProperty={refetchProperty}
           roomId={roomId}
+          navigation={navigation}
         />
       )}
       {editMembersChatRoomOpen && (
@@ -313,7 +318,7 @@ export default function EditChatRoom({
           jwtToken={jwtToken}
           userData={userData}
           property={property}
-          setPopUpOpen={setDeletePopUpOpen}
+          setPopUpOpen={setEditMembersChatRoomOpen}
           refetchProperty={refetchProperty}
           roomId={roomId}
         />
