@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const propertySchema = new Schema({
@@ -12,8 +12,11 @@ const propertySchema = new Schema({
   description: String,
   note: String,
   rules: [String],
+  issues: [String],
   residentIds: [String],
+  eventIds: [String],
+  chatRoomIds: [String],
   ownerId: String,
 });
 
-module.exports = mongoose.model("Property", propertySchema);
+module.exports = mongoose.model('Property', propertySchema);
