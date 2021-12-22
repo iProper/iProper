@@ -69,6 +69,15 @@ function SideMenu(props) {
             </View>
             <View style={[styles.sideMenuItem]}>
               <DrawerItem
+                label={"Chat"}
+                labelStyle={{ fontSize: 20 }}
+                onPress={() => {
+                  props.navigation.navigate("Chat");
+                }}
+              />
+            </View>
+            <View style={[styles.sideMenuItem]}>
+              <DrawerItem
                 label={"About"}
                 labelStyle={{ fontSize: 20 }}
                 onPress={() => {

@@ -56,7 +56,7 @@ export function PropertyTabs({ route, userData, jwtToken, refetchUser }) {
       const newSocket = io("https://iproper.herokuapp.com/", {
         extraHeaders: {
           authorization: `Bearer ${jwtToken}`,
-          propId: data.getProperty.id,
+          propId: data?.getProperty?.id,
         },
       });
       setSocket(newSocket);
@@ -86,7 +86,7 @@ export function PropertyTabs({ route, userData, jwtToken, refetchUser }) {
       });
   }, [socket]);
 
-  return loading || propertyId === null || property === null ? (
+  return (loading || property === null) && propertyId ? (
     <Tabs.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Tabs.Screen
         name='loading'
